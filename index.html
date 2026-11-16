@@ -3289,34 +3289,39 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
     {n:"Sunrise", s:"First light on the playa", tip:"Jump the bikes, barrels and dust devils. Hold for a higher jump. A zone without a hit: wax wings and Sakhalin mode.", at:0, beat:96},
     {n:"White-out", s:"Dust storm", tip:"You see less. Trust the beat and keep jumping.", at:1200, beat:112},
     {n:"Deep playa", s:"Night · 124 BPM", tip:"Everything glows. Ride the art cars for the long rows of vinyl.", at:2800, beat:128},
-    {n:"Violin Chaser", s:"Deep playa · 132 BPM", tip:"Your violin left on the lantern boat. Find it at Camp Rosin before your set starts.", at:4800, beat:123}
+    {n:"Violin Chaser", s:"Deep playa · 132 BPM", tip:"Your violin left on the lantern boat. Find it at Camp Rosin before your set starts. It gets faster. Twenty seconds without a hit: Sakhalin mode II, and you fly.", at:4800, beat:123}
   ];
   function pk(i){ var p=TD.pools[i%TD.pools.length]||[]; return TD.tracks[p[plays%Math.max(1,p.length)]]||FALL; }
-  function rSpeed(){ return ZN[R.zone].beat*gbpm()/60; }
+  function rRamp(){ return R&&R.zone===3?1+Math.min(1,R.zt/100)*0.8:1; }   // Violin Chaser gets faster: up to 1.8 times after 100 seconds. The beat stays; a beat covers more ground
+  function rSpeed(){ return ZN[R.zone].beat*gbpm()/60*rRamp(); }
   function sJump(n){ var tr=T(); tone(note(tr,n?4:2),0.12,"square",0.15,0,note(tr,n?7:5)); }
   function sLand(){ tone(120,0.08,"triangle",0.16,0,62); }
   function sBoard(){ var a=A(); if(!a) return; var tr=T(), t=a.currentTime; [0,2,4].forEach(function(i,j){ tone(note(tr,i+tr.scale.length),0.1,"square",0.13,t+j*0.06); }); }
   function sVinyl(){ var a=A(); if(!a) return; var tr=T(); if(R.zone===2&&R.got%2===0){ stab(tr,false); return; } var t=grid(), f=note(tr,R.got%(tr.scale.length*2)); tone(f,0.09,"square",0.14,t); tone(f*2,0.08,"triangle",0.07,t+seq.spb); }
   function startRunner(){ A(); bedStop(); curR=[pk(1),pk(0),pk(2),pk(2)]; plays++; musPre(curR); score=0; energy=100; streak=0; fx=[]; banner=2.6; shake=0; flash=0;
-    R={y:GY,vy:0,on:1,jumps:0,held:0,dist:0,zone:0,zt:0,obs:[],vin:[],cars:[],inv:0,acc:0,beatN:0,gap:4,car:null,got:0,bonus:0,foot:0,carN:0,hit:0,superT:0};
+    R={y:GY,vy:0,on:1,jumps:0,held:0,dist:0,zone:0,zt:0,obs:[],vin:[],cars:[],inv:0,acc:0,beatN:0,gap:4,car:null,got:0,bonus:0,foot:0,carN:0,hit:0,superT:0,fly:0,clean:0};
     QST={active:false,phase:0,violin:null,car:null,msgTimer:0,msg:"",found:false,stage:false,campDist:0,stageDist:0};
     try{ document.dispatchEvent(new CustomEvent("ss:audio",{detail:"arcade"})); }catch(e){}
     clkSet(gbpm()); st="play"; show("play"); say("The Playa Runner. Zone 1, Sunrise. Jump with space, the up arrow or a tap; jump again in the air."); sLevel(0); bedStart(); wake(); }
   function rJump(){ if(st!=="play"||game!==2||!R) return;
+    if(R.fly>0){ R.held=1; R.relAt=0; if(R.vy>-120) R.vy=-120; return; }   // Sakhalin mode II: hold to rise, let go to sink
     if(R.on){ R.vy=-520; R.on=0; R.jumps=1; R.car=null; R.held=1; R.jt=performance.now(); R.relAt=0; sJump(0); var jb=beatPos(); if(Math.abs(jb-Math.round(jb))<0.16&&banner<1.9){ R.bonus+=5*(R.zone+1); R.ob=(R.ob||0)+1; fx.push({x:PX+20,y:R.y-46,t:"ON BEAT",l:0.7,col:"#ff3d9a"}); } }
     else if(R.jumps<2){ R.vy=-450; R.jumps=2; R.held=1; R.jt=performance.now(); R.relAt=0; sJump(1); burst(PX,R.y-8,"#ffd36b"); } }
   function rRelease(){ if(R){ if(!R.on&&performance.now()-(R.jt||0)<110){ R.relAt=R.jt+110; return; } R.held=0; R.relAt=0; if(R.vy<-220) R.vy=-220; } }   // a jump is never cut in its first 110 ms: the shortest tap clears a dust devil
   function rSpawn(){ var z=R.zone, near=R.cars.some(function(cr){ return cr.x+cr.w>GW-30; }); R.gap--;
+    if(R.fly>0){ var sb=ZN[z].beat*rRamp(); for(var sj=0;sj<2;sj++) R.vin.push({x:GW+30+sj*sb/2,y:190+92*Math.sin((R.beatN+sj/2)*0.62),sky:1}); }   // in flight the vinyl hangs in the sky, in one long wave
+    else if(z===3&&R.beatN%8===0){ for(var sk=0;sk<4;sk++) R.vin.push({x:GW+40+sk*26,y:GY-112-Math.sin(sk/3*Math.PI)*46,sky:1}); }   // Violin Chaser: an arc of vinyl up high, for the second jump
     if(!near&&R.beatN>6&&R.beatN%(z===2?13:17)===0){ var h=44+(R.carN%2)*8, cr=carFit({x:GW+30,w:118,h:h,k:R.carN%5,v:ZN[z].beat*0.5}); R.carN++; R.cars.push(cr);
       for(var i=0;i<5;i++) R.vin.push({car:cr,ox:12+i*(cr.w-24)/4,x:0,y:GY-h-24-Math.sin(i/4*Math.PI)*12}); R.gap=3; return; }
     if(near) return;
     if(R.gap<=0){ var r=Math.random(), k=r<0.4?"bike":r<0.75?"devil":"barrel", ow=k==="bike"?30:k==="devil"?20:18, oh=k==="bike"?18:k==="devil"?36:26;
-      var bz=ZN[z].beat, ox=PX+(Math.ceil((GW+34-PX)/bz-0.6)+0.6)*bz-ow/2;   // it reaches the runner 0.6 of a beat after a beat: jump on the kick and you clear it
+      var bz=ZN[z].beat*rRamp(), ox=PX+(Math.ceil((GW+34-PX)/bz-0.6)+0.6)*bz-ow/2;   // it reaches the runner 0.6 of a beat after a beat: jump on the kick and you clear it
       R.obs.push({k:k,x:ox,w:ow,h:oh,ph:Math.random()*6});
       for(var j=0;j<3;j++) R.vin.push({x:ox+ow/2+(j-1)*24,y:GY-oh-36-(j===1?16:0)});
       R.gap=z===0?(R.dist<3000?(Math.random()<0.5?4:3):(Math.random()<0.5?3:2)):z===1?(Math.random()<0.35?3:2):2; }   // the first 300 m leave more room
     else if(Math.random()<0.3) R.vin.push({x:GW+40,y:GY-16}); }
   function updateR(dt,t){ if(banner>0) banner-=dt; if(shake>0) shake-=dt; if(flash>0) flash-=dt; if(R.inv>0) R.inv-=dt; if(R.superT>0) R.superT-=dt; R.zt+=dt;
+    if(R.zone===3&&banner<=0&&R.fly<=0&&R.superT<=0){ R.clean+=dt; if(R.clean>=20){ R.clean=0; R.fly=14; R.superT=14; TL.sup++; sBoard(); if(!calm) shake=0.3; burst(PX,R.y-40,"#fff3b0","SAKHALIN MODE II"); say("Sakhalin mode two. You fly. Hold to rise, let go to sink. The vinyl is in the sky."); } }   // twenty seconds without a hit in Violin Chaser
     var v=rSpeed()*(banner>1.9?0.6:1), dx=v*dt, i; R.dist+=dx; R.foot+=dx; score=Math.floor(R.dist/10)+R.bonus;
     if(R.zone<3&&R.dist/10>=ZN[R.zone+1].at){ if(!R.hit){ TL.sup++; R.superT=12; sBoard(); burst(PX,R.y-40,"#ffe27a","SAKHALIN MODE"); } R.hit=0; R.zone++; R.zt=0; banner=2.6; sLevel(R.zone); clkSet(gbpm()); bedStart();
       if(R.zone===3){ QST.active=true; QST.phase=0; QST.msg=QUEST_MSGS[0]; QST.msgTimer=4.0;
@@ -3348,7 +3353,7 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
       if(QST.phase===3 && QST.msgTimer<=0){ QST.msg=QUEST_MSGS[5]; QST.msgTimer=99; }
       // phase 3: reach stage distance → win sequence
       if(!QST.stage && R.dist>=QST.stageDist){
-        QST.stage=true; QST.msg=QUEST_MSGS[6]; QST.msgTimer=99;
+        QST.stage=true; QST.msg=QUEST_MSGS[6]; QST.msgTimer=6;
         R.bonus+=5000; score=Math.floor(R.dist/10)+R.bonus;
         burst(GW/2,GY-80,"#E4007C"); burst(GW/3,GY-60,"#ffd36b"); burst(2*GW/3,GY-60,"#7affc8");
         shake=0.9; flash=0.25;
@@ -3357,14 +3362,18 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
     // ---- end quest ----
     // the runner
     if(R.relAt&&performance.now()>=R.relAt){ R.relAt=0; R.held=0; if(R.vy<-220) R.vy=-220; }
-    if(!R.on){ R.vy+=(R.held&&R.vy<0?1250:1900)*dt*(R.superT>0?0.45:1); var py=R.y; R.y+=R.vy*dt;
+    if(R.fly>0){ R.fly-=dt; R.on=0; R.car=null; R.jumps=2; R.vy+=(R.held?-1500:720)*dt; R.vy=Math.max(-250,Math.min(220,R.vy)); R.y+=R.vy*dt;   // Sakhalin mode II: free flight above everything on the ground
+      if(R.y<70){ R.y=70; if(R.vy<0) R.vy=0; } if(R.y>GY-70){ R.y=GY-70; if(R.vy>0) R.vy=0; }
+      if(!calm&&Math.random()<dt*26) fx.push({x:PX-8-Math.random()*10,y:R.y-10-Math.random()*26,vx:-70-Math.random()*50,vy:-10+Math.random()*20,l:0.5,col:Math.random()<0.5?"#fff3b0":"#ffd36b"});
+      if(R.fly<=0){ R.fly=0; R.superT=0; R.clean=0; R.inv=Math.max(R.inv,1.8); R.vy=0; R.held=0; say("Back on the playa. Keep running."); } }
+    else if(!R.on){ R.vy+=(R.held&&R.vy<0?1250:1900)*dt*(R.superT>0?0.45:1); var py=R.y; R.y+=R.vy*dt;
       if(R.vy>=0){ for(i=0;i<R.cars.length;i++){ var cr=R.cars[i], top=GY-cr.h; if(PX>cr.x-4&&PX<cr.x+cr.w+4&&py<=top+2&&R.y>=top){ R.y=top; R.vy=0; R.on=1; R.jumps=0; R.car=cr; sBoard(); burst(PX,top,"#ff6fb6","RIDE"); break; } } }
       if(!R.on&&R.y>=GY){ R.y=GY; R.vy=0; R.on=1; R.jumps=0; R.car=null; sLand(); } }
     else if(R.car){ if(PX<R.car.x-4||PX>R.car.x+R.car.w+4){ R.on=0; R.car=null; R.jumps=1; R.vy=0; } else R.y=GY-R.car.h; }
     // the world
     for(i=R.cars.length-1;i>=0;i--){ var c2=R.cars[i]; c2.x-=(v-c2.v)*dt; if(c2.x+c2.w<-40){ if(R.car===c2) R.car=null; R.cars.splice(i,1); } }
     for(i=R.obs.length-1;i>=0;i--){ var o=R.obs[i]; o.x-=dx; if(o.x+o.w<-30){ R.obs.splice(i,1); continue; }
-      if(R.inv<=0&&PX+6>o.x+3&&PX-6<o.x+o.w-3&&R.y>GY-o.h+5){ if(R.superT<=0){ TL.h++; energy-=30*AD; streak=0; R.hit=1; } R.inv=1.2; if(!calm) shake=0.25; flash=0.2; sBad(); burst(PX,R.y-14,"#ff3b3b",o.k==="devil"?"DUST":o.k==="bike"?"BIKE":"HOT"); } }
+      if(R.inv<=0&&PX+6>o.x+3&&PX-6<o.x+o.w-3&&R.y>GY-o.h+5){ if(R.superT<=0){ TL.h++; energy-=30*AD; streak=0; R.hit=1; R.clean=0; } R.inv=1.2; if(!calm) shake=0.25; flash=0.2; sBad(); burst(PX,R.y-14,"#ff3b3b",o.k==="devil"?"DUST":o.k==="bike"?"BIKE":"HOT"); } }
     for(i=R.vin.length-1;i>=0;i--){ var vn=R.vin[i]; if(vn.car){ vn.x=vn.car.x+vn.ox; if(R.cars.indexOf(vn.car)<0){ R.vin.splice(i,1); continue; } } else vn.x-=dx;
       if(vn.x<-20){ if(!vn.quest) TL.m++; R.vin.splice(i,1); continue; }
       var hitR=vn.quest?28:15;
@@ -3447,7 +3456,22 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
       c.strokeStyle="rgba(255,211,107,.9)"; c.lineWidth=1.2; c.beginPath(); c.moveTo(2,-1); c.quadraticCurveTo(14,-12,28,-20); c.stroke();
       c.fillStyle="#ffd36b"; for(var i=0;i<4;i++){ c.beginPath(); c.arc(6+i*5,-4-i*2.5,1,0,6.283); c.fill(); }
       c.restore(); }); c.restore(); }
-  function runner(x,y,z,t,air){ var a=Math.sin((R?R.foot:t*90)/9), ink=INK[z];
+  // Sakhalin mode II: our own figure in a golden glow, hair streaming, leaning into the flight. Glow and light only; no character from anywhere else.
+  function aura2(x,y,t){ var cy=y-18, fl=calm?1:0.82+0.18*Math.sin(t*23), i;
+    glow(x,cy,74*fl,"rgba(255,226,122,.26)"); glow(x,cy,42*fl,"rgba(255,236,160,.24)");
+    c.save(); c.globalCompositeOperation="lighter";
+    for(i=0;i<7;i++){ var ph=t*(calm?0:7)+i*0.9, fx0=x-20+i*6.5, hh=26+14*Math.sin(ph)+ (i%2)*8, g=c.createLinearGradient(0,cy+18,0,cy+18-hh-30);
+      g.addColorStop(0,"rgba(255,211,107,0)"); g.addColorStop(.35,"rgba(255,226,122,.22)"); g.addColorStop(1,"rgba(255,255,255,0)"); c.fillStyle=g;
+      c.beginPath(); c.moveTo(fx0-6,cy+18); c.quadraticCurveTo(fx0-9+3*Math.sin(ph*1.3),cy-hh*0.5,fx0+2*Math.sin(ph),cy-hh-24); c.quadraticCurveTo(fx0+9+3*Math.sin(ph*1.7),cy-hh*0.5,fx0+6,cy+18); c.fill(); }
+    c.restore();
+    if(!calm){ c.strokeStyle="rgba(255,255,255,.85)"; c.lineWidth=1; for(i=0;i<2;i++){ var sa=((t*3+i*1.7)%1), sx=x-26+((i*37+Math.floor(t*3+i*1.7)*53)%52), sy=cy-30+((i*29+Math.floor(t*3+i*1.7)*31)%50); c.globalAlpha=1-sa; c.beginPath(); c.moveTo(sx,sy); c.lineTo(sx+4,sy+5); c.lineTo(sx+1,sy+6); c.lineTo(sx+5,sy+12); c.stroke(); } c.globalAlpha=1; } }
+  function hair2(x,y,t){ var hy=y-33, i, w=calm?0:Math.sin(t*12);   // hair of light, streaming back from the head
+    c.save(); c.globalCompositeOperation="lighter"; glow(x,hy,13,"rgba(255,240,170,.6)");
+    for(i=0;i<5;i++){ var g=c.createLinearGradient(x,hy,x-30,hy-8+i*4); g.addColorStop(0,"rgba(255,246,200,.95)"); g.addColorStop(1,"rgba(255,211,107,0)"); c.strokeStyle=g; c.lineWidth=2.4-i*0.25; c.lineCap="round";
+      c.beginPath(); c.moveTo(x-1,hy-3+i*1.4); c.quadraticCurveTo(x-13,hy-9+i*3+w*2,x-27-i*2,hy-6+i*4.5+w*(i-2)); c.stroke(); }
+    c.lineCap="butt"; c.fillStyle="#fffbe6"; c.beginPath(); c.arc(x,hy,5.2,Math.PI,0); c.fill(); c.restore(); }
+  function runner(x,y,z,t,air){ if(R&&R.fly>0){ aura2(x,y,t); c.save(); c.translate(x,y-16); c.rotate(0.5); c.translate(-x,-(y-16)); runner0(x,y,z,t,true); hair2(x,y,t); c.restore(); return; } runner0(x,y,z,t,air); }
+  function runner0(x,y,z,t,air){ var a=Math.sin((R?R.foot:t*90)/9), ink=INK[z];
     if(R&&R.superT>0) waxWings(x,y,t);
     if(R&&R.inv>0&&((t*12)|0)%2) c.globalAlpha=0.3;
     var ro=art("g2.runner"); if(ro){ var rn=ro.n, rf=air?(rn>2?(R&&R.vy>0?rn-1:rn-2):0):Math.floor((R?R.foot:t*90)/11)%Math.max(1,rn>2?rn-2:rn); spr("g2.runner",x,y+2,46,t,0,rf); c.globalAlpha=1; return; }
@@ -3459,7 +3483,7 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
     c.strokeStyle=z===2?"#ffd9ec":"#f7f2e6"; c.lineWidth=1; c.beginPath(); c.moveTo(x+1,y-17-2*a); c.lineTo(x+14,y-27-2*a); c.stroke(); c.globalAlpha=1; }
   function hudR(){ c.fillStyle="rgba(0,0,0,.55)"; c.fillRect(0,0,GW,30); c.textAlign="left"; c.font="500 11px 'IBM Plex Mono',monospace"; c.fillStyle="#fff";
     c.fillText(String(score).padStart(6,"0"),10,19); c.fillStyle="#ffd36b"; c.fillText("x"+mult(),70,19);
-    c.textAlign="center"; c.fillStyle="rgba(255,255,255,.7)"; c.font="500 9px 'IBM Plex Mono',monospace"; c.fillText((R.superT>0?"SAKHALIN MODE · "+Math.ceil(R.superT)+" s":"Z"+(R.zone+1)+" · "+ZN[R.zone].n+" · "+Math.floor(R.dist/10)+" m").toUpperCase(),GW/2,19);
+    c.textAlign="center"; c.fillStyle="rgba(255,255,255,.7)"; c.font="500 9px 'IBM Plex Mono',monospace"; c.fillText((R.fly>0?"SAKHALIN MODE II · "+Math.ceil(R.fly)+" s":R.superT>0?"SAKHALIN MODE · "+Math.ceil(R.superT)+" s":"Z"+(R.zone+1)+" · "+ZN[R.zone].n+" · "+Math.floor(R.dist/10)+" m"+(R.zone===3&&rRamp()>1.04?" · ×"+rRamp().toFixed(1):"")).toUpperCase(),GW/2,19);
     var ew=74, ex=GW-ew-10; c.strokeStyle="rgba(255,255,255,.35)"; c.lineWidth=1; c.strokeRect(ex,11,ew,9); c.fillStyle=energy>50?"#7affc8":energy>34?"#ffd36b":"#ff3b3b"; c.fillRect(ex+1.5,12.5,(ew-3)*energy/100,6);
     if(R.zone<3){ var a0=ZN[R.zone].at, a1=ZN[R.zone+1].at, p=Math.min(1,(R.dist/10-a0)/(a1-a0)); c.fillStyle="rgba(255,255,255,.12)"; c.fillRect(0,30,GW,2); c.fillStyle="#ffd36b"; c.fillRect(0,30,GW*p,2); }
     // quest progress bar in zone 3
@@ -3949,7 +3973,7 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
     tracks:function(){ return (game===2?curR:cur).map(function(t){ return t&&t.t; }); },
     peek:function(){ return game===3&&V?{px:V.px,py:V.py,gv:V.gv||0,zc:V.zc,rings:V.ring.map(function(r){ return [Math.round(r.x*100)/100,Math.round(r.y*100)/100,Math.round(r.z*100)/100,r.gv?2:r.gold?1:0]; })}:game===2&&R?{y:R.y,on:R.on,obs:R.obs.map(function(o){ return [o.k,Math.round(o.x),o.w,o.h]; }),vin:R.vin.map(function(v){ return [Math.round(v.x),Math.round(v.y)]; }),cars:R.cars.map(function(q){ return [Math.round(q.x),q.w,q.h]; })}
       :{bx:bx,items:items.map(function(i){ return [i.k,Math.round(i.x),Math.round(i.y)]; })}; },
-    jump:rJump, release:rRelease, music:function(){ return {on:MUS.on,key:MUS.key,want:MUS.want,mode:MUS.src?"loop":MUS.el?"element":"synth",rate:MUS.rate,bpm:60/CK.spb,beat:beatPos(),lv:MUS.lv,lib:Object.keys(MUS.lib),art:Object.keys(ART.s)}; }, _mus:MUS, _load:musLoad,
+    jump:rJump, release:rRelease, music:function(){ return {on:MUS.on,key:MUS.key,want:MUS.want,mode:MUS.src?"loop":MUS.el?"element":"synth",rate:MUS.rate,bpm:60/CK.spb,beat:beatPos(),lv:MUS.lv,lib:Object.keys(MUS.lib),art:Object.keys(ART.s)}; }, _mus:MUS, _load:musLoad, _run:function(){ return R; },
     cheat:function(){ if(st!=="play") return;
       if(game===2){ if(R.zone<3) R.dist=ZN[R.zone+1].at*10; }
       else if(game===3){ if(lvl===2&&!V.gv){ V.zc=VZ[2].goal; V.gv=1; } else if(lvl<3){ V.zc=VZ[lvl].goal||0; vNextZone(); } }   // game 03 has its own zone counter; LV is game 01's
