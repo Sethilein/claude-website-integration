@@ -1,0 +1,10 @@
+The font files in this folder are open-source typefaces under the SIL Open Font License 1.1,
+taken from the Fontsource packages (fontsource.org) so that the site serves them itself
+and no visitor's address goes to a font service:
+
+  Chivo            Omnibus-Type                https://github.com/Omnibus-Type/Chivo
+  Inter            The Inter Project Authors   https://github.com/rsms/inter
+  IBM Plex Mono    IBM Corp.                   https://github.com/IBM/plex
+  Bodoni Moda      The Bodoni Moda Project Authors  https://github.com/indestructible-type/Bodoni
+
+Licence text: https://openfontlicense.org

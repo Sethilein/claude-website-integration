@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Not here · Seth Schwarz</title>
+<style>
+html,body{height:100%}
+body{margin:0;display:grid;place-items:center;background:#000;color:#fff;font:16px/1.6 system-ui,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;text-align:center;padding:24px;box-sizing:border-box}
+p.k{margin:0;font:500 11px/1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.22em;text-transform:uppercase;color:#E4007C}
+h1{margin:18px 0 0;font-size:clamp(30px,6vw,56px);line-height:1.05;font-weight:600;letter-spacing:-.02em}
+p.s{margin:16px auto 0;max-width:34ch;color:#A39AA0}
+a{display:inline-block;margin:26px 6px 0;padding:14px 20px;font:500 11px/1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.17em;text-transform:uppercase;text-decoration:none;border-radius:2px}
+a.n{background:#E4007C;color:#fff}
+a.d{border:1px solid rgba(255,255,255,.45);color:#fff}
+a:focus-visible{outline:2px solid #fff;outline-offset:3px}
+</style>
+</head>
+<body>
+<main>
+  <p class="k">404 · no set here</p>
+  <h1>This page played somewhere else.</h1>
+  <p class="s">The address does not exist. Both sides of the site are one step away.</p>
+  <a class="n" id="n" href="/#night">Seth Schwarz · night</a>
+  <a class="d" id="d" href="/#day">Dr. Martin Zschornak · day</a>
+</main>
+<script>
+// On GitHub Pages the site lives in a folder; on its own domain at the root.
+(function(){ var base="/", h=location.hostname, p=location.pathname.split("/");
+  if(/\.github\.io$/.test(h)&&p.length>1&&p[1]) base="/"+p[1]+"/";
+  document.getElementById("n").href=base+"#night"; document.getElementById("d").href=base+"#day"; })();
+</script>
+</body>
+</html>
