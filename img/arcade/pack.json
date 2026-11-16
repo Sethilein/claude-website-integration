@@ -1,0 +1,59 @@
+{
+ "v": 1,
+ "files": {
+  "g1.bg0": {
+   "src": "img/arcade/g1_bg0.webp",
+   "veil": 0.14
+  },
+  "g1.bg1": {
+   "src": "img/arcade/g1_bg1.webp",
+   "veil": 0.3
+  },
+  "g1.bg2": {
+   "src": "img/arcade/g1_bg2.webp",
+   "veil": 0.42
+  },
+  "g3.bg2": {
+   "src": "img/arcade/g3_bg2.webp"
+  },
+  "g1.bow": {
+   "src": "img/arcade/g1_bow.webp"
+  },
+  "g3.ring": {
+   "src": "img/arcade/g3_ring.webp"
+  },
+  "g3.ringGold": {
+   "src": "img/arcade/g3_ringGold.webp"
+  },
+  "g3.dust": {
+   "src": "img/arcade/g3_dust.webp"
+  },
+  "g3.violin": {
+   "src": "img/arcade/g3_violin.webp"
+  },
+  "g2.vinyl": {
+   "src": "img/arcade/g2_vinyl.webp"
+  },
+  "g2.barrel": {
+   "src": "img/arcade/g2_barrel.webp"
+  },
+  "g2.devil": {
+   "src": "img/arcade/g2_devil.webp"
+  },
+  "g2.car0": {
+   "src": "img/arcade/g2_car0.webp"
+  },
+  "g2.car1": {
+   "src": "img/arcade/g2_car1.webp"
+  },
+  "g2.car2": {
+   "src": "img/arcade/g2_car2.webp"
+  },
+  "g2.car3": {
+   "src": "img/arcade/g2_car3.webp"
+  },
+  "g2.car4": {
+   "src": "img/arcade/g2_car4.webp"
+  }
+ }
+}
