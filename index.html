@@ -5241,6 +5241,185 @@ h1,h2,h3{font-weight:600;letter-spacing:-.02em}
   setTimeout(ask,500); setInterval(ask,1500);
 })();
 </script>
+<style>
+/* ===== cursorfx.css ===== */
+/* Cursor dust (16 Nov 2026): sand that draws Chladni figures by day, a trail that kicks with the beat by night.
+   One canvas above the page and below the player (.mp) and the disco lights. Mouse only. */
+#ssCursorFx{position:fixed;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:65}
+@media (prefers-reduced-motion:reduce){#ssCursorFx{display:none}}
+@media print{#ssCursorFx{display:none}}
+</style>
+<script>
+/* ===== cursorfx.js ===== */
+// Cursor dust (Martin, 16 Nov 2026). Mouse only: nothing on touch, nothing with "reduce motion".
+//   Day:   grains of sand fall off the stethoscope and settle on the still lines of a small Chladni plate,
+//          by the same rule as the plate in the frequency lab. A faster hand picks a finer figure.
+//   Night: a pink trail behind the bow that kicks with the beat: the radio's bass while the radio plays,
+//          the tempo shown in the release player while an excerpt plays, otherwise 124 BPM in step with the mandala.
+// One canvas above the page and below the player. It sleeps when the pointer rests or the tab is hidden, and keeps
+// off the games, the plates, the globe, the brain, the enquiry dialog and form fields.
+// Visitors: localStorage.setItem("ss-cursorfx","off"). Console: __ssCursorFx() for the state, __ssCursorFx(false) / (true).
+(function(){
+  var root=document.documentElement;
+  var calm=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if(calm||!window.requestAnimationFrame){ window.__ssCursorFx=function(){ return {on:false,why:"reduce motion"}; }; return; }
+  var off=false; try{ off=localStorage.getItem("ss-cursorfx")==="off"; }catch(e){}
+  var cv=null, c=null, W=0, H=0, dpr=1, raf=0;
+  var px=0, py=0, lx=null, ly=null, lt=0, spd=0, moved=0, path=0, sy=0, src="";
+  var KEEP_OFF="canvas,input,textarea,select,[contenteditable],dialog,.ac-cab";
+  function side(){ return root.getAttribute("data-side")==="night"?"night":"day"; }
+  var cur=side();
+
+  function make(){
+    cv=document.createElement("canvas"); cv.id="ssCursorFx"; cv.setAttribute("aria-hidden","true");
+    document.body.appendChild(cv); c=cv.getContext("2d");
+    if(!c){ cv.parentNode.removeChild(cv); cv=null; return false; }
+    spA=puff("rgba(255,120,190,1)","rgba(228,0,124,.45)"); spB=puff("rgba(255,255,255,1)","rgba(247,198,221,.5)");
+    size(); return true;
+  }
+  function size(){
+    if(!cv) return; dpr=Math.min(2,window.devicePixelRatio||1); W=window.innerWidth; H=window.innerHeight;
+    cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr); c.setTransform(dpr,0,0,dpr,0,0);
+  }
+
+  // ---- day: sand on a small plate (square-plate rule, as in the lab; the corners are faded out) ----
+  // The grains fly off the cursor into a disc and settle on the still lines while they fly. Plates keep their
+  // distance from each other, so a figure stays readable; a scribble in one place does not pile them up.
+  var SQ=[[1,2],[1,3],[2,3],[1,4],[3,4]], plates=[], PMAX=6, GN=200, LIFE=2800, STEP=100, APART=74;
+  function plate(x,y){
+    var now=performance.now(), i, p, a, r, g, k, R;
+    for(i=0;i<plates.length;i++){ p=plates[i]; if(now-p.t0<1300&&Math.abs(p.x-x)<APART&&Math.abs(p.y-y)<APART) return false; }
+    k=Math.max(0,Math.min(SQ.length-1,Math.floor(spd/9))); R=62+Math.min(16,spd*0.6);
+    g=new Float32Array(GN*2);
+    for(i=0;i<GN;i++){ a=Math.random()*6.283; r=Math.sqrt(Math.random())*0.96; g[2*i]=Math.cos(a)*r; g[2*i+1]=Math.sin(a)*r; }
+    for(i=0;i<=plates.length-PMAX;i++) plates[i].t0=Math.min(plates[i].t0,now-(LIFE-420));   // the oldest plates leave early
+    if(plates.length>=PMAX+4) plates.shift();                                                  // and a racing hand never carries more than ten
+    plates.push({x:x,y:y,R:R,n:SQ[k][0],m:SQ[k][1],g:g,t0:now});
+    return true;
+  }
+  function drawDay(now){
+    var PI=Math.PI, i, j, s, n, p, age, env, fly, g, x, y, X, Y, v, st, rr, q, a, R;
+    if(now-moved>150&&path>34){ path=0; plate(px,py); }          // the hand has stopped: one more figure where it rests
+    for(i=plates.length-1;i>=0;i--){
+      p=plates[i]; age=now-p.t0;
+      if(age>=LIFE){ plates.splice(i,1); continue; }
+      env=age<120?age/120:(age>LIFE-1000?(LIFE-age)/1000:1);
+      fly=age<300?1-Math.pow(1-age/300,3):1; R=p.R*fly; g=p.g;  // out of the cursor, into the disc
+      n=age<520?3:1;                                             // the sand is quick while it flies, then lies still
+      c.fillStyle="#8E6F1A";                                     // the grain: the day side's gold ...
+      for(j=0;j<GN;j++){
+        x=g[2*j]; y=g[2*j+1];
+        for(s=0;s<n;s++){
+          X=(x+1)/2; Y=(y+1)/2;
+          v=Math.cos(p.n*PI*X)*Math.cos(p.m*PI*Y)-Math.cos(p.m*PI*X)*Math.cos(p.n*PI*Y);
+          st=0.12*Math.abs(v)+0.0012; x+=(Math.random()-0.5)*st*2; y+=(Math.random()-0.5)*st*2;
+          rr=x*x+y*y; if(rr>1){ q=0.99/Math.sqrt(rr); x*=q; y*=q; }
+        }
+        g[2*j]=x; g[2*j+1]=y;
+        rr=x*x+y*y; a=env*(1-rr*rr*rr)*0.95; if(a<0.03) continue;
+        c.globalAlpha=a; c.fillRect(p.x+x*R-1.1,p.y+y*R-1.1,2.2,2.2);
+      }
+      c.fillStyle="#EBD489";                                     // ... with a glint, so it also shows on the dark hero
+      for(j=0;j<GN;j++){
+        x=g[2*j]; y=g[2*j+1]; rr=x*x+y*y; a=env*(1-rr*rr*rr)*0.9; if(a<0.03) continue;
+        c.globalAlpha=a; c.fillRect(p.x+x*R-0.55,p.y+y*R-0.55,1.1,1.1);
+      }
+    }
+    c.globalAlpha=1;
+  }
+
+  // ---- night: a trail that kicks ----
+  var P=[], rings=[], NMAX=220, spA=null, spB=null, lastV=0, lastHit=0, lastN=-1, mpT=0, mpHz=0;
+  function puff(a,b){
+    var s=document.createElement("canvas"); s.width=s.height=64;
+    var k=s.getContext("2d"), g=k.createRadialGradient(32,32,0,32,32,32);
+    g.addColorStop(0,a); g.addColorStop(0.4,b); g.addColorStop(1,"rgba(0,0,0,0)"); k.fillStyle=g; k.fillRect(0,0,64,64); return s;
+  }
+  function tempoHz(now){                                        // the release player shows its tempo; read it twice a second
+    if(now-mpT>500){
+      mpT=now; mpHz=0; src="124 BPM";
+      var mp=document.querySelector(".mp"), pp, b, v;
+      if(mp&&!mp.hidden){ pp=mp.querySelector(".mp-pp"); b=mp.querySelector(".mp-bpm");
+        if(pp&&!pp.classList.contains("paused")&&b){ v=parseFloat(b.textContent); if(v>60&&v<200){ mpHz=v/60; src="release player, "+v+" BPM"; } } }
+    }
+    return mpHz||2.0667;
+  }
+  function beat(now){
+    var v=0, hz, n, ph, hit;
+    if(typeof window.__ssRadioLevel==="function"){ try{ v=+window.__ssRadioLevel()||0; }catch(e){ v=0; } }
+    if(v>0.05){                                                 // the globe and the plates read this level too, so the peak itself may
+      hit=v-lastV>0.22&&now-lastHit>170; if(hit) lastHit=now;   // be missed: take the jump as the kick, and no second one within 170 ms
+      lastV=v; lastN=-1; src="radio bass"; return {p:v,hit:hit,down:false};
+    }
+    lastV=v; hz=tempoHz(now); n=Math.floor(now/1000*hz); ph=(now/1000*hz)%1;      // same clock as the mandala's idle pulse
+    hit=lastN>=0&&n!==lastN; lastN=n;
+    return {p:Math.exp(-ph*6),hit:hit,down:hit&&n%4===0};
+  }
+  function drawNight(now){
+    var b=beat(now), p=b.p, i, q, d, dx, dy, k, r, live=now-moved<1400;
+    if(b.hit){
+      if(live) rings.push({x:px,y:py,t0:now,big:b.down});
+      for(i=0;i<P.length;i++){ q=P[i]; dx=q.x-px; dy=q.y-py; d=Math.sqrt(dx*dx+dy*dy)||1;
+        if(d<260){ k=(1-d/260)*(b.down?2.4:1.7); q.vx+=dx/d*k; q.vy+=dy/d*k; } }
+    }
+    c.globalCompositeOperation="lighter";
+    for(i=P.length-1;i>=0;i--){
+      q=P[i]; q.life-=q.dec; if(q.life<=0){ P.splice(i,1); continue; }
+      q.x+=q.vx; q.y+=q.vy; q.vx*=0.94; q.vy*=0.94; q.r+=0.22;
+      r=q.r*(1+0.5*p); c.globalAlpha=Math.min(1,q.life*q.life*q.g*(0.6+0.6*p));
+      c.drawImage(q.hot?spB:spA,q.x-r,q.y-r,r*2,r*2);
+    }
+    for(i=rings.length-1;i>=0;i--){
+      q=rings[i]; k=(now-q.t0)/(q.big?560:430); if(k>=1){ rings.splice(i,1); continue; }
+      r=8+(q.big?96:64)*(1-Math.pow(1-k,3)); c.globalAlpha=(q.big?0.75:0.8)*(1-k);
+      c.strokeStyle=q.big?"#F7C6DD":"#E4007C"; c.lineWidth=q.big?2.5:2; c.beginPath(); c.arc(q.x,q.y,r,0,6.2832); c.stroke();
+    }
+    c.globalAlpha=1; c.globalCompositeOperation="source-over";
+  }
+
+  function clear(){ plates.length=0; P.length=0; rings.length=0; }
+  function frame(now){
+    raf=0; if(!cv) return;
+    var s=side(), y0=window.pageYOffset||0, dy=y0-sy, i; sy=y0;
+    if(s!==cur){ cur=s; clear(); }
+    if(dy){ for(i=0;i<plates.length;i++) plates[i].y-=dy; for(i=0;i<P.length;i++) P[i].y-=dy; for(i=0;i<rings.length;i++) rings[i].y-=dy; }   // the dust lies on the page, not on the glass
+    c.clearRect(0,0,W,H);
+    if(off||document.hidden){ clear(); return; }
+    if(s==="night") drawNight(now); else drawDay(now);
+    if(plates.length||P.length||rings.length||now-moved<1400) raf=requestAnimationFrame(frame);
+  }
+  function wake(){ if(!raf){ sy=window.pageYOffset||0; raf=requestAnimationFrame(frame); } }
+
+  window.addEventListener("pointermove",function(ev){
+    if(off||ev.pointerType!=="mouse") return;
+    var now=performance.now(), t=ev.target, dx, dy, d, n, i, f;
+    px=ev.clientX; py=ev.clientY;
+    if(lx===null){ lx=px; ly=py; lt=now; return; }
+    dx=px-lx; dy=py-ly; d=Math.sqrt(dx*dx+dy*dy);
+    if(d<2) return;                                                       // a slow hand still adds up
+    spd=spd*0.7+(d/Math.max(4,now-lt))*16*0.3; lx=px; ly=py; lt=now;      // hand speed, in pixels per frame
+    if(t&&t.closest&&t.closest(KEEP_OFF)){ path=0; return; }
+    if(!cv&&!make()) return;
+    moved=now;
+    if(side()==="night"){
+      n=Math.min(4,1+Math.floor(d/14));
+      for(i=0;i<n;i++){ if(P.length>=NMAX) P.shift(); f=i/n;
+        P.push({x:px-dx*f+(Math.random()-0.5)*7,y:py-dy*f+(Math.random()-0.5)*7,vx:dx*0.04+(Math.random()-0.5)*0.4,vy:dy*0.04+(Math.random()-0.5)*0.4,
+                r:4.5+Math.random()*8,g:0.26+Math.random()*0.48,life:1,dec:0.007+Math.random()*0.006,hot:Math.random()<0.22}); }
+    } else {
+      path+=d; if(path>=STEP||!plates.length){ if(plate(px,py)) path=0; else path=Math.min(path,STEP); }
+    }
+    wake();
+  },{passive:true});
+  window.addEventListener("resize",size);
+
+  window.__ssCursorFx=function(v){
+    if(v===false){ off=true; try{ localStorage.setItem("ss-cursorfx","off"); }catch(e){} }
+    if(v===true){ off=false; try{ localStorage.removeItem("ss-cursorfx"); }catch(e){} }
+    return {on:!off,side:side(),beat:side()==="night"?(src||"124 BPM"):"",plates:plates.length,grains:plates.length*GN,sparks:P.length,rings:rings.length};
+  };
+})();
+</script>
 <!-- site modules: end -->
 </body>
 </html>
