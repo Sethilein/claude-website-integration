@@ -4359,7 +4359,7 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
     g.addColorStop(0, c.accent); g.addColorStop(0.45, c.accent); g.addColorStop(1, "rgba(0,0,0,0)");
     x.globalAlpha = 0.3 + 0.45 * k; x.fillStyle = g; x.beginPath(); x.arc(cx, cy2, cr, 0, TAU); x.fill();
     x.globalAlpha = 1; x.restore();
-    x.save(); x.globalAlpha = 0.5; x.strokeStyle = c.fg; x.lineWidth = u; heartPath(x, cx, cy, R * 0.9); x.stroke(); x.restore();
+    x.save(); x.globalAlpha = 0.3; x.strokeStyle = c.fg; x.lineWidth = u; heartPath(x, cx, cy, R * 0.88); x.stroke(); x.restore();
   }
 
   /* ---------- 01 pulse ---------- */
@@ -4475,7 +4475,7 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
         if (night) { heartMachine(x, cx, cy, HR, c, k, d.dpr); x.strokeStyle = c.accent; }
         else { x.save(); x.globalAlpha = 0.16; x.lineWidth = d.dpr; heartPath(x, cx, cy, HR * 0.78); x.stroke(); x.restore(); }
         if (!calm && age < 0.8) { heartPath(x, cx, cy, R * (1.1 + age * 0.9)); x.globalAlpha = Math.max(0, 0.45 - age * 0.6); x.lineWidth = d.dpr; x.stroke(); x.globalAlpha = 1; }
-        x.fillStyle = c.fg; x.textAlign = "center"; x.textBaseline = "middle"; x.font = "500 " + Math.round(R * 0.72) + "px " + c.display; x.fillText(bpm ? String(Math.round(bpm)) : "–", cx, cy - R * 0.1);
+        x.fillStyle = bpm ? c.fg : c.muted; x.textAlign = "center"; x.textBaseline = "middle"; x.font = "500 " + Math.round(R * (bpm ? 0.72 : 0.3)) + "px " + c.display; x.fillText(bpm ? String(Math.round(bpm)) : "–", cx, cy - R * 0.1);
         x.font = "500 " + Math.round(10 * d.dpr) + "px " + c.mono; x.fillStyle = c.muted; x.fillText("B P M", cx, cy + R * 0.46);
         var y0 = h * 0.9, amp = h * 0.1, u = d.dpr;                          // the last eight seconds, one mark for every beat
         x.beginPath(); x.moveTo(0, y0);
