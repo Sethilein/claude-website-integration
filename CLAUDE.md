@@ -10,6 +10,9 @@ Two sessions change `index.html` at the same time and one overwrites the other. 
    `github-upload/`, then push here. A change that only lives here must be written back to the folder in the same session.
    The folder can be ahead of this repository on purpose (a feature that waits for Martin's go): `START_HERE.md` says so.
 3. Never upload a whole file from memory or from a preview page. Merge; do not replace.
+4. Before publishing, and again right after it, look whether another conversation has changed the folder in the
+   meantime: `python3 source/check_sync.py` in the working folder shows where every copy stands. If something came
+   in, merge it and publish again (Martin's rule, 17 Nov 2026).
 
 ## Before publishing
 These run in the working folder (`sethschwarz-site/`); `source/` is deliberately not in this repository.
@@ -19,6 +22,8 @@ These run in the working folder (`sethschwarz-site/`); `source/` is deliberately
 - After anything that rebuilds the page or its module block: `python3 source/polish/apply.py` last (own fonts, light
   pictures, the curtain between the sides, the arcade record). It can be run again safely. Mind the folder README
   on `add_modules.py`: as it stands it would drop `nav_here` and the cursor dust.
+- After a rebuild the two blocks at the end of the page go back in as well: the vortex (`source/vortex/vortex.html`)
+  and the lab's sound button (`source/labplay/labplay.html`).
 - The page is not enough on its own: `fonts/`, `img/` (with the WebP copies) and `audio/` go up with it.
 
 ## Rules of content (Martin's, not negotiable)
