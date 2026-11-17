@@ -4337,6 +4337,31 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
   function tog(act, label) { return '<button type="button" class="bio-btn" data-act="' + act + '" aria-pressed="false"><span class="bio-ic" aria-hidden="true"></span><span class="bio-lb">' + label + '</span></button>'; }
   function btn(act, label, cls) { return '<button type="button" class="bio-btn' + (cls ? " " + cls : "") + '" data-act="' + act + '"><span class="bio-lb">' + label + '</span></button>'; }
 
+  /* ---------- the heart ----------
+     The pulse panel used to be a plain circle. It is a heart now: the same silhouette on both sides,
+     so it reads as one heart in two modes. Day draws it clean, night builds it out of plates with a
+     core that lights on every beat. 17 Nov 2026. */
+  function heartPath(x, cx, cy, R) {
+    x.beginPath(); x.moveTo(cx, cy + R * 0.95);
+    x.bezierCurveTo(cx - R * 1.35, cy + R * 0.05, cx - R * 0.78, cy - R * 1.08, cx, cy - R * 0.38);
+    x.bezierCurveTo(cx + R * 0.78, cy - R * 1.08, cx + R * 1.35, cy + R * 0.05, cx, cy + R * 0.95);
+    x.closePath();
+  }
+  function heartMachine(x, cx, cy, R, c, k, u) {
+    var i, seams = [-0.52, -0.08, 0.36], bolts = [[-0.62, -0.28], [0.62, -0.28], [-0.4, 0.28], [0.4, 0.28], [0, 0.66]];
+    x.save(); heartPath(x, cx, cy, R); x.clip();
+    x.strokeStyle = c.fg; x.lineWidth = u; x.globalAlpha = 0.2;
+    for (i = 0; i < seams.length; i++) { x.beginPath(); x.moveTo(cx - R * 1.4, cy + R * seams[i]); x.lineTo(cx + R * 1.4, cy + R * seams[i]); x.stroke(); }
+    x.beginPath(); x.moveTo(cx, cy - R * 0.34); x.lineTo(cx, cy + R * 0.95); x.stroke();
+    x.globalAlpha = 0.45; x.fillStyle = c.fg;
+    for (i = 0; i < bolts.length; i++) { x.beginPath(); x.arc(cx + R * bolts[i][0], cy + R * bolts[i][1], 1.6 * u, 0, TAU); x.fill(); }
+    var cy2 = cy + R * 0.02, cr = R * (0.52 + 0.18 * k), g = x.createRadialGradient(cx, cy2, 0, cx, cy2, cr);
+    g.addColorStop(0, c.accent); g.addColorStop(0.45, c.accent); g.addColorStop(1, "rgba(0,0,0,0)");
+    x.globalAlpha = 0.3 + 0.45 * k; x.fillStyle = g; x.beginPath(); x.arc(cx, cy2, cr, 0, TAU); x.fill();
+    x.globalAlpha = 1; x.restore();
+    x.save(); x.globalAlpha = 0.5; x.strokeStyle = c.fg; x.lineWidth = u; heartPath(x, cx, cy, R * 0.9); x.stroke(); x.restore();
+  }
+
   /* ---------- 01 pulse ---------- */
   function Pulse(panel, night) {
     var d = setup(panel), pad = d.act("tap"), taps = [], iv = [], beats = [], rrs = [], bpm = null, lastBeat = 0, lastLive = 0, playing = false, src = "tap", cam = null, strap = null, nextKick = 0, lastKick = 0;
@@ -4445,10 +4470,13 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
         var x = d.ctx, w = d.w, h = d.h, R = Math.min(w, h * 0.74) * 0.3, cx = w / 2, cy = h * 0.4, age = lastBeat ? (t - lastBeat) / 1000 : 9, k = calm ? 0 : Math.exp(-age / 0.16), i;
         x.clearRect(0, 0, w, h);
         if (night && playing) { var kk = Math.exp(-(t - lastKick) / 120); x.beginPath(); x.arc(cx, cy, R * 1.4 * (1 + 0.04 * kk), 0, TAU); x.strokeStyle = c.fg; x.globalAlpha = 0.25 + 0.5 * kk; x.lineWidth = d.dpr; x.stroke(); x.globalAlpha = 1; }
-        x.beginPath(); x.arc(cx, cy, R * (1 + 0.09 * k), 0, TAU); x.fillStyle = c.accent; x.globalAlpha = 0.08 + 0.2 * Math.exp(-age / 0.16); x.fill(); x.globalAlpha = 1; x.strokeStyle = c.accent; x.lineWidth = 2 * d.dpr; x.stroke();
-        if (!calm && age < 0.8) { x.beginPath(); x.arc(cx, cy, R * (1.1 + age * 0.9), 0, TAU); x.globalAlpha = Math.max(0, 0.45 - age * 0.6); x.lineWidth = d.dpr; x.stroke(); x.globalAlpha = 1; }
-        x.fillStyle = c.fg; x.textAlign = "center"; x.textBaseline = "middle"; x.font = "500 " + Math.round(R * 0.72) + "px " + c.display; x.fillText(bpm ? String(Math.round(bpm)) : "–", cx, cy - R * 0.05);
-        x.font = "500 " + Math.round(10 * d.dpr) + "px " + c.mono; x.fillStyle = c.muted; x.fillText("B P M", cx, cy + R * 0.52);
+        var HR = R * (1 + 0.09 * k);
+        heartPath(x, cx, cy, HR); x.fillStyle = c.accent; x.globalAlpha = 0.08 + 0.2 * Math.exp(-age / 0.16); x.fill(); x.globalAlpha = 1; x.strokeStyle = c.accent; x.lineWidth = 2 * d.dpr; x.stroke();
+        if (night) { heartMachine(x, cx, cy, HR, c, k, d.dpr); x.strokeStyle = c.accent; }
+        else { x.save(); x.globalAlpha = 0.16; x.lineWidth = d.dpr; heartPath(x, cx, cy, HR * 0.78); x.stroke(); x.restore(); }
+        if (!calm && age < 0.8) { heartPath(x, cx, cy, R * (1.1 + age * 0.9)); x.globalAlpha = Math.max(0, 0.45 - age * 0.6); x.lineWidth = d.dpr; x.stroke(); x.globalAlpha = 1; }
+        x.fillStyle = c.fg; x.textAlign = "center"; x.textBaseline = "middle"; x.font = "500 " + Math.round(R * 0.72) + "px " + c.display; x.fillText(bpm ? String(Math.round(bpm)) : "–", cx, cy - R * 0.1);
+        x.font = "500 " + Math.round(10 * d.dpr) + "px " + c.mono; x.fillStyle = c.muted; x.fillText("B P M", cx, cy + R * 0.46);
         var y0 = h * 0.9, amp = h * 0.1, u = d.dpr;                          // the last eight seconds, one mark for every beat
         x.beginPath(); x.moveTo(0, y0);
         for (i = 0; i < beats.length; i++) { var xb = w - (t - beats[i]) / 8000 * w; if (xb < -10) continue; x.lineTo(xb - 7 * u, y0); x.lineTo(xb - 2 * u, y0 - amp); x.lineTo(xb + 2 * u, y0 + amp * 0.35); x.lineTo(xb + 7 * u, y0); }
@@ -4621,7 +4649,7 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
       + '<button type="button" class="bio-tab" role="tab" aria-selected="true" data-k="pulse"><span class="bio-k">01 · Pulse</span><b>Heartbeat</b><span class="bio-s">Tap it, or let a phone camera read your fingertip</span></button>'
       + '<button type="button" class="bio-tab" role="tab" aria-selected="false" data-k="breath"><span class="bio-k">02 · Breath</span><b>Breathing</b><span class="bio-s">Follow the ring and see your own rhythm</span></button>'
       + '<button type="button" class="bio-tab" role="tab" aria-selected="false" data-k="still"><span class="bio-k">03 · Stillness</span><b>Holding still</b><span class="bio-s">Thirty seconds without moving</span></button></div>');
-    o.push('<div class="bio-panel" data-k="pulse"' + (night ? "" : ' role="tabpanel"') + '><div class="bio-vis"><canvas class="bio-cv" role="img" aria-label="A ring that beats with your pulse, and a mark for each of the last beats"></canvas><video class="bio-video" playsinline muted></video></div><div class="bio-ctl">'
+    o.push('<div class="bio-panel" data-k="pulse"' + (night ? "" : ' role="tabpanel"') + '><div class="bio-vis"><canvas class="bio-cv" role="img" aria-label="A heart that beats with your pulse, and a mark for each of the last beats"></canvas><video class="bio-video" playsinline muted></video></div><div class="bio-ctl">'
       + '<p class="bio-how">' + (night ? 'Find your pulse at the wrist or the side of your neck and tap the pad on every beat. Then press play: the inner ring is you, the outer ring is the kick.' : 'Find your pulse at the wrist or the side of your neck and tap the pad on every beat. On a phone, the camera can read it from a fingertip.') + '</p>'
       + '<div class="bio-src" role="group" aria-label="How to read your pulse"><button type="button" data-src="tap" aria-pressed="true">Tap</button><button type="button" data-src="cam" aria-pressed="false">Camera</button><button type="button" data-src="strap" aria-pressed="false">Chest strap</button></div>'
       + '<button type="button" class="bio-pad" data-act="tap">Tap on every beat</button>'
