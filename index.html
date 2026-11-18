@@ -4176,6 +4176,7 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
 .bio-ctl{min-width:0}
 .bio-how{margin:0;color:var(--muted);font-size:14.5px;line-height:1.5;max-width:48ch}
 .bio-src{display:inline-flex;flex-wrap:wrap;margin-top:14px;border:1px solid var(--line);border-radius:2px}
+.bio-hint{margin:10px 0 0;color:var(--muted);font-size:12.5px;line-height:1.5;max-width:52ch}
 .bio-src button{background:none;border:0;color:var(--muted);font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;padding:9px 13px;cursor:pointer}
 .bio-src button[aria-pressed="true"]{background:var(--accent);color:var(--bg)}
 .bio-src button[hidden],.bio-src[hidden],.bio-btn[hidden],.bio-pad[hidden]{display:none}
@@ -4718,6 +4719,7 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
     o.push('<div class="bio-panel" data-k="pulse"' + (night ? "" : ' role="tabpanel"') + '><div class="bio-vis"><canvas class="bio-cv" role="img" aria-label="A heart that beats with your pulse, and a mark for each of the last beats"></canvas><video class="bio-video" playsinline muted></video></div><div class="bio-ctl">'
       + '<p class="bio-how">' + (night ? 'Find your pulse at the wrist or the side of your neck and tap the pad on every beat. Then press play: the inner ring is you, the outer ring is the kick.' : 'Find your pulse at the wrist or the side of your neck and tap the pad on every beat. On a phone, the camera can read it from a fingertip.') + '</p>'
       + '<div class="bio-src" role="group" aria-label="How to read your pulse"><button type="button" data-src="tap" aria-pressed="true">Tap</button><button type="button" data-src="cam" aria-pressed="false">Camera</button><button type="button" data-src="strap" aria-pressed="false">Chest strap</button></div>'
+      + '<p class="bio-hint">Tap works everywhere. Camera: on a phone, cover the lens with a fingertip. Chest strap: a Bluetooth heart-rate strap, in Chrome or Edge; an Apple Watch can’t connect.</p>'
       + '<button type="button" class="bio-pad" data-act="tap">Tap on every beat</button>'
       + '<p class="bio-big"><b data-r="big">–</b><span>beats per minute</span></p><p class="bio-line" data-r="l1"></p><p class="bio-line" data-r="l2"></p>'
       + '<div class="bio-acts">' + tog("play", night ? "Hear both" : "Play it back") + btn("lab", "Show it in the frequency lab") + btn("reset", "Reset", "quiet") + '</div>'
