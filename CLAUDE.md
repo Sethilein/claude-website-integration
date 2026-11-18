@@ -8,11 +8,16 @@ Two sessions change `index.html` at the same time and one overwrites the other. 
 1. Before any change: `git fetch` and compare with the folder's `sethschwarz-site/index.html`. Start from the newest.
 2. Change the folder's file first (backup: `index_before_<topic>.bak.html`, never overwrite a backup), then copy to
    `github-upload/`, then push here. A change that only lives here must be written back to the folder in the same session.
-   The folder can be ahead of this repository on purpose (a feature that waits for Martin's go): `START_HERE.md` says so.
+   A change that waits for Martin's go does not lie in `index.html`: it waits as its own draft file
+   (`index_<topic>_entwurf.html`, built by a script that can be run again), and `START_HERE.md` names it. So the
+   folder's `index.html` is always the live page, and an upload from another conversation cannot take an unapproved
+   change with it (Martin's rule, 18 Nov 2026).
 3. Never upload a whole file from memory or from a preview page. Merge; do not replace.
 4. Before publishing, and again right after it, look whether another conversation has changed the folder in the
    meantime: `python3 source/check_sync.py` in the working folder shows where every copy stands. If something came
    in, merge it and publish again (Martin's rule, 17 Nov 2026).
+5. One writer per folder: if another conversation is writing into the same folder right now, stop, leave a note next
+   to the files and ask Martin which conversation finishes (Martin's rule, 18 Nov 2026).
 
 ## Before publishing
 These run in the working folder (`sethschwarz-site/`); `source/` is deliberately not in this repository.
