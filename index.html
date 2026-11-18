@@ -3597,9 +3597,11 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
   // with r_s = 1 and h = |r x v| the photon's angular momentum. Checked against the
   // weak-field deflection 4M/b + 15*pi*M^2/(4b^2): within 0.1% at b = 50 r_s.
   // WebGL draws it off-screen; without WebGL a 2D approximation takes over, so the game always runs.
-  var BH={tried:0,gl:null,cv:null,pr:null,u:{},tier:0,w:160,h:100,steps:90,iv:30,last:0,ema:0,n:0};
+  var BH={tried:0,gl:null,cv:null,pr:null,u:{},tier:0,w:160,h:100,steps:90,iv:30,last:0,ema:0,n:0,
+    cym:0.6,cn:5,ck:2,cw:0.16,crot:0,bt:0};   // cym: how much of the cymatics figure shows in the disk, 0 off .. 1 full
   // the shader costs what the device can give: it steps down, and on a slow one the 2D picture takes over for good
   var BH_T=[{f:0.70,min:288,steps:100,iv:33},{f:0.50,min:200,steps:70,iv:55},{f:0.34,min:140,steps:48,iv:85}];
+  var BH_UP=[0,2.1,1.5]; BH.tier=2; BH.up=1; BH.f=0;   // start at the cheapest step and earn the sharper ones: a slow device never draws a dear frame
   function bhSize(){ var T4=BH_T[Math.min(BH.tier,BH_T.length-1)];
     var bw=(cv&&cv.width)||GW, bh2=(cv&&cv.height)||GH;                       // the canvas's real pixels, so a retina screen gets a sharper hole
     BH.w=Math.max(T4.min,Math.min(512,Math.round(bw*T4.f)));
@@ -3608,7 +3610,7 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
     if(BH.cv&&(BH.cv.width!==BH.w||BH.cv.height!==BH.h)){ BH.cv.width=BH.w; BH.cv.height=BH.h; } }
   var BH_FS=[
     "precision highp float;",
-    "uniform vec2 uRes; uniform float uD,uEl,uTime,uBeat,uSteps;",
+    "uniform vec2 uRes; uniform float uD,uEl,uTime,uBeat,uSteps,uCn,uCk,uCw,uCrot,uCym;",
     "float hs(vec3 p){p=fract(p*0.3183099+vec3(0.11,0.17,0.23));p*=17.0;return fract(p.x*p.y*p.z*(p.x+p.y+p.z));}",
     "float nz(vec3 x){vec3 i=floor(x),f=fract(x);f=f*f*(3.0-2.0*f);",
     " return mix(mix(mix(hs(i),hs(i+vec3(1.0,0.0,0.0)),f.x),mix(hs(i+vec3(0.0,1.0,0.0)),hs(i+vec3(1.0,1.0,0.0)),f.x),f.y),",
@@ -3644,6 +3646,10 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
     "    float ca=cos(om*uTime),sa=sin(om*uTime);",
     "    vec2 q=vec2(hit.x*ca+hit.z*sa,-hit.x*sa+hit.z*ca);",
     "    float n=nz(vec3(q*1.0,uTime*0.05))*0.65+nz(vec3(q*3.0,uTime*0.10))*0.35;",
+    "    float th=atan(hit.z,hit.x), xr=(dr-3.0)/5.0;",                                   // the night mandala's figure, laid into the disk
+    "    float cv=sin(uCk*3.14159265*xr)*cos(uCn*th+uCrot)+0.3*sin((uCk+1.5)*3.14159265*xr)*cos(2.0*uCn*th-1.4*uCrot);",
+    "    float cl=1.0-smoothstep(0.0,uCw,abs(cv));",                                      // light gathers on the nodal lines, like sand on a plate
+    "    float cym=mix(1.0,0.55+1.5*cl,uCym);",
     "    vec3 vd=normalize(cross(vec3(0.0,1.0,0.0),hit));",
     "    float bt=min(sqrt(0.5/max(dr,0.6)),0.85);",
     "    float g=clamp(1.0/max(1.0-dot(vd*bt,-normalize(v)),0.22),0.35,3.2);",
@@ -3651,7 +3657,7 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
     "    vec3 base=mix(vec3(1.0,0.42,0.10),vec3(1.0,0.96,0.88),pow(tp,2.4));",   // only the innermost edge goes white-hot
     "    base=mix(base,base*vec3(0.72,0.86,1.25),clamp((g-1.0)*0.55,0.0,0.70));",
     "    float ed=smoothstep(3.0,3.5,dr)*(1.0-smoothstep(6.4,8.0,dr));",
-    "    acc+=base*tp*tp*0.55*(0.40+1.15*n)*ed*min(pow(g,2.6),5.0)*gr*(1.0+0.40*uBeat);",
+    "    acc+=base*tp*tp*0.55*(0.40+1.15*n)*cym*ed*min(pow(g,2.6),5.0)*gr*(1.0+0.40*uBeat);",
     "   }}}",
     " if(!esc&&!cap) acc+=sky(normalize(v))*0.5;",
     " float ring=exp(-pow((minr-1.52)*7.5,2.0));",
@@ -3675,7 +3681,7 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
       var bf=g.createBuffer(); g.bindBuffer(g.ARRAY_BUFFER,bf);
       g.bufferData(g.ARRAY_BUFFER,new Float32Array([-1,-1,3,-1,-1,3]),g.STATIC_DRAW);
       var la=g.getAttribLocation(pr,"a"); g.enableVertexAttribArray(la); g.vertexAttribPointer(la,2,g.FLOAT,false,0,0);
-      ["uRes","uD","uEl","uTime","uBeat","uSteps"].forEach(function(k){ BH.u[k]=g.getUniformLocation(pr,k); });
+      ["uRes","uD","uEl","uTime","uBeat","uSteps","uCn","uCk","uCw","uCrot","uCym"].forEach(function(k){ BH.u[k]=g.getUniformLocation(pr,k); });
       cvl.addEventListener("webglcontextlost",function(e){ e.preventDefault(); BH.gl=null; });
       BH.cv=cvl; BH.pr=pr; BH.gl=g; return true;
     }catch(e){ return false; }
@@ -3695,24 +3701,35 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
     B.amt=Math.max(0,Math.min(1,(22-B.d)/14)); }
   function bhScene(t){ var B=V&&V.bh?V.bh:{d:15,R:GH*0.1,tier:1,cross:0,amt:0};
     var bt=Math.pow(1-(((beatPos()%1)+1)%1),3);
+    var bp=beatPos(), f4=Math.floor(bp/16), p4=(((bp/16)%1)+1)%1;                   // four bars carry one figure
+    BH.cn=3+(((f4%5)+5)%5); BH.ck=2+((((f4>>1)%2)+2)%2);                             // 3- to 7-fold, two or three rings
+    BH.cw=0.16+0.55*Math.exp(-p4*9); BH.crot=t*0.12+0.18*bt; BH.bt=bt;               // at the change the lines blur, then settle within a bar
     if(bhInit()&&!calm){ var now=performance.now(), g=BH.gl, t0=now;
       if(g&&now-BH.last>BH.iv){ BH.last=now;
         g.viewport(0,0,BH.w,BH.h); g.uniform2f(BH.u.uRes,BH.w,BH.h);
         g.uniform1f(BH.u.uD,Math.max(1.02,B.d)); g.uniform1f(BH.u.uEl,0.20+0.05*Math.sin(t*0.1));
         g.uniform1f(BH.u.uTime,t); g.uniform1f(BH.u.uBeat,bt); g.uniform1f(BH.u.uSteps,BH.steps);
+        g.uniform1f(BH.u.uCn,BH.cn); g.uniform1f(BH.u.uCk,BH.ck); g.uniform1f(BH.u.uCw,BH.cw);
+        g.uniform1f(BH.u.uCrot,BH.crot); g.uniform1f(BH.u.uCym,BH.cym);
         g.drawArrays(g.TRIANGLES,0,3);
         var sm=c.imageSmoothingEnabled; c.imageSmoothingEnabled=true;
         try{ c.imageSmoothingQuality="high"; }catch(e2){}
         try{ c.drawImage(BH.cv,0,0,GW,GH); }catch(e){ BH.gl=null; }
         c.imageSmoothingEnabled=sm;
-        var ms=performance.now()-t0; BH.ema=BH.ema?BH.ema+(ms-BH.ema)*0.25:ms; BH.n++;   // drawImage waits for the GPU, so this is the real cost
-        if(BH.n>3&&BH.ema>7){ BH.n=0; BH.ema=0; bhDown(); }
+        var ms=performance.now()-t0;                                                    // drawImage waits for the GPU, so this is the real cost
+        if(BH.f++>0){ BH.ema=BH.ema?BH.ema+(ms-BH.ema)*0.25:ms; BH.n++;                // the very first frame also pays for warming up: not counted
+          if(ms>220){ BH.gl=null; }                                                     // one frame this slow: the 2D picture, at once
+          else if(ms>60||(BH.n>3&&BH.ema>7)){ BH.n=0; BH.ema=0; BH.up=0; bhDown(); }    // too dear: a step down, and never up again
+          else if(BH.up&&BH.tier>0&&BH.n>3&&BH.ema<BH_UP[BH.tier]){ BH.n=0; BH.ema=0; BH.tier--; bhSize(); } }   // cheap enough: the next sharper step
       } else if(g){ var sm2=c.imageSmoothingEnabled; c.imageSmoothingEnabled=true;
         try{ c.drawImage(BH.cv,0,0,GW,GH); }catch(e){ BH.gl=null; }
         c.imageSmoothingEnabled=sm2; }
       if(BH.gl){ var cx2=GW/2, cy2=GH*0.6, R2=B.R;             // the picture is drawn small and blown up: this keeps the ring sharp
         c.globalCompositeOperation="lighter"; c.strokeStyle="rgba(255,214,140,"+(0.40+0.35*bt).toFixed(3)+")";
         c.lineWidth=Math.max(1.2,R2*0.035); c.beginPath(); c.arc(cx2,cy2,R2*1.02,0,6.283); c.stroke();
+        if(BH.cym>0){ c.strokeStyle="rgba(255,236,190,"+((0.16+0.30*bt)*BH.cym).toFixed(3)+")"; c.lineWidth=Math.max(1.6,R2*0.05);
+          for(var jl=0;jl<BH.cn;jl++){ var al=-BH.crot/BH.cn+jl*6.2832/BH.cn, hw=1.38/BH.cn;      // one lobe per fold, turning with the figure
+            c.beginPath(); c.arc(cx2,cy2,R2*1.02,al-hw,al+hw); c.stroke(); } }
         c.globalCompositeOperation="source-over"; }
     }
     if(!BH.gl||calm) bh2d(t,B,bt);
@@ -3747,6 +3764,11 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
     for(i=0;i<9;i++){ var an=t*0.5*(1+i*0.06)+i*0.7, br=inner+(outer-inner)*(0.15+0.75*(((i*37)%101)/101));
       var bx=Math.cos(an)*br, by=Math.sin(an)*br, bg=c.createRadialGradient(bx,by,0,bx,by,outer*0.16);
       bg.addColorStop(0,"rgba(255,220,160,.22)"); bg.addColorStop(1,"rgba(0,0,0,0)"); c.fillStyle=bg; c.fill(); }
+    if(BH.cym>0){ var jc, ac, rc, soft=Math.min(1,0.16/BH.cw);                                  // the same figure without WebGL: its nodal rings and spokes
+      c.strokeStyle="rgba(255,238,200,"+((0.10+0.14*BH.bt)*BH.cym*soft).toFixed(3)+")"; c.lineWidth=Math.max(1,outer*0.012);
+      for(jc=0;jc<=BH.ck;jc++){ rc=inner+(outer-inner)*jc/BH.ck; c.beginPath(); c.arc(0,0,rc,0,6.283); c.stroke(); }
+      for(jc=0;jc<BH.cn*2;jc++){ ac=((jc+0.5)*3.14159-BH.crot)/BH.cn; c.beginPath();
+        c.moveTo(Math.cos(ac)*inner,Math.sin(ac)*inner); c.lineTo(Math.cos(ac)*outer,Math.sin(ac)*outer); c.stroke(); } }
     c.restore(); c.globalCompositeOperation="source-over"; }
   function vScene(t,z){ if(backdrop("g3.bg"+z)){ vGrid(z,0.5); return; }
     if(z===3){ bhScene(t); vGrid(3,0.22); return; }
@@ -4004,7 +4026,7 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
   drawBoards(-1); size(); show("attract"); wake();
   window.__ssArcade={start:startGame,menu:menu,target:function(n){ TG=Math.max(0,+n||0); return TG; },game:function(g){ if(g) setGame(g); return game; },
     state:function(){ return {st:st,game:game,lvl:lvl,zone:R?R.zone:0,m:R?Math.floor(R.dist/10):0,score:score,energy:energy,streak:streak,items:items.length,
-      bh:(game===3&&V&&V.bh)?{d:Math.round(V.bh.d*10)/10,tier:V.bh.tier,tau:Math.round(V.bh.tau*100)/100,gl:!!BH.gl}:null}; },
+      bh:(game===3&&V&&V.bh)?{d:Math.round(V.bh.d*10)/10,tier:V.bh.tier,tau:Math.round(V.bh.tau*100)/100,gl:!!BH.gl,q:BH.tier,w:BH.w}:null}; },
     tracks:function(){ return (game===2?curR:cur).map(function(t){ return t&&t.t; }); },
     peek:function(){ return game===3&&V?{px:V.px,py:V.py,gv:V.gv||0,zc:V.zc,rings:V.ring.map(function(r){ return [Math.round(r.x*100)/100,Math.round(r.y*100)/100,Math.round(r.z*100)/100,r.gv?2:r.gold?1:0]; })}:game===2&&R?{y:R.y,on:R.on,obs:R.obs.map(function(o){ return [o.k,Math.round(o.x),o.w,o.h]; }),vin:R.vin.map(function(v){ return [Math.round(v.x),Math.round(v.y)]; }),cars:R.cars.map(function(q){ return [Math.round(q.x),q.w,q.h]; })}
       :{bx:bx,items:items.map(function(i){ return [i.k,Math.round(i.x),Math.round(i.y)]; })}; },
@@ -4012,7 +4034,8 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
     cheat:function(){ if(st!=="play") return;
       if(game===2){ if(R.zone<3) R.dist=ZN[R.zone+1].at*10; }
       else if(game===3){ if(lvl===2&&!V.gv){ V.zc=VZ[2].goal; V.gv=1; } else if(lvl<3){ V.zc=VZ[lvl].goal||0; vNextZone(); } }   // game 03 has its own zone counter; LV is game 01's
-      else { caught=LV[lvl].goal||0; if(lvl<2) nextLevel(); } }, end:function(){ energy=0; }};
+      else { caught=LV[lvl].goal||0; if(lvl<2) nextLevel(); } }, end:function(){ energy=0; },
+    cym:function(v){ if(v!==undefined) BH.cym=Math.max(0,Math.min(1,+v)||0); return BH.cym; }};   // the cymatics in the hole's disk: 0 off .. 1 full
 })();
 
 (function(){
