@@ -1034,6 +1034,8 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
 <style>
 /* The kit downloads. Written by source/kits/apply.py; take the three kits blocks out and the page is as before. */
 .kits{margin-top:22px}
+.kits-sec .kits ul{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.kits-sec .kits li{max-width:440px}
 .kits-k{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;opacity:.7}
 .kits ul{list-style:none;margin:10px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px}
 .kits a{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:14px;border:1px solid rgba(128,128,128,.5);color:inherit;text-decoration:none;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;-webkit-tap-highlight-color:transparent}
@@ -1196,6 +1198,15 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
     <div class="rows"><div class="row"><span class="yr">30 Sep 2016</span><p class="main"><b>Universitätsmedizin Halle, blog</b><span><i lang="de">“Der Elektro-Geiger im Arztkittel”</i>: the electric violinist in a doctor’s coat.</span><a class="lk" href="https://blog.medizin.uni-halle.de/2016/09/der-elektro-geiger-im-arztkittel/" target="_blank" rel="noopener">Read the article ↗</a></p><span class="tagx">Feature</span></div><div class="row"><span class="yr">3 Sep 2016</span><p class="main"><b>Mitteldeutsche Zeitung</b><span>On the invitation to Burning Man 2016, the doctoral thesis and music at the clinic. By Iris Stein.</span></p><span class="tagx">Print</span></div><div class="row"><span class="yr">31 Mar 2016</span><p class="main"><b>BILD München</b><span><i lang="de">“Tagsüber Arzt, nachts ein Star an den Turntables”</i>: a doctor by day, a star at the turntables by night.</span></p><span class="tagx">Print</span></div></div>
   </section>
 
+  <!-- kits:d:start -->
+  <section class="blk col kits-sec" id="dDownloads">
+    <div class="eyebrow">Downloads</div>
+    <h2>The speaker sheet.</h2>
+    <p class="sub">The talks and how to book them, as a PDF.</p>
+    <div class="kits"><ul><li><a href="kits/Dr_Martin_Zschornak_Speaking_2026.pdf" download><b>Speaker Sheet</b><span>PDF · 2.9 MB</span></a></li></ul></div>
+  </section>
+  <!-- kits:d:end -->
+
   <div class="ask" id="dAsk">
     <div class="col">
       <div class="t">
@@ -1204,9 +1215,6 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
         <p class="sub">He is a working doctor. Talks are planned around the clinic, so the calendar fills from the front. Write with the event, the date, the audience and the format. He replies within 48 hours.</p>
         <div class="mail"><span class="addr" id="dMail">doctor.martin@icloud.com</span><button type="button" class="copy" data-copy="dMail">Copy address</button></div>
         <p class="fine">Shows are booked separately, as Seth Schwarz, through Schwarzbooking: hello@schwarzbooking.com</p>
-        <!-- kits:d:start -->
-        <div class="kits"><div class="kits-k">Download</div><ul><li><a href="kits/Dr_Martin_Zschornak_Speaking_2026.pdf" download><b>Speaker Sheet</b><span>PDF · 2.9 MB</span></a></li></ul></div>
-        <!-- kits:d:end -->
       </div>
       <img src="img/d-hand.webp" srcset="img/d-hand-900.webp 900w, img/d-hand.webp 1000w" sizes="(max-width:760px) 100vw, 40vw" alt="His left hand on the neck of the violin, against the blue stage screen" loading="lazy" decoding="async">
     </div>
@@ -1247,7 +1255,7 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
   </div></div>
 
   <nav class="subnav" aria-label="On this page"><div class="col">
-    <button type="button" data-go="nWatch">Watch</button><button type="button" data-go="nListen">Listen</button><button type="button" data-go="nWorld">189 cities</button><button type="button" data-go="nLab">Frequency lab</button><button type="button" data-go="nPlaya">The playa</button><button type="button" data-go="nMusic">Releases</button><button type="button" data-go="nStems">Stems</button><button type="button" data-go="nArcade">Arcade</button><button type="button" data-go="nStory">Story</button><button type="button" class="cta" data-go="book">Book</button>
+    <button type="button" data-go="nWatch">Watch</button><button type="button" data-go="nListen">Listen</button><button type="button" data-go="nWorld">189 cities</button><button type="button" data-go="nLab">Frequency lab</button><button type="button" data-go="nPlaya">The playa</button><button type="button" data-go="nMusic">Releases</button><button type="button" data-go="nStems">Stems</button><button type="button" data-go="nArcade">Arcade</button><button type="button" data-go="nStory">Story</button><!-- kits:nav:start --><button type="button" data-go="nDownloads">Downloads</button><!-- kits:nav:end --><button type="button" class="cta" data-go="book">Book</button>
   </div></nav>
 
   <section class="blk col">
@@ -1307,9 +1315,6 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
           <li>The violin runs through his own pedalboard</li>
         </ul>
         <div class="billing"><div class="k">Billing</div><p class="bill">SETH SCHWARZ (LIVE)</p><p>Where space allows: All Day I Dream · Katermukke · Einmusika · Bar 25 Music · NASAJA</p></div>
-        <!-- kits:n:start -->
-        <div class="kits"><div class="kits-k">Downloads</div><ul><li><a href="kits/Seth_Schwarz_Press_Kit_2026.pdf" download><b>Press Kit</b><span>PDF · 10 MB</span></a></li><li><a href="kits/Seth_Schwarz_Booking_Kit_2026.pdf" download><b>Booking Kit</b><span>PDF · 2.3 MB</span></a></li><li><a href="kits/Seth_Schwarz_Private_Events_2026.pdf" download><b>Private Events Kit</b><span>PDF · 1.0 MB</span></a></li><li><a href="kits/Seth_Schwarz_Press_Pictures_2026.pdf" download><b>Press Pictures</b><span>PDF · 4.6 MB</span></a></li></ul></div>
-        <!-- kits:n:end -->
       </div>
     </div>
   </section>
@@ -1369,6 +1374,15 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
     </div>
   
   </section>
+
+  <!-- kits:n:start -->
+  <section class="blk col kits-sec" id="nDownloads">
+    <div class="eyebrow">Downloads</div>
+    <h2>Kits and press pictures.</h2>
+    <p class="sub">For promoters, press and private events. Each file is a PDF.</p>
+    <div class="kits"><ul><li><a href="kits/Seth_Schwarz_Press_Kit_2026.pdf" download><b>Press Kit</b><span>PDF · 10 MB</span></a></li><li><a href="kits/Seth_Schwarz_Booking_Kit_2026.pdf" download><b>Booking Kit</b><span>PDF · 2.3 MB</span></a></li><li><a href="kits/Seth_Schwarz_Private_Events_2026.pdf" download><b>Private Events Kit</b><span>PDF · 1.0 MB</span></a></li><li><a href="kits/Seth_Schwarz_Press_Pictures_2026.pdf" download><b>Press Pictures</b><span>PDF · 4.6 MB</span></a></li></ul></div>
+  </section>
+  <!-- kits:n:end -->
 
   <section class="curious"><div class="col">
     <div class="eyebrow">For the curious</div>
