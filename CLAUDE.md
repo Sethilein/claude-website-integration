@@ -17,13 +17,14 @@ Two sessions change `index.html` at the same time and one overwrites the other. 
 ## Before publishing
 These run in the working folder (`sethschwarz-site/`); `source/` is deliberately not in this repository.
 - `python3 source/check_site.py` prints OK (it also checks that every picture, font and sound file the page names is there).
+- `python3 source/check_facts.py` prints OK (the page, the scripts and the documents carry what the facts say; see below).
 - The page loads without script errors on both sides, at desktop and phone width. Tests: `source/tests/` (Playwright).
 - After a new picture: `python3 source/polish/make_assets.py` (writes the WebP copies and thumbnails).
-- After anything that rebuilds the page or its module block: `python3 source/polish/apply.py` last (own fonts, light
-  pictures, the curtain between the sides, the arcade record). It can be run again safely. Mind the folder README
-  on `add_modules.py`: as it stands it would drop `nav_here` and the cursor dust.
-- After a rebuild the two blocks at the end of the page go back in as well: the vortex (`source/vortex/vortex.html`)
-  and the lab's sound button (`source/labplay/labplay.html`).
+- The page is edited directly. The old generator is retired (Martin's word, 17 Nov 2026): `build_site.py`,
+  `package.py` and `add_modules.py` stop with a note and write nothing; the page holds work they never knew.
+- `python3 source/polish/apply.py` can be run again safely (own fonts, light pictures, the curtain between the sides,
+  the arcade record). The two blocks at the end of the page have their sources in `source/vortex/vortex.html` (the
+  vortex) and `source/labplay/labplay.html` (the lab's sound button).
 - The page is not enough on its own: `fonts/`, `img/` (with the WebP copies) and `audio/` go up with it.
 
 ## Rules of content (Martin's, not negotiable)
@@ -32,7 +33,11 @@ These run in the working folder (`sethschwarz-site/`); `source/` is deliberately
 - "Dr." never next to a sponsor or a brand. Anything unconfirmed is marked as such.
 - Never "Wildwind". Not in his own texts: "legend", "legendary", "insane", "best in the world".
 - Shows: hello@schwarzbooking.com. Talks: doctor.martin@icloud.com.
-- Numbers (cities, countries, plays) come from `data/places.json` and the page; change them everywhere at once.
+- Facts (numbers, lines, contacts, links, credits, spellings) are changed in `data/facts.json` first, a gig in
+  `data/places.json`. Then `python3 source/apply_facts.py` writes them into the pages; kits, Brand Book, bio and
+  profiles follow. City and country counts are counted from `data/places.json`, never typed. The plays figure has
+  its own rule (`source/plays_links.py`) and is not written by that script. `data/facts.json` stays in the working
+  folder and never comes into this repository (Martin's rule, 17 Nov 2026).
 
 ## Code
 One file, ES5 style (`var`, `function`), no framework, no build step. Canvases run only while on screen.
@@ -40,4 +45,4 @@ One file, ES5 style (`var`, `function`), no framework, no build step. Canvases r
 
 ## Not decided here
 Label clearance for the audio excerpts, real names in the burn history, the newsletter service, the legal notice
-(Impressum) and privacy page, the public city count. Ask Martin; do not decide.
+(Impressum) and privacy page. Ask Martin; do not decide.
