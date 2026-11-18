@@ -25,7 +25,8 @@ These run in the working folder (`sethschwarz-site/`); `source/` is deliberately
 - `python3 source/polish/apply.py` can be run again safely (own fonts, light pictures, the curtain between the sides,
   the arcade record). The two blocks at the end of the page have their sources in `source/vortex/vortex.html` (the
   vortex) and `source/labplay/labplay.html` (the lab's sound button).
-- The page is not enough on its own: `fonts/`, `img/` (with the WebP copies) and `audio/` go up with it.
+- The page is not enough on its own: `fonts/`, `img/` (with the WebP copies), `audio/`, `i18n/` and `kits/` go up with it.
+- Kit downloads (since 18 Nov 2026): the PDFs lie in `kits/`. `python3 source/kits/apply.py` writes the buttons from `data/facts.json` ("kits") and reads each size from the file. After a kit is rebuilt: new PDF into `kits/`, run the script, upload `index.html` and `kits/`.
 
 ## Rules of content (Martin's, not negotiable)
 - Games: invented names only. No real art car, camp or stage without the crew's written consent.
