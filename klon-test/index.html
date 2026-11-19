@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="en" data-mode="night">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Seth Schwarz · Dr. Martin Zschornak — clone test</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="description" content="Design clone, not the live site. Day / Night portfolio test build.">
+<link rel="icon" href="favicon.png">
+<style>
+@font-face{font-family:Chivo;src:url(fonts/chivo-latin-wght-normal.woff2)format("woff2");font-weight:100 900;font-display:swap}
+@font-face{font-family:Chivo;src:url(fonts/chivo-latin-wght-italic.woff2)format("woff2");font-weight:100 900;font-style:italic;font-display:swap}
+@font-face{font-family:Plex;src:url(fonts/ibm-plex-mono-latin-400-normal.woff2)format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:Plex;src:url(fonts/ibm-plex-mono-latin-500-normal.woff2)format("woff2");font-weight:500;font-display:swap}
+@font-face{font-family:Inter;src:url(fonts/inter-latin-wght-normal.woff2)format("woff2");font-weight:100 900;font-display:swap}
+
+:root{
+  --n-bg:#09090B; --n-ink:#FAFAF9; --n-mute:#A1A1AA; --n-line:rgba(250,250,249,.14); --n-well:#121214;
+  --n-amber:#D97706; --n-cyan:#06B6D4;
+  --d-bg:#F8FAFC; --d-ink:#0F172A; --d-mute:#64748B; --d-line:rgba(15,23,42,.14); --d-well:#EEF2F6;
+  --d-teal:#0D9488;
+  --display:Chivo,"Helvetica Neue",Helvetica,Arial,sans-serif;
+  --mono:Plex,ui-monospace,SFMono-Regular,Menlo,monospace;
+  --body:Inter,system-ui,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;
+  --pad:clamp(18px,4vw,40px); --maxw:1240px; --dock:0px;
+  --bg:var(--n-bg); --ink:var(--n-ink); --mute:var(--n-mute); --line:var(--n-line); --well:var(--n-well);
+  --a1:var(--n-amber); --a2:var(--n-cyan);
+}
+:root[data-mode="day"]{--bg:var(--d-bg);--ink:var(--d-ink);--mute:var(--d-mute);--line:var(--d-line);--well:var(--d-well);--a1:var(--d-teal);--a2:#0EA5E9}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+  transition:background-color .9s cubic-bezier(.4,0,.2,1),color .9s cubic-bezier(.4,0,.2,1);padding-bottom:var(--dock)}
+img{max-width:100%;display:block}
+a{color:inherit}
+.wrap{max-width:var(--maxw);margin:0 auto;padding-inline:var(--pad)}
+.k{font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mute)}
+h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.022em;margin:0;line-height:1.04}
+h1{font-size:clamp(40px,8.4vw,104px)}
+h2{font-size:clamp(28px,4.6vw,56px)}
+h3{font-size:clamp(18px,2.1vw,24px);letter-spacing:-.012em}
+p{margin:0}
+.sub{color:var(--mute);font-size:clamp(16px,1.5vw,19px);max-width:62ch;margin-top:14px}
+section{padding-block:clamp(46px,6.4vw,86px);position:relative}
+.panel section + section > .wrap{border-top:1px solid var(--line);padding-top:clamp(40px,5.5vw,74px)}
+.hero + section > .wrap{border-top:0;padding-top:0}
+.rule{height:1px;background:var(--line)}
+
+/* ---------- header + toggle */
+.testbar{background:var(--a1);color:#09090B;font-family:var(--mono);font-size:9.5px;letter-spacing:.17em;
+  text-transform:uppercase;text-align:center;padding:7px 12px}
+:root[data-mode="day"] .testbar{color:#fff}
+header{position:sticky;top:0;z-index:60;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  background:color-mix(in srgb,var(--bg) 82%,transparent);border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;gap:14px;justify-content:space-between;height:60px}
+.mark{font-family:var(--display);font-weight:600;letter-spacing:-.02em;font-size:15px;white-space:nowrap}
+.mark em{font-style:normal;color:var(--mute);font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;margin-left:10px}
+@media(max-width:620px){.mark em{display:none}}
+nav.jump{display:flex;gap:2px;overflow:auto;scrollbar-width:none}
+nav.jump::-webkit-scrollbar{display:none}
+nav.jump a{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--mute);
+  text-decoration:none;padding:10px 10px;white-space:nowrap;border-radius:3px}
+nav.jump a:hover,nav.jump a:focus-visible{color:var(--ink);background:var(--well)}
+@media(max-width:900px){nav.jump{display:none}}
+
+/* the magnetic toggle */
+.tgl{position:relative;display:inline-flex;align-items:center;flex:none;width:168px;height:40px;border-radius:999px;
+  border:1px solid var(--line);background:var(--well);cursor:pointer;padding:0;overflow:hidden;
+  -webkit-tap-highlight-color:transparent}
+.tgl .pill{position:absolute;top:3px;left:3px;width:calc(50% - 3px);height:34px;border-radius:999px;
+  background:linear-gradient(120deg,var(--a1),var(--a2));
+  transition:transform .62s cubic-bezier(.22,1.3,.36,1),background .6s;will-change:transform}
+:root[data-mode="night"] .tgl .pill{transform:translateX(calc(100% + 0px))}
+.tgl span{position:relative;z-index:1;flex:1 1 50%;text-align:center;font-family:var(--mono);font-size:10px;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--mute);transition:color .45s}
+:root[data-mode="day"] .tgl span.d,:root[data-mode="night"] .tgl span.n{color:#09090B}
+:root[data-mode="night"] .tgl span.n{color:#09090B}
+.tgl:focus-visible{outline:2px solid var(--a2);outline-offset:3px}
+
+/* ---------- panels */
+.panel{display:none}
+.panel.on{display:block;animation:fade .7s cubic-bezier(.2,.7,.2,1) both}
+@keyframes fade{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+/* ---------- hero */
+.hero{position:relative;min-height:clamp(560px,86svh,860px);display:flex;align-items:flex-end;overflow:hidden;padding-bottom:clamp(36px,6vw,72px)}
+.hero canvas.viz{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0}
+.hero .shot{position:absolute;inset:0;object-fit:cover;width:100%;height:100%;z-index:-1;opacity:.5}
+:root[data-mode="day"] .hero .shot{opacity:.9}
+.hero .veil{position:absolute;inset:0;z-index:0;pointer-events:none}
+:root[data-mode="night"] .hero .veil{background:linear-gradient(180deg,rgba(9,9,11,.35) 0%,rgba(9,9,11,.1) 38%,rgba(9,9,11,.92) 92%)}
+:root[data-mode="day"] .hero .veil{background:linear-gradient(180deg,rgba(248,250,252,.5) 0%,rgba(248,250,252,.25) 40%,rgba(248,250,252,.96) 92%)}
+.hero .wrap{position:relative;z-index:1;width:100%}
+.hero h1{margin-top:10px;text-wrap:balance}
+.hero h1 .line2{display:block;color:transparent;background:linear-gradient(100deg,var(--a1),var(--a2));-webkit-background-clip:text;background-clip:text}
+.ctas{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.btn{font-family:var(--mono);font-size:11px;letter-spacing:.17em;text-transform:uppercase;padding:15px 22px;border-radius:3px;
+  border:1px solid transparent;cursor:pointer;text-decoration:none;display:inline-block;transition:transform .16s,box-shadow .2s,background .2s,color .2s}
+.btn.pri{background:var(--a1);color:#09090B;font-weight:500}
+:root[data-mode="day"] .btn.pri{color:#fff}
+.btn.sec{border-color:var(--line);color:var(--ink);background:transparent}
+.btn:hover{transform:translateY(-2px)}
+.btn.pri:hover{box-shadow:0 10px 30px color-mix(in srgb,var(--a1) 35%,transparent)}
+.btn:focus-visible{outline:2px solid var(--a2);outline-offset:3px}
+.figs{display:flex;flex-wrap:wrap;gap:clamp(18px,4vw,46px);margin-top:36px;padding-top:24px;border-top:1px solid var(--line)}
+.figs div b{display:block;font-family:var(--display);font-size:clamp(26px,3.6vw,40px);font-weight:600;letter-spacing:-.03em;line-height:1}
+.figs div span{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--mute)}
+/* day hero: a Swiss grid, no full-bleed photo, so every word stays legible */
+.hero.dhero{align-items:center;min-height:clamp(520px,82svh,820px);padding-top:clamp(28px,6vw,60px)}
+.dgrid{display:grid;grid-template-columns:1.18fr .82fr;gap:clamp(22px,4vw,56px);align-items:center}
+@media(max-width:900px){.dgrid{grid-template-columns:1fr;gap:26px}}
+.dhero h1{font-size:clamp(38px,6.6vw,80px)}
+.dfig{margin:0;position:relative;border:1px solid var(--line);border-radius:5px;overflow:hidden;background:var(--well)}
+.dfig img{aspect-ratio:4/5;object-fit:cover;width:100%;position:relative;z-index:1;mix-blend-mode:multiply}
+.dfig .viz{position:absolute;inset:0;z-index:2;opacity:.55;pointer-events:none}
+.dfig figcaption{position:absolute;left:0;right:0;bottom:0;z-index:3;padding:12px 14px;color:#fff;
+  background:linear-gradient(0deg,rgba(15,23,42,.85),rgba(15,23,42,0))}
+@media(max-width:900px){.dfig img{aspect-ratio:16/10}}
+
+/* ---------- generic grid cards */
+.grid{display:grid;gap:14px;margin-top:34px}
+.g3{grid-template-columns:repeat(auto-fit,minmax(248px,1fr))}
+.g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.card{border:1px solid var(--line);border-radius:5px;padding:22px;background:var(--well);transition:border-color .25s,transform .25s}
+.card:hover{border-color:color-mix(in srgb,var(--a2) 55%,var(--line))}
+.card p{color:var(--mute);margin-top:8px;font-size:15px}
+#tracks .card{display:flex;flex-direction:column;align-items:flex-start;text-align:left;font:inherit;color:inherit;cursor:pointer}
+#tracks .card p{margin-top:auto;padding-top:10px}
+#tracks .card h3{margin-top:10px}
+
+/* ---------- anatomy */
+.anat{display:grid;gap:16px;grid-template-columns:1.1fr .9fr;align-items:start;margin-top:34px}
+@media(max-width:860px){.anat{grid-template-columns:1fr}}
+.layers{display:flex;flex-direction:column;gap:10px}
+.layer{display:flex;align-items:center;gap:14px;border:1px solid var(--line);background:var(--well);border-radius:5px;
+  padding:16px 18px;cursor:pointer;text-align:left;color:inherit;font:inherit;transition:border-color .2s,transform .2s,background .2s}
+.layer:hover{transform:translateX(3px)}
+.layer[aria-pressed="true"]{border-color:var(--a2);background:color-mix(in srgb,var(--a2) 10%,var(--well))}
+.layer .dot{width:9px;height:9px;border-radius:50%;background:var(--mute);flex:none;transition:background .2s,box-shadow .2s}
+.layer[aria-pressed="true"] .dot{background:var(--a2);box-shadow:0 0 0 5px color-mix(in srgb,var(--a2) 22%,transparent)}
+.layer b{font-family:var(--display);font-weight:600;font-size:17px;letter-spacing:-.01em}
+.layer small{display:block;color:var(--mute);font-size:13px;margin-top:2px}
+.stage{border:1px solid var(--line);border-radius:5px;background:var(--well);padding:18px;min-height:260px;display:flex;flex-direction:column;gap:12px}
+.stage canvas{width:100%;height:190px;display:block;border-radius:3px}
+.note{font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;color:var(--mute);line-height:1.7}
+
+/* ---------- videos */
+.vids{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));margin-top:32px}
+.vid{position:relative;display:block;border-radius:5px;overflow:hidden;border:1px solid var(--line);text-decoration:none;background:#000}
+.vid img{aspect-ratio:16/9;object-fit:cover;transition:transform .6s cubic-bezier(.2,.7,.2,1),opacity .4s;opacity:.85}
+.vid:hover img{transform:scale(1.045);opacity:1}
+.vid .meta{position:absolute;left:0;right:0;bottom:0;padding:34px 14px 14px;color:#fff;
+  background:linear-gradient(0deg,rgba(9,9,11,.95) 10%,rgba(9,9,11,.7) 55%,rgba(9,9,11,0))}
+.vid .meta b{display:block;font-family:var(--display);font-weight:600;font-size:17px}
+.vid .meta span{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;opacity:.75}
+.vid .play{position:absolute;top:12px;right:12px;width:30px;height:30px;border-radius:50%;background:rgba(9,9,11,.6);
+  display:grid;place-items:center;color:#fff;font-size:11px;border:1px solid rgba(255,255,255,.3)}
+
+/* ---------- plate */
+.plate{display:grid;grid-template-columns:minmax(0,1fr) minmax(250px,.82fr);gap:clamp(16px,3vw,44px);margin-top:32px;align-items:center}
+@media(max-width:860px){.plate{grid-template-columns:1fr}}
+.pbox{border:1px solid var(--line);border-radius:5px;background:var(--well);overflow:hidden;max-width:520px;width:100%}
+#plate{display:block;width:100%;aspect-ratio:1/1}
+.pfreq{font-family:var(--display);font-weight:600;font-size:clamp(30px,4vw,46px);letter-spacing:-.03em;margin-top:6px;
+  color:transparent;background:linear-gradient(100deg,var(--a1),var(--a2));-webkit-background-clip:text;background-clip:text}
+#pSlide{width:100%;margin:14px 0 16px;accent-color:var(--a1);height:26px}
+.pside .note{max-width:44ch}
+
+/* ---------- globe */
+.gwrap{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(16px,2.6vw,34px);margin-top:32px;align-items:start}
+@media(max-width:900px){.gwrap{grid-template-columns:1fr}}
+.gbox{position:relative;border:1px solid var(--line);border-radius:5px;background:var(--well);overflow:hidden}
+#globe{display:block;width:100%;aspect-ratio:1/1;touch-action:none;cursor:grab}
+#globe:active{cursor:grabbing}
+.gctl{position:absolute;top:12px;right:12px;display:flex;flex-direction:column;gap:6px}
+.gctl button{width:34px;height:34px;border-radius:4px;border:1px solid var(--line);background:color-mix(in srgb,var(--bg) 70%,transparent);
+  color:var(--ink);font:500 14px/1 var(--mono);cursor:pointer;backdrop-filter:blur(8px)}
+.gctl button:hover{border-color:var(--a1)}
+.gcard{position:absolute;left:12px;right:12px;bottom:12px;border:1px solid var(--line);border-radius:4px;
+  background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(10px);padding:14px 16px;max-height:44%;overflow:auto}
+.gcard b{font-family:var(--display);font-weight:600;font-size:17px;display:block}
+.gcard .cty{font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mute)}
+.gcard p{font-size:13.5px;color:var(--mute);margin-top:8px;line-height:1.55}
+.gcard button.x{position:absolute;top:8px;right:10px;background:none;border:0;color:var(--mute);cursor:pointer;font-size:15px}
+.gside input{width:100%;background:var(--well);border:1px solid var(--line);color:var(--ink);border-radius:4px;
+  padding:12px 13px;font:inherit;font-size:15px;margin-top:8px}
+.gside input:focus-visible{outline:2px solid var(--a2);outline-offset:1px}
+.gfilt{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.gfilt button{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;background:transparent;
+  border:1px solid var(--line);color:var(--mute);border-radius:999px;padding:7px 12px;cursor:pointer}
+.gfilt button[aria-pressed="true"]{border-color:var(--a1);color:var(--ink)}
+.glist{margin-top:12px;border:1px solid var(--line);border-radius:4px;max-height:clamp(240px,42vh,400px);overflow:auto}
+.glist button{display:block;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--line);
+  color:inherit;font:inherit;padding:11px 14px;cursor:pointer}
+.glist button:last-child{border-bottom:0}
+.glist button:hover,.glist button[aria-selected="true"]{background:color-mix(in srgb,var(--a2) 12%,transparent)}
+.glist b{font-weight:600;font-size:14.5px}
+.glist span{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);margin-top:2px}
+.glist span span{display:inline;margin:0}
+.glist .rec{color:var(--a1)}
+#gCount{margin-top:10px}
+
+/* ---------- playa flyers */
+.playa{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));margin-top:30px}
+.fly{position:relative;display:block;border:1px solid var(--line);border-radius:4px;overflow:hidden;text-decoration:none;background:#000}
+.fly img{aspect-ratio:1/1;object-fit:cover;opacity:.78;transition:opacity .35s,transform .6s cubic-bezier(.2,.7,.2,1)}
+.fly:hover img{opacity:1;transform:scale(1.05)}
+.fly .fc{position:absolute;left:0;right:0;bottom:0;padding:22px 10px 9px;color:#fff;font-family:var(--mono);
+  font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;
+  background:linear-gradient(0deg,rgba(9,9,11,.95),rgba(9,9,11,0))}
+
+/* ---------- vinyl */
+.vinyl{display:grid;gap:clamp(14px,2.4vw,28px);grid-template-columns:repeat(3,1fr);margin-top:30px}
+@media(max-width:700px){.vinyl{grid-template-columns:repeat(2,1fr)}}
+.vy{display:block;text-decoration:none;position:relative}
+.sl{display:block;position:relative;border-radius:3px;overflow:visible}
+.sl img.cvr{width:100%;height:auto;aspect-ratio:1/1;object-fit:cover;border-radius:3px;position:relative;z-index:2;
+  box-shadow:0 10px 30px rgba(0,0,0,.45);transition:transform .5s cubic-bezier(.2,.8,.2,1)}
+.sl .disc{position:absolute;top:0;left:0;width:100%;aspect-ratio:1/1;border-radius:50%;z-index:1;
+  background:radial-gradient(circle at 50% 50%,#1b1b1e 0 18%,#0b0b0d 19% 100%);
+  transition:transform .55s cubic-bezier(.2,.8,.2,1)}
+.sl .disc::after{content:"";position:absolute;inset:40%;border-radius:50%;background:var(--a1)}
+.vy:hover .disc{transform:translateX(34%)}
+.vy:hover .sl img.cvr{transform:translateX(-3%)}
+.vy .m{display:block;margin-top:12px}
+.vy .m b{display:block;font-family:var(--display);font-weight:600;font-size:15px;letter-spacing:-.01em}
+.vy .m span{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--mute);margin-top:3px}
+
+/* ---------- tour */
+.tour{border:1px solid var(--line);border-radius:5px;background:var(--well);padding:clamp(22px,4vw,38px);margin-top:30px}
+.empty{display:flex;flex-wrap:wrap;gap:18px;align-items:center;justify-content:space-between}
+.dl{list-style:none;padding:0;margin:22px 0 0;display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.dl a{display:flex;justify-content:space-between;gap:12px;align-items:baseline;padding:14px 16px;border:1px solid var(--line);
+  border-radius:4px;text-decoration:none;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase}
+.dl a:hover{border-color:var(--a1)}
+.dl a span{color:var(--mute);letter-spacing:.04em;white-space:nowrap}
+
+/* ---------- publications */
+.rows{margin-top:28px;border-top:1px solid var(--line)}
+.row{display:grid;grid-template-columns:92px 1fr auto;gap:16px;padding:20px 0;border-bottom:1px solid var(--line);align-items:start}
+@media(max-width:700px){.row{grid-template-columns:1fr;gap:6px}}
+.row .yr{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--mute);padding-top:4px}
+.row b{font-family:var(--display);font-weight:600;font-size:17px;display:block}
+.row p{color:var(--mute);font-size:14.5px;margin-top:5px}
+.tag{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;border:1px solid var(--line);
+  border-radius:999px;padding:5px 11px;color:var(--mute);white-space:nowrap;align-self:center}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-top:24px}
+.filters button{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;background:transparent;
+  border:1px solid var(--line);color:var(--mute);border-radius:999px;padding:9px 15px;cursor:pointer}
+.filters button[aria-pressed="true"]{border-color:var(--a1);color:var(--ink)}
+
+/* ---------- bridge */
+.bridge{border:1px solid var(--line);border-left:3px solid var(--a1);border-radius:5px;background:var(--well);
+  padding:clamp(24px,4vw,44px);margin-top:30px}
+.bridge h3{font-size:clamp(22px,3vw,34px)}
+
+/* ---------- audio dock */
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:70;border-top:1px solid var(--line);
+  background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  transform:translateY(120%);transition:transform .5s cubic-bezier(.2,.9,.2,1);padding-bottom:env(safe-area-inset-bottom,0)}
+.dock.up{transform:none}
+.dockin{display:flex;align-items:center;gap:14px;height:72px}
+.pbtn{width:42px;height:42px;flex:none;border-radius:50%;border:1px solid var(--line);background:var(--a1);color:#09090B;
+  cursor:pointer;display:grid;place-items:center;font-size:13px}
+:root[data-mode="day"] .pbtn{color:#fff}
+.now{min-width:0;flex:none;width:clamp(120px,26vw,250px)}
+.now b{display:block;font-family:var(--display);font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.now span{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wave{flex:1;height:44px;min-width:60px;cursor:pointer;position:relative}
+.wave canvas{width:100%;height:44px;display:block}
+.skip{background:none;border:0;color:var(--mute);cursor:pointer;font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;padding:8px}
+.skip:hover{color:var(--ink)}
+.dock .x{background:none;border:0;color:var(--mute);font-size:16px;cursor:pointer;padding:6px 2px}
+@media(max-width:620px){.dockin{height:64px;gap:10px}.now{width:clamp(96px,38vw,180px)}.skip{display:none}}
+
+/* ---------- cursor */
+.cur{position:fixed;top:0;left:0;z-index:90;pointer-events:none;mix-blend-mode:difference;will-change:transform;opacity:0;transition:opacity .3s}
+@media(hover:hover) and (pointer:fine){.cur{opacity:1}}
+.cur i{display:block;border-radius:50%;border:1px solid #fff}
+:root[data-mode="night"] .cur i{width:26px;height:26px;margin:-13px 0 0 -13px;box-shadow:0 0 0 0 rgba(255,255,255,.4)}
+:root[data-mode="day"] .cur i{width:9px;height:9px;margin:-4.5px 0 0 -4.5px;background:#fff}
+
+/* ---------- modal */
+.modal{position:fixed;inset:0;z-index:95;display:none;place-items:center;padding:20px;background:rgba(9,9,11,.72);backdrop-filter:blur(6px)}
+.modal.on{display:grid}
+.sheet{width:min(560px,100%);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:clamp(22px,4vw,34px);max-height:88svh;overflow:auto}
+.sheet label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--mute);margin:16px 0 6px}
+.sheet input,.sheet textarea,.sheet select{width:100%;background:var(--well);border:1px solid var(--line);color:var(--ink);
+  border-radius:4px;padding:12px 13px;font:inherit;font-size:15px}
+.sheet textarea{min-height:92px;resize:vertical}
+.mailout{margin-top:18px;border:1px dashed var(--line);border-radius:4px;padding:14px;font-family:var(--mono);font-size:12px;
+  color:var(--mute);white-space:pre-wrap;word-break:break-word;max-height:170px;overflow:auto}
+
+/* ---------- reveal */
+.rv{opacity:0;transform:translateY(22px);transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1)}
+.rv.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}.panel.on{animation:none}.tgl .pill{transition:none}}
+
+footer{border-top:1px solid var(--line);padding-block:40px;color:var(--mute);font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;line-height:2}
+.flag{background:color-mix(in srgb,var(--a1) 14%,transparent);border:1px solid color-mix(in srgb,var(--a1) 45%,transparent);
+  border-radius:4px;padding:12px 15px;font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;color:var(--ink);line-height:1.8;margin-top:26px}
+</style>
+</head>
+<body>
+
+<script type="application/json" id="globeData">{"dots":[-150,-84,-135,-84,-120,-84,-105,-84,-90,-84,-75,-84,-60,-84,-45,-84,-30,-84,-15,-84,0,-84,15,-84,30,-84,45,-84,60,-84,75,-84,90,-84,105,-84,120,-84,135,-84,150,-84,165,-84,-150,-82.4,-138,-82.4,-126,-82.4,-114,-82.4,-102,-82.4,-90,-82.4,-78,-82.4,-66,-82.4,-54,-82.4,-42,-82.4,-30,-82.4,-18,-82.4,-6,-82.4,6,-82.4,18,-82.4,30,-82.4,42,-82.4,54,-82.4,66,-82.4,78,-82.4,90,-82.4,102,-82.4,114,-82.4,126,-82.4,138,-82.4,150,-82.4,162,-82.4,-145,-80.8,-135,-80.8,-125,-80.8,-115,-80.8,-105,-80.8,-95,-80.8,-85,-80.8,-75,-80.8,-25,-80.8,-15,-80.8,-5,-80.8,5,-80.8,15,-80.8,25,-80.8,35,-80.8,45,-80.8,55,-80.8,65,-80.8,75,-80.8,85,-80.8,95,-80.8,105,-80.8,115,-80.8,125,-80.8,135,-80.8,145,-80.8,155,-80.8,-145.7,-79.2,-137.1,-79.2,-128.6,-79.2,-120,-79.2,-111.4,-79.2,-102.9,-79.2,-94.3,-79.2,-85.7,-79.2,-34.3,-79.2,-25.7,-79.2,-17.1,-79.2,-8.6,-79.2,0,-79.2,8.6,-79.2,17.1,-79.2,25.7,-79.2,34.3,-79.2,42.9,-79.2,51.4,-79.2,60,-79.2,68.6,-79.2,77.1,-79.2,85.7,-79.2,94.3,-79.2,102.9,-79.2,111.4,-79.2,120,-79.2,128.6,-79.2,137.1,-79.2,145.7,-79.2,154.3,-79.2,-153.7,-77.6,-146.2,-77.6,-138.7,-77.6,-131.2,-77.6,-123.7,-77.6,-116.2,-77.6,-108.7,-77.6,-101.2,-77.6,-93.7,-77.6,-86.2,-77.6,-78.7,-77.6,-26.2,-77.6,-18.7,-77.6,-11.2,-77.6,-3.7,-77.6,3.8,-77.6,11.3,-77.6,18.8,-77.6,26.3,-77.6,33.8,-77.6,41.3,-77.6,48.8,-77.6,56.3,-77.6,63.8,-77.6,71.3,-77.6,78.8,-77.6,86.3,-77.6,93.8,-77.6,101.3,-77.6,108.8,-77.6,116.3,-77.6,123.8,-77.6,131.3,-77.6,138.8,-77.6,146.3,-77.6,153.8,-77.6,161.3,-77.6,-140,-76,-133.3,-76,-126.7,-76,-120,-76,-113.3,-76,-106.7,-76,-100,-76,-93.3,-76,-86.7,-76,-80,-76,-73.3,-76,-20,-76,-13.3,-76,-6.7,-76,0,-76,6.7,-76,13.3,-76,20,-76,26.7,-76,33.3,-76,40,-76,46.7,-76,53.3,-76,60,-76,66.7,-76,73.3,-76,80,-76,86.7,-76,93.3,-76,100,-76,106.7,-76,113.3,-76,120,-76,126.7,-76,133.3,-76,140,-76,146.7,-76,153.3,-76,160,-76,-135.7,-74.4,-118,-74.4,-100.3,-74.4,-94.4,-74.4,-88.5,-74.4,-82.6,-74.4,-76.7,-74.4,-70.8,-74.4,-64.9,-74.4,-11.8,-74.4,-5.9,-74.4,0,-74.4,5.9,-74.4,11.8,-74.4,17.7,-74.4,23.6,-74.4,29.5,-74.4,35.4,-74.4,41.3,-74.4,47.2,-74.4,53.1,-74.4,59,-74.4,64.9,-74.4,70.8,-74.4,76.7,-74.4,82.6,-74.4,88.5,-74.4,94.4,-74.4,100.3,-74.4,106.2,-74.4,112.1,-74.4,118,-74.4,123.9,-74.4,129.8,-74.4,135.7,-74.4,141.6,-74.4,147.5,-74.4,153.4,-74.4,159.3,-74.4,165.2,-74.4,-67.2,-72.8,-61.8,-72.8,-13.4,-72.8,-8.1,-72.8,-2.7,-72.8,2.7,-72.8,8.1,-72.8,13.4,-72.8,18.8,-72.8,24.2,-72.8,29.6,-72.8,34.9,-72.8,40.3,-72.8,45.7,-72.8,51,-72.8,56.4,-72.8,61.8,-72.8,67.2,-72.8,72.5,-72.8,77.9,-72.8,83.3,-72.8,88.7,-72.8,94,-72.8,99.4,-72.8,104.8,-72.8,110.1,-72.8,115.5,-72.8,120.9,-72.8,126.3,-72.8,131.6,-72.8,137,-72.8,142.4,-72.8,147.8,-72.8,153.1,-72.8,158.5,-72.8,163.9,-72.8,169.3,-72.8,-69,-71.2,-64.1,-71.2,4.9,-71.2,9.9,-71.2,14.8,-71.2,19.7,-71.2,24.7,-71.2,29.6,-71.2,34.5,-71.2,39.5,-71.2,44.4,-71.2,49.3,-71.2,54.2,-71.2,59.2,-71.2,64.1,-71.2,74,-71.2,78.9,-71.2,83.8,-71.2,88.8,-71.2,93.7,-71.2,98.6,-71.2,103.6,-71.2,108.5,-71.2,113.4,-71.2,118.4,-71.2,123.3,-71.2,128.2,-71.2,133.2,-71.2,138.1,-71.2,143,-71.2,147.9,-71.2,152.9,-71.2,157.8,-71.2,162.7,-71.2,167.7,-71.2,-64.6,-69.6,32.3,-69.6,36.9,-69.6,41.5,-69.6,46.2,-69.6,50.8,-69.6,55.4,-69.6,60,-69.6,64.6,-69.6,69.2,-69.6,78.5,-69.6,83.1,-69.6,87.7,-69.6,92.3,-69.6,96.9,-69.6,101.5,-69.6,106.2,-69.6,110.8,-69.6,115.4,-69.6,120,-69.6,124.6,-69.6,129.2,-69.6,133.8,-69.6,138.5,-69.6,143.1,-69.6,147.7,-69.6,152.3,-69.6,156.9,-69.6,-66.4,-68,49.3,-68,53.6,-68,57.9,-68,62.1,-68,66.4,-68,83.6,-68,87.9,-68,92.1,-68,96.4,-68,100.7,-68,105,-68,109.3,-68,113.6,-68,117.9,-68,122.1,-68,126.4,-68,130.7,-68,135,-68,139.3,-68,143.6,-68,-64,-66.4,52,-66.4,56,-66.4,88,-66.4,104,-66.4,112,-66.4,132,-66.4,136,-66.4,-68.9,-55.2,-66.1,-55.2,-69.9,-53.6,-72.5,-52,-69.9,-52,-59.6,-52,-74.3,-50.4,-71.7,-50.4,-69.2,-50.4,-74.2,-48.8,-71.8,-48.8,-69.3,-48.8,-74.1,-47.2,-71.8,-47.2,-69.4,-47.2,-67.1,-47.2,-73.4,-45.6,-71.1,-45.6,-68.8,-45.6,167.4,-45.6,169.7,-45.6,-71.1,-44,-68.9,-44,-66.7,-44,168.9,-44,171.1,-44,-72.7,-42.4,-70.5,-42.4,-68.3,-42.4,-66.1,-42.4,-64,-42.4,146.4,-42.4,172.4,-42.4,-72,-40.8,-69.9,-40.8,-67.8,-40.8,-65.6,-40.8,-63.5,-40.8,175.8,-40.8,-71.4,-39.2,-69.3,-39.2,-67.2,-39.2,-65.2,-39.2,-63.1,-39.2,174.8,-39.2,176.9,-39.2,-72.8,-37.6,-70.8,-37.6,-68.8,-37.6,-66.7,-37.6,-64.7,-37.6,-62.7,-37.6,-60.7,-37.6,-58.7,-37.6,141.6,-37.6,143.6,-37.6,145.6,-37.6,147.6,-37.6,149.7,-37.6,176,-37.6,-72.2,-36,-70.2,-36,-68.2,-36,-66.3,-36,-64.3,-36,-62.3,-36,-60.3,-36,-58.4,-36,139.5,-36,141.4,-36,143.4,-36,145.4,-36,147.4,-36,149.3,-36,-71.6,-34.4,-69.7,-34.4,-67.7,-34.4,-65.8,-34.4,-63.9,-34.4,-61.9,-34.4,-60,-34.4,-56.1,-34.4,-54.2,-34.4,19.4,-34.4,116.1,-34.4,118.1,-34.4,135.5,-34.4,139.4,-34.4,141.3,-34.4,143.2,-34.4,145.2,-34.4,147.1,-34.4,149,-34.4,151,-34.4,-70.5,-32.8,-68.6,-32.8,-66.7,-32.8,-64.8,-32.8,-62.9,-32.8,-61,-32.8,-59,-32.8,-57.1,-32.8,-55.2,-32.8,-53.3,-32.8,19,-32.8,21,-32.8,22.9,-32.8,24.8,-32.8,26.7,-32.8,116.2,-32.8,118.1,-32.8,120,-32.8,121.9,-32.8,123.8,-32.8,135.2,-32.8,137.1,-32.8,139,-32.8,141,-32.8,142.9,-32.8,144.8,-32.8,146.7,-32.8,148.6,-32.8,150.5,-32.8,-71.2,-31.2,-69.4,-31.2,-67.5,-31.2,-65.6,-31.2,-63.7,-31.2,-61.9,-31.2,-60,-31.2,-58.1,-31.2,-56.2,-31.2,-54.4,-31.2,-52.5,-31.2,18.8,-31.2,20.6,-31.2,22.5,-31.2,24.4,-31.2,26.3,-31.2,28.1,-31.2,116.3,-31.2,118.1,-31.2,120,-31.2,121.9,-31.2,123.8,-31.2,125.6,-31.2,127.5,-31.2,129.4,-31.2,131.3,-31.2,133.1,-31.2,135,-31.2,136.9,-31.2,138.8,-31.2,140.6,-31.2,142.5,-31.2,144.4,-31.2,146.3,-31.2,148.1,-31.2,150,-31.2,151.9,-31.2,-70.7,-29.6,-68.9,-29.6,-67,-29.6,-65.2,-29.6,-63.4,-29.6,-61.5,-29.6,-59.7,-29.6,-57.9,-29.6,-56,-29.6,-54.2,-29.6,-52.3,-29.6,-50.5,-29.6,17.4,-29.6,19.3,-29.6,21.1,-29.6,23,-29.6,24.8,-29.6,26.6,-29.6,28.5,-29.6,30.3,-29.6,116.6,-29.6,118.5,-29.6,120.3,-29.6,122.1,-29.6,124,-29.6,125.8,-29.6,127.7,-29.6,129.5,-29.6,131.3,-29.6,133.2,-29.6,135,-29.6,136.8,-29.6,138.7,-29.6,140.5,-29.6,142.3,-29.6,144.2,-29.6,146,-29.6,147.9,-29.6,149.7,-29.6,151.5,-29.6,-69.6,-28,-67.8,-28,-66,-28,-64.2,-28,-62.4,-28,-60.6,-28,-58.8,-28,-57,-28,-55.2,-28,-53.4,-28,-51.6,-28,-49.7,-28,17.2,-28,19,-28,20.8,-28,22.6,-28,24.4,-28,26.2,-28,28,-28,29.8,-28,31.7,-28,114.9,-28,116.7,-28,118.5,-28,120.3,-28,122.1,-28,123.9,-28,125.7,-28,127.5,-28,129.3,-28,131.2,-28,133,-28,134.8,-28,136.6,-28,138.4,-28,140.2,-28,142,-28,143.8,-28,145.6,-28,147.4,-28,149.2,-28,151.1,-28,152.9,-28,-70.4,-26.4,-68.6,-26.4,-66.8,-26.4,-65,-26.4,-63.3,-26.4,-61.5,-26.4,-59.7,-26.4,-57.9,-26.4,-56.1,-26.4,-54.4,-26.4,-52.6,-26.4,-50.8,-26.4,-49,-26.4,15.1,-26.4,16.9,-26.4,18.7,-26.4,20.5,-26.4,22.3,-26.4,24.1,-26.4,25.8,-26.4,27.6,-26.4,29.4,-26.4,31.2,-26.4,115,-26.4,116.7,-26.4,118.5,-26.4,120.3,-26.4,122.1,-26.4,123.9,-26.4,125.6,-26.4,127.4,-26.4,129.2,-26.4,131,-26.4,132.8,-26.4,134.6,-26.4,136.3,-26.4,138.1,-26.4,139.9,-26.4,141.7,-26.4,143.5,-26.4,145.2,-26.4,147,-26.4,148.8,-26.4,150.6,-26.4,152.4,-26.4,-68.8,-24.8,-67.1,-24.8,-65.3,-24.8,-63.5,-24.8,-61.8,-24.8,-60,-24.8,-58.2,-24.8,-56.5,-24.8,-54.7,-24.8,-52.9,-24.8,-51.2,-24.8,-49.4,-24.8,-47.6,-24.8,15.9,-24.8,17.6,-24.8,19.4,-24.8,21.2,-24.8,22.9,-24.8,24.7,-24.8,26.5,-24.8,28.2,-24.8,30,-24.8,31.8,-24.8,33.5,-24.8,44.1,-24.8,45.9,-24.8,114.7,-24.8,116.5,-24.8,118.2,-24.8,120,-24.8,121.8,-24.8,123.5,-24.8,125.3,-24.8,127.1,-24.8,128.8,-24.8,130.6,-24.8,132.4,-24.8,134.1,-24.8,135.9,-24.8,137.6,-24.8,139.4,-24.8,141.2,-24.8,142.9,-24.8,144.7,-24.8,146.5,-24.8,148.2,-24.8,150,-24.8,151.8,-24.8,-69.6,-23.2,-67.8,-23.2,-66.1,-23.2,-64.3,-23.2,-62.6,-23.2,-60.9,-23.2,-59.1,-23.2,-57.4,-23.2,-55.7,-23.2,-53.9,-23.2,-52.2,-23.2,-50.4,-23.2,-48.7,-23.2,-47,-23.2,-45.2,-23.2,15.7,-23.2,17.4,-23.2,19.1,-23.2,20.9,-23.2,22.6,-23.2,24.3,-23.2,26.1,-23.2,27.8,-23.2,29.6,-23.2,31.3,-23.2,33,-23.2,34.8,-23.2,45.2,-23.2,47,-23.2,114.8,-23.2,116.5,-23.2,118.3,-23.2,120,-23.2,121.7,-23.2,123.5,-23.2,125.2,-23.2,127,-23.2,128.7,-23.2,130.4,-23.2,132.2,-23.2,133.9,-23.2,135.7,-23.2,137.4,-23.2,139.1,-23.2,140.9,-23.2,142.6,-23.2,144.3,-23.2,146.1,-23.2,147.8,-23.2,149.6,-23.2,-69.8,-21.6,-68,-21.6,-66.3,-21.6,-64.6,-21.6,-62.9,-21.6,-61.1,-21.6,-59.4,-21.6,-57.7,-21.6,-56,-21.6,-54.3,-21.6,-52.5,-21.6,-50.8,-21.6,-49.1,-21.6,-47.4,-21.6,-45.6,-21.6,-43.9,-21.6,-42.2,-21.6,14.6,-21.6,16.4,-21.6,18.1,-21.6,19.8,-21.6,21.5,-21.6,23.3,-21.6,25,-21.6,26.7,-21.6,28.4,-21.6,30.1,-21.6,31.9,-21.6,33.6,-21.6,43.9,-21.6,45.6,-21.6,47.4,-21.6,116.3,-21.6,118,-21.6,119.7,-21.6,121.4,-21.6,123.2,-21.6,124.9,-21.6,126.6,-21.6,128.3,-21.6,130,-21.6,131.8,-21.6,133.5,-21.6,135.2,-21.6,136.9,-21.6,138.7,-21.6,140.4,-21.6,142.1,-21.6,143.8,-21.6,145.6,-21.6,147.3,-21.6,149,-21.6,166.2,-21.6,-70,-20,-68.2,-20,-66.5,-20,-64.8,-20,-63.1,-20,-61.4,-20,-59.7,-20,-58,-20,-56.3,-20,-54.6,-20,-52.9,-20,-51.2,-20,-49.5,-20,-47.8,-20,-46.1,-20,-44.4,-20,-42.7,-20,-40.9,-20,13.6,-20,15.4,-20,17.1,-20,18.8,-20,20.5,-20,22.2,-20,23.9,-20,25.6,-20,27.3,-20,29,-20,30.7,-20,32.4,-20,34.1,-20,46.1,-20,47.8,-20,119.4,-20,121.1,-20,122.8,-20,124.5,-20,126.3,-20,128,-20,129.7,-20,131.4,-20,133.1,-20,134.8,-20,136.5,-20,138.2,-20,139.9,-20,141.6,-20,143.3,-20,145,-20,146.7,-20,-70.1,-18.4,-68.5,-18.4,-66.8,-18.4,-65.1,-18.4,-63.4,-18.4,-61.7,-18.4,-60,-18.4,-58.3,-18.4,-56.6,-18.4,-54.9,-18.4,-53.2,-18.4,-51.5,-18.4,-49.9,-18.4,-48.2,-18.4,-46.5,-18.4,-44.8,-18.4,-43.1,-18.4,-41.4,-18.4,-39.7,-18.4,12.7,-18.4,14.4,-18.4,16.1,-18.4,17.7,-18.4,19.4,-18.4,21.1,-18.4,22.8,-18.4,24.5,-18.4,26.2,-18.4,27.9,-18.4,29.6,-18.4,31.3,-18.4,33,-18.4,34.6,-18.4,36.3,-18.4,44.8,-18.4,46.5,-18.4,48.2,-18.4,122.5,-18.4,124.2,-18.4,125.9,-18.4,127.6,-18.4,129.3,-18.4,131,-18.4,132.7,-18.4,134.4,-18.4,136.1,-18.4,137.7,-18.4,139.4,-18.4,141.1,-18.4,142.8,-18.4,144.5,-18.4,-72,-16.8,-70.3,-16.8,-68.7,-16.8,-67,-16.8,-65.3,-16.8,-63.6,-16.8,-62,-16.8,-60.3,-16.8,-58.6,-16.8,-56.9,-16.8,-55.3,-16.8,-53.6,-16.8,-51.9,-16.8,-50.2,-16.8,-48.6,-16.8,-46.9,-16.8,-45.2,-16.8,-43.5,-16.8,-41.9,-16.8,-40.2,-16.8,11.7,-16.8,13.4,-16.8,15.1,-16.8,16.7,-16.8,18.4,-16.8,20.1,-16.8,21.8,-16.8,23.4,-16.8,25.1,-16.8,26.8,-16.8,28.5,-16.8,30.1,-16.8,31.8,-16.8,33.5,-16.8,35.2,-16.8,36.8,-16.8,38.5,-16.8,45.2,-16.8,46.9,-16.8,48.6,-16.8,123.9,-16.8,125.6,-16.8,127.3,-16.8,128.9,-16.8,130.6,-16.8,132.3,-16.8,134,-16.8,135.6,-16.8,137.3,-16.8,142.3,-16.8,144,-16.8,179.2,-16.8,-73.8,-15.2,-72.2,-15.2,-70.5,-15.2,-68.8,-15.2,-67.2,-15.2,-65.5,-15.2,-63.9,-15.2,-62.2,-15.2,-60.6,-15.2,-58.9,-15.2,-57.2,-15.2,-55.6,-15.2,-53.9,-15.2,-52.3,-15.2,-50.6,-15.2,-48.9,-15.2,-47.3,-15.2,-45.6,-15.2,-44,-15.2,-42.3,-15.2,-40.6,-15.2,-39,-15.2,12.4,-15.2,14.1,-15.2,15.8,-15.2,17.4,-15.2,19.1,-15.2,20.7,-15.2,22.4,-15.2,24.1,-15.2,25.7,-15.2,27.4,-15.2,29,-15.2,30.7,-15.2,32.4,-15.2,34,-15.2,35.7,-15.2,37.3,-15.2,39,-15.2,47.3,-15.2,48.9,-15.2,125.3,-15.2,126.9,-15.2,128.6,-15.2,130.2,-15.2,131.9,-15.2,133.5,-15.2,135.2,-15.2,141.8,-15.2,143.5,-15.2,145.2,-15.2,166.7,-15.2,-75.6,-13.6,-74,-13.6,-72.3,-13.6,-70.7,-13.6,-69,-13.6,-67.4,-13.6,-65.8,-13.6,-64.1,-13.6,-62.5,-13.6,-60.8,-13.6,-59.2,-13.6,-57.5,-13.6,-55.9,-13.6,-54.2,-13.6,-52.6,-13.6,-51,-13.6,-49.3,-13.6,-47.7,-13.6,-46,-13.6,-44.4,-13.6,-42.7,-13.6,-41.1,-13.6,-39.5,-13.6,13.2,-13.6,14.8,-13.6,16.4,-13.6,18.1,-13.6,19.7,-13.6,21.4,-13.6,23,-13.6,24.7,-13.6,26.3,-13.6,27.9,-13.6,29.6,-13.6,31.2,-13.6,32.9,-13.6,34.5,-13.6,36.2,-13.6,37.8,-13.6,39.5,-13.6,49.3,-13.6,131.5,-13.6,133.2,-13.6,134.8,-13.6,143,-13.6,-76.9,-12,-75.3,-12,-73.6,-12,-72,-12,-70.4,-12,-68.7,-12,-67.1,-12,-65.5,-12,-63.8,-12,-62.2,-12,-60.5,-12,-58.9,-12,-57.3,-12,-55.6,-12,-54,-12,-52.4,-12,-50.7,-12,-49.1,-12,-47.5,-12,-45.8,-12,-44.2,-12,-42.5,-12,-40.9,-12,-39.3,-12,-37.6,-12,14.7,-12,16.4,-12,18,-12,19.6,-12,21.3,-12,22.9,-12,24.5,-12,26.2,-12,27.8,-12,29.5,-12,31.1,-12,32.7,-12,34.4,-12,36,-12,37.6,-12,39.3,-12,134.2,-12,135.8,-12,142.4,-12,-76.6,-10.4,-74.9,-10.4,-73.3,-10.4,-71.7,-10.4,-70,-10.4,-68.4,-10.4,-66.8,-10.4,-65.2,-10.4,-63.5,-10.4,-61.9,-10.4,-60.3,-10.4,-58.6,-10.4,-57,-10.4,-55.4,-10.4,-53.8,-10.4,-52.1,-10.4,-50.5,-10.4,-48.9,-10.4,-47.2,-10.4,-45.6,-10.4,-44,-10.4,-42.4,-10.4,-40.7,-10.4,-39.1,-10.4,-37.5,-10.4,14.7,-10.4,16.3,-10.4,17.9,-10.4,19.5,-10.4,21.2,-10.4,22.8,-10.4,24.4,-10.4,26.1,-10.4,27.7,-10.4,29.3,-10.4,31,-10.4,32.6,-10.4,34.2,-10.4,35.8,-10.4,37.5,-10.4,39.1,-10.4,149.9,-10.4,-77.8,-8.8,-76.2,-8.8,-74.6,-8.8,-73,-8.8,-71.4,-8.8,-69.7,-8.8,-68.1,-8.8,-66.5,-8.8,-64.9,-8.8,-63.2,-8.8,-61.6,-8.8,-60,-8.8,-58.4,-8.8,-56.8,-8.8,-55.1,-8.8,-53.5,-8.8,-51.9,-8.8,-50.3,-8.8,-48.6,-8.8,-47,-8.8,-45.4,-8.8,-43.8,-8.8,-42.2,-8.8,-40.5,-8.8,-38.9,-8.8,-37.3,-8.8,-35.7,-8.8,14.6,-8.8,16.2,-8.8,17.8,-8.8,19.5,-8.8,21.1,-8.8,22.7,-8.8,24.3,-8.8,25.9,-8.8,27.6,-8.8,29.2,-8.8,30.8,-8.8,32.4,-8.8,34.1,-8.8,35.7,-8.8,37.3,-8.8,38.9,-8.8,118.4,-8.8,120,-8.8,121.6,-8.8,126.5,-8.8,141.1,-8.8,142.7,-8.8,147.6,-8.8,-79.1,-7.2,-77.5,-7.2,-75.9,-7.2,-74.3,-7.2,-72.6,-7.2,-71,-7.2,-69.4,-7.2,-67.8,-7.2,-66.2,-7.2,-64.6,-7.2,-63,-7.2,-61.3,-7.2,-59.7,-7.2,-58.1,-7.2,-56.5,-7.2,-54.9,-7.2,-53.3,-7.2,-51.7,-7.2,-50,-7.2,-48.4,-7.2,-46.8,-7.2,-45.2,-7.2,-43.6,-7.2,-42,-7.2,-40.4,-7.2,-38.7,-7.2,-37.1,-7.2,-35.5,-7.2,12.9,-7.2,14.5,-7.2,16.1,-7.2,17.8,-7.2,19.4,-7.2,21,-7.2,22.6,-7.2,24.2,-7.2,25.8,-7.2,27.4,-7.2,29.1,-7.2,30.7,-7.2,32.3,-7.2,33.9,-7.2,35.5,-7.2,37.1,-7.2,38.7,-7.2,106.5,-7.2,108.2,-7.2,109.8,-7.2,111.4,-7.2,138.8,-7.2,140.4,-7.2,142.1,-7.2,143.7,-7.2,145.3,-7.2,146.9,-7.2,-80.4,-5.6,-78.7,-5.6,-77.1,-5.6,-75.5,-5.6,-73.9,-5.6,-72.3,-5.6,-70.7,-5.6,-69.1,-5.6,-67.5,-5.6,-65.9,-5.6,-64.3,-5.6,-62.7,-5.6,-61.1,-5.6,-59.5,-5.6,-57.9,-5.6,-56.2,-5.6,-54.6,-5.6,-53,-5.6,-51.4,-5.6,-49.8,-5.6,-48.2,-5.6,-46.6,-5.6,-45,-5.6,-43.4,-5.6,-41.8,-5.6,-40.2,-5.6,-38.6,-5.6,-37,-5.6,-35.4,-5.6,12.9,-5.6,14.5,-5.6,16.1,-5.6,17.7,-5.6,19.3,-5.6,20.9,-5.6,22.5,-5.6,24.1,-5.6,25.7,-5.6,27.3,-5.6,28.9,-5.6,30.5,-5.6,32.1,-5.6,33.8,-5.6,35.4,-5.6,37,-5.6,38.6,-5.6,104.5,-5.6,138.2,-5.6,139.8,-5.6,141.4,-5.6,143,-5.6,144.6,-5.6,146.3,-5.6,149.5,-5.6,151.1,-5.6,-79.6,-4,-77.9,-4,-76.3,-4,-74.7,-4,-73.1,-4,-71.5,-4,-69.9,-4,-68.3,-4,-66.7,-4,-65.1,-4,-63.5,-4,-61.9,-4,-60.3,-4,-58.7,-4,-57.1,-4,-55.4,-4,-53.8,-4,-52.2,-4,-50.6,-4,-49,-4,-47.4,-4,-45.8,-4,-44.2,-4,-42.6,-4,-41,-4,-39.4,-4,12.1,-4,13.7,-4,15.3,-4,16.9,-4,18.5,-4,20.1,-4,21.7,-4,23.3,-4,24.9,-4,26.5,-4,28.1,-4,29.7,-4,31.3,-4,32.9,-4,34.6,-4,36.2,-4,37.8,-4,39.4,-4,103.7,-4,105.3,-4,114.9,-4,119.7,-4,135.8,-4,137.4,-4,139,-4,140.6,-4,142.2,-4,143.8,-4,-79.2,-2.4,-77.6,-2.4,-76,-2.4,-74.4,-2.4,-72.8,-2.4,-71.2,-2.4,-69.6,-2.4,-68,-2.4,-66.4,-2.4,-64.8,-2.4,-63.2,-2.4,-61.6,-2.4,-60,-2.4,-58.4,-2.4,-56.8,-2.4,-55.2,-2.4,-53.6,-2.4,-52,-2.4,-50.4,-2.4,-48.8,-2.4,-47.2,-2.4,-45.6,-2.4,10.4,-2.4,12,-2.4,13.6,-2.4,15.2,-2.4,16.8,-2.4,18.4,-2.4,20,-2.4,21.6,-2.4,23.2,-2.4,24.8,-2.4,26.4,-2.4,28,-2.4,29.6,-2.4,31.2,-2.4,32.8,-2.4,34.4,-2.4,36,-2.4,37.6,-2.4,39.2,-2.4,101.6,-2.4,103.2,-2.4,104.8,-2.4,111.2,-2.4,112.8,-2.4,114.4,-2.4,116,-2.4,119.2,-2.4,120.8,-2.4,136.8,-2.4,138.4,-2.4,-80,-0.8,-78.4,-0.8,-76.8,-0.8,-75.2,-0.8,-73.6,-0.8,-72,-0.8,-70.4,-0.8,-68.8,-0.8,-67.2,-0.8,-65.6,-0.8,-64,-0.8,-62.4,-0.8,-60.8,-0.8,-59.2,-0.8,-57.6,-0.8,-56,-0.8,-54.4,-0.8,-52.8,-0.8,-51.2,-0.8,-49.6,-0.8,-48,-0.8,9.6,-0.8,11.2,-0.8,12.8,-0.8,14.4,-0.8,16,-0.8,17.6,-0.8,19.2,-0.8,20.8,-0.8,22.4,-0.8,24,-0.8,25.6,-0.8,27.2,-0.8,28.8,-0.8,30.4,-0.8,32,-0.8,33.6,-0.8,35.2,-0.8,36.8,-0.8,38.4,-0.8,40,-0.8,41.6,-0.8,100.8,-0.8,102.4,-0.8,110.4,-0.8,112,-0.8,113.6,-0.8,115.2,-0.8,116.8,-0.8,120,-0.8,123.2,-0.8,132.8,-0.8,-79.2,0.8,-77.6,0.8,-76,0.8,-74.4,0.8,-72.8,0.8,-71.2,0.8,-69.6,0.8,-68,0.8,-66.4,0.8,-64.8,0.8,-63.2,0.8,-61.6,0.8,-60,0.8,-58.4,0.8,-56.8,0.8,-55.2,0.8,-53.6,0.8,-52,0.8,-50.4,0.8,10.4,0.8,12,0.8,13.6,0.8,15.2,0.8,16.8,0.8,18.4,0.8,20,0.8,21.6,0.8,23.2,0.8,24.8,0.8,26.4,0.8,28,0.8,29.6,0.8,31.2,0.8,32.8,0.8,34.4,0.8,36,0.8,37.6,0.8,39.2,0.8,40.8,0.8,42.4,0.8,100,0.8,101.6,0.8,109.6,0.8,111.2,0.8,112.8,0.8,114.4,0.8,116,0.8,117.6,0.8,120.8,0.8,122.4,0.8,124,0.8,-78.4,2.4,-76.8,2.4,-75.2,2.4,-73.6,2.4,-72,2.4,-70.4,2.4,-68.8,2.4,-67.2,2.4,-65.6,2.4,-64,2.4,-62.4,2.4,-60.8,2.4,-59.2,2.4,-57.6,2.4,-56,2.4,-54.4,2.4,-52.8,2.4,-51.2,2.4,11.2,2.4,12.8,2.4,14.4,2.4,16,2.4,17.6,2.4,19.2,2.4,20.8,2.4,22.4,2.4,24,2.4,25.6,2.4,27.2,2.4,28.8,2.4,30.4,2.4,32,2.4,33.6,2.4,35.2,2.4,36.8,2.4,38.4,2.4,40,2.4,41.6,2.4,43.2,2.4,44.8,2.4,99.2,2.4,102.4,2.4,112,2.4,113.6,2.4,115.2,2.4,116.8,2.4,-77.1,4,-75.5,4,-73.9,4,-72.3,4,-70.7,4,-69.1,4,-67.5,4,-65.9,4,-64.3,4,-62.7,4,-61.1,4,-59.5,4,-57.9,4,-56.2,4,-54.6,4,-53,4,-51.4,4,9.6,4,11.3,4,12.9,4,14.5,4,16.1,4,17.7,4,19.3,4,20.9,4,22.5,4,24.1,4,25.7,4,27.3,4,28.9,4,30.5,4,32.1,4,33.8,4,35.4,4,37,4,38.6,4,40.2,4,41.8,4,43.4,4,45,4,46.6,4,96.4,4,98,4,101.3,4,102.9,4,114.1,4,115.7,4,117.3,4,-76.3,5.6,-74.7,5.6,-73.1,5.6,-71.5,5.6,-69.9,5.6,-68.3,5.6,-66.7,5.6,-65.1,5.6,-63.5,5.6,-61.9,5.6,-60.3,5.6,-58.7,5.6,-57.1,5.6,-55.4,5.6,-53.8,5.6,-8.8,5.6,-7.2,5.6,-5.6,5.6,-4,5.6,-2.4,5.6,-0.8,5.6,5.6,5.6,7.2,5.6,8.8,5.6,10.4,5.6,12.1,5.6,13.7,5.6,15.3,5.6,16.9,5.6,18.5,5.6,20.1,5.6,21.7,5.6,23.3,5.6,24.9,5.6,26.5,5.6,28.1,5.6,29.7,5.6,31.3,5.6,32.9,5.6,34.6,5.6,36.2,5.6,37.8,5.6,39.4,5.6,41,5.6,42.6,5.6,44.2,5.6,45.8,5.6,47.4,5.6,100.4,5.6,102.1,5.6,116.5,5.6,118.1,5.6,-76.7,7.2,-75.1,7.2,-73.5,7.2,-71.8,7.2,-70.2,7.2,-68.6,7.2,-67,7.2,-65.4,7.2,-63.8,7.2,-62.2,7.2,-60.5,7.2,-58.9,7.2,-12.1,7.2,-10.5,7.2,-8.9,7.2,-7.3,7.2,-5.7,7.2,-4,7.2,-2.4,7.2,-0.8,7.2,0.8,7.2,2.4,7.2,4,7.2,5.7,7.2,7.3,7.2,8.9,7.2,10.5,7.2,12.1,7.2,13.7,7.2,15.3,7.2,17,7.2,18.6,7.2,20.2,7.2,21.8,7.2,23.4,7.2,25,7.2,26.6,7.2,28.3,7.2,29.9,7.2,31.5,7.2,33.1,7.2,34.7,7.2,36.3,7.2,37.9,7.2,39.6,7.2,41.2,7.2,42.8,7.2,44.4,7.2,46,7.2,47.6,7.2,49.2,7.2,79.9,7.2,81.5,7.2,125.1,7.2,-83.5,8.8,-81.9,8.8,-80.3,8.8,-78.6,8.8,-75.4,8.8,-73.8,8.8,-72.2,8.8,-70.5,8.8,-68.9,8.8,-67.3,8.8,-65.7,8.8,-64.1,8.8,-62.4,8.8,-60.8,8.8,-12.2,8.8,-10.5,8.8,-8.9,8.8,-7.3,8.8,-5.7,8.8,-4.1,8.8,-2.4,8.8,-0.8,8.8,0.8,8.8,2.4,8.8,4.1,8.8,5.7,8.8,7.3,8.8,8.9,8.8,10.5,8.8,12.2,8.8,13.8,8.8,15.4,8.8,17,8.8,18.6,8.8,20.3,8.8,21.9,8.8,23.5,8.8,25.1,8.8,26.8,8.8,28.4,8.8,30,8.8,31.6,8.8,33.2,8.8,34.9,8.8,36.5,8.8,38.1,8.8,39.7,8.8,41.4,8.8,43,8.8,44.6,8.8,46.2,8.8,47.8,8.8,49.5,8.8,77,8.8,80.3,8.8,99.7,8.8,117.6,8.8,125.7,8.8,-85.5,10.4,-83.9,10.4,-74.1,10.4,-72.5,10.4,-70.9,10.4,-69.2,10.4,-67.6,10.4,-66,10.4,-62.7,10.4,-61.1,10.4,-13.8,10.4,-12.2,10.4,-10.6,10.4,-9,10.4,-7.3,10.4,-5.7,10.4,-4.1,10.4,-2.4,10.4,-0.8,10.4,0.8,10.4,2.4,10.4,4.1,10.4,5.7,10.4,7.3,10.4,9,10.4,10.6,10.4,12.2,10.4,13.8,10.4,15.5,10.4,17.1,10.4,18.7,10.4,20.4,10.4,22,10.4,23.6,10.4,25.2,10.4,26.9,10.4,28.5,10.4,30.1,10.4,31.8,10.4,33.4,10.4,35,10.4,36.7,10.4,38.3,10.4,39.9,10.4,41.5,10.4,43.2,10.4,44.8,10.4,46.4,10.4,48.1,10.4,49.7,10.4,77.4,10.4,79,10.4,98.6,10.4,105.1,10.4,106.7,10.4,123,10.4,-85.9,12,-84.3,12,-15.5,12,-13.9,12,-12.3,12,-10.6,12,-9,12,-7.4,12,-5.7,12,-4.1,12,-2.5,12,-0.8,12,0.8,12,2.5,12,4.1,12,5.7,12,7.4,12,9,12,10.6,12,12.3,12,13.9,12,15.5,12,17.2,12,18.8,12,20.5,12,22.1,12,23.7,12,25.4,12,27,12,28.6,12,30.3,12,31.9,12,33.5,12,35.2,12,36.8,12,38.5,12,40.1,12,41.7,12,76.1,12,77.7,12,79.4,12,99,12,103.9,12,105.5,12,107.2,12,108.8,12,125.2,12,-89.6,13.6,-87.9,13.6,-86.3,13.6,-84.7,13.6,-15.6,13.6,-14,13.6,-12.3,13.6,-10.7,13.6,-9,13.6,-7.4,13.6,-5.8,13.6,-4.1,13.6,-2.5,13.6,-0.8,13.6,0.8,13.6,2.5,13.6,4.1,13.6,5.8,13.6,7.4,13.6,9,13.6,10.7,13.6,12.3,13.6,14,13.6,15.6,13.6,17.3,13.6,18.9,13.6,20.5,13.6,22.2,13.6,23.8,13.6,25.5,13.6,27.1,13.6,28.8,13.6,30.4,13.6,32.1,13.6,33.7,13.6,35.3,13.6,37,13.6,38.6,13.6,40.3,13.6,41.9,13.6,43.6,13.6,45.2,13.6,46.8,13.6,74.8,13.6,76.4,13.6,78.1,13.6,79.7,13.6,99.5,13.6,101.1,13.6,102.7,13.6,104.4,13.6,106,13.6,107.7,13.6,122.5,13.6,-92.9,15.2,-91.2,15.2,-89.6,15.2,-87.9,15.2,-86.3,15.2,-84.6,15.2,-16.6,15.2,-14.9,15.2,-13.3,15.2,-11.6,15.2,-10,15.2,-8.3,15.2,-6.6,15.2,-5,15.2,-3.3,15.2,-1.7,15.2,0,15.2,1.7,15.2,3.3,15.2,5,15.2,6.6,15.2,8.3,15.2,10,15.2,11.6,15.2,13.3,15.2,14.9,15.2,16.6,15.2,18.2,15.2,19.9,15.2,21.6,15.2,23.2,15.2,24.9,15.2,26.5,15.2,28.2,15.2,29.9,15.2,31.5,15.2,33.2,15.2,34.8,15.2,36.5,15.2,38.2,15.2,39.8,15.2,43.1,15.2,44.8,15.2,46.5,15.2,48.1,15.2,49.8,15.2,74.7,15.2,76.3,15.2,78,15.2,79.6,15.2,97.9,15.2,99.5,15.2,101.2,15.2,102.9,15.2,104.5,15.2,106.2,15.2,107.8,15.2,121.1,15.2,-99.6,16.8,-98,16.8,-96.3,16.8,-94.6,16.8,-92.9,16.8,-91.3,16.8,-89.6,16.8,-15.9,16.8,-14.2,16.8,-12.6,16.8,-10.9,16.8,-9.2,16.8,-7.5,16.8,-5.9,16.8,-4.2,16.8,-2.5,16.8,-0.8,16.8,0.8,16.8,2.5,16.8,4.2,16.8,5.9,16.8,7.5,16.8,9.2,16.8,10.9,16.8,12.6,16.8,14.2,16.8,15.9,16.8,17.6,16.8,19.3,16.8,20.9,16.8,22.6,16.8,24.3,16.8,26,16.8,27.6,16.8,29.3,16.8,31,16.8,32.7,16.8,34.3,16.8,36,16.8,37.7,16.8,42.7,16.8,44.4,16.8,46,16.8,47.7,16.8,49.4,16.8,51.1,16.8,52.7,16.8,74.5,16.8,76.2,16.8,77.9,16.8,79.5,16.8,81.2,16.8,94.6,16.8,96.3,16.8,98,16.8,99.6,16.8,101.3,16.8,103,16.8,104.7,16.8,106.3,16.8,121.4,16.8,-103.1,18.4,-101.4,18.4,-99.7,18.4,-98,18.4,-96.3,18.4,-93,18.4,-91.3,18.4,-89.6,18.4,-87.9,18.4,-77.7,18.4,-74.4,18.4,-72.7,18.4,-71,18.4,-65.9,18.4,-15.2,18.4,-13.5,18.4,-11.8,18.4,-10.1,18.4,-8.5,18.4,-6.8,18.4,-5.1,18.4,-3.4,18.4,-1.7,18.4,0,18.4,1.7,18.4,3.4,18.4,5.1,18.4,6.8,18.4,8.5,18.4,10.1,18.4,11.8,18.4,13.5,18.4,15.2,18.4,16.9,18.4,18.6,18.4,20.3,18.4,22,18.4,23.7,18.4,25.4,18.4,27,18.4,28.7,18.4,30.4,18.4,32.1,18.4,33.8,18.4,35.5,18.4,37.2,18.4,42.3,18.4,43.9,18.4,45.6,18.4,47.3,18.4,49,18.4,50.7,18.4,52.4,18.4,54.1,18.4,55.8,18.4,74.4,18.4,76.1,18.4,77.7,18.4,79.4,18.4,81.1,18.4,82.8,18.4,94.6,18.4,96.3,18.4,98,18.4,99.7,18.4,101.4,18.4,103.1,18.4,104.8,18.4,-104.9,20,-103.2,20,-101.5,20,-99.8,20,-98.1,20,-89.6,20,-87.9,20,-75.9,20,-16.2,20,-14.5,20,-12.8,20,-11.1,20,-9.4,20,-7.7,20,-6,20,-4.3,20,-2.6,20,-0.9,20,0.9,20,2.6,20,4.3,20,6,20,7.7,20,9.4,20,11.1,20,12.8,20,14.5,20,16.2,20,17.9,20,19.6,20,21.3,20,23,20,24.7,20,26.4,20,28.2,20,29.9,20,31.6,20,33.3,20,35,20,36.7,20,41.8,20,43.5,20,45.2,20,46.9,20,48.6,20,50.3,20,52,20,53.7,20,55.5,20,57.2,20,74.2,20,75.9,20,77.6,20,79.3,20,81,20,82.7,20,84.5,20,86.2,20,93,20,94.7,20,96.4,20,98.1,20,99.8,20,101.5,20,103.2,20,104.9,20,110,20,-105.1,21.6,-103.3,21.6,-101.6,21.6,-99.9,21.6,-98.2,21.6,-79.2,21.6,-77.5,21.6,-15.5,21.6,-13.8,21.6,-12.1,21.6,-10.3,21.6,-8.6,21.6,-6.9,21.6,-5.2,21.6,-3.4,21.6,-1.7,21.6,0,21.6,1.7,21.6,3.4,21.6,5.2,21.6,6.9,21.6,8.6,21.6,10.3,21.6,12.1,21.6,13.8,21.6,15.5,21.6,17.2,21.6,18.9,21.6,20.7,21.6,22.4,21.6,24.1,21.6,25.8,21.6,27.6,21.6,29.3,21.6,31,21.6,32.7,21.6,34.4,21.6,36.2,21.6,39.6,21.6,41.3,21.6,43.1,21.6,44.8,21.6,46.5,21.6,48.2,21.6,50,21.6,51.7,21.6,53.4,21.6,55.1,21.6,56.8,21.6,58.6,21.6,70.6,21.6,72.3,21.6,74.1,21.6,75.8,21.6,77.5,21.6,79.2,21.6,81,21.6,82.7,21.6,84.4,21.6,86.1,21.6,93,21.6,94.7,21.6,96.5,21.6,98.2,21.6,99.9,21.6,101.6,21.6,103.3,21.6,105.1,21.6,106.8,21.6,110.2,21.6,112,21.6,-105.2,23.2,-103.5,23.2,-101.7,23.2,-100,23.2,-98.3,23.2,-14.8,23.2,-13,23.2,-11.3,23.2,-9.6,23.2,-7.8,23.2,-6.1,23.2,-4.3,23.2,-2.6,23.2,-0.9,23.2,0.9,23.2,2.6,23.2,4.3,23.2,6.1,23.2,7.8,23.2,9.6,23.2,11.3,23.2,13,23.2,14.8,23.2,16.5,23.2,18.3,23.2,20,23.2,21.7,23.2,23.5,23.2,25.2,23.2,27,23.2,28.7,23.2,30.4,23.2,32.2,23.2,33.9,23.2,39.1,23.2,40.9,23.2,42.6,23.2,44.3,23.2,46.1,23.2,47.8,23.2,49.6,23.2,51.3,23.2,53,23.2,54.8,23.2,56.5,23.2,58.3,23.2,70.4,23.2,72.2,23.2,73.9,23.2,75.7,23.2,77.4,23.2,79.1,23.2,80.9,23.2,82.6,23.2,84.3,23.2,86.1,23.2,87.8,23.2,89.6,23.2,91.3,23.2,93,23.2,94.8,23.2,96.5,23.2,98.3,23.2,100,23.2,101.7,23.2,103.5,23.2,105.2,23.2,107,23.2,108.7,23.2,110.4,23.2,112.2,23.2,113.9,23.2,115.7,23.2,120.9,23.2,-112.1,24.8,-106.8,24.8,-105,24.8,-103.2,24.8,-101.5,24.8,-99.7,24.8,-97.9,24.8,-13.2,24.8,-11.5,24.8,-9.7,24.8,-7.9,24.8,-6.2,24.8,-4.4,24.8,-2.6,24.8,-0.9,24.8,0.9,24.8,2.6,24.8,4.4,24.8,6.2,24.8,7.9,24.8,9.7,24.8,11.5,24.8,13.2,24.8,15,24.8,16.8,24.8,18.5,24.8,20.3,24.8,22.1,24.8,23.8,24.8,25.6,24.8,27.4,24.8,29.1,24.8,30.9,24.8,32.6,24.8,34.4,24.8,37.9,24.8,39.7,24.8,41.5,24.8,43.2,24.8,45,24.8,46.8,24.8,48.5,24.8,50.3,24.8,55.6,24.8,67.9,24.8,69.7,24.8,71.5,24.8,73.2,24.8,75,24.8,76.8,24.8,78.5,24.8,80.3,24.8,82.1,24.8,83.8,24.8,85.6,24.8,87.4,24.8,89.1,24.8,90.9,24.8,92.6,24.8,94.4,24.8,96.2,24.8,97.9,24.8,99.7,24.8,101.5,24.8,103.2,24.8,105,24.8,106.8,24.8,108.5,24.8,110.3,24.8,112.1,24.8,113.8,24.8,115.6,24.8,117.4,24.8,-112.3,26.4,-108.7,26.4,-106.9,26.4,-105.1,26.4,-103.4,26.4,-101.6,26.4,-99.8,26.4,-98,26.4,-82,26.4,-80.2,26.4,-12.5,26.4,-10.7,26.4,-8.9,26.4,-7.1,26.4,-5.3,26.4,-3.6,26.4,-1.8,26.4,0,26.4,1.8,26.4,3.6,26.4,5.3,26.4,7.1,26.4,8.9,26.4,10.7,26.4,12.5,26.4,14.3,26.4,16,26.4,17.8,26.4,19.6,26.4,21.4,26.4,23.2,26.4,25,26.4,26.7,26.4,28.5,26.4,30.3,26.4,32.1,26.4,33.9,26.4,37.4,26.4,39.2,26.4,41,26.4,42.8,26.4,44.6,26.4,46.3,26.4,48.1,26.4,49.9,26.4,58.8,26.4,60.6,26.4,62.4,26.4,64.2,26.4,65.9,26.4,67.7,26.4,69.5,26.4,71.3,26.4,73.1,26.4,74.9,26.4,76.6,26.4,78.4,26.4,80.2,26.4,82,26.4,83.8,26.4,85.5,26.4,87.3,26.4,89.1,26.4,90.9,26.4,92.7,26.4,94.5,26.4,96.2,26.4,98,26.4,99.8,26.4,101.6,26.4,103.4,26.4,105.1,26.4,106.9,26.4,108.7,26.4,110.5,26.4,112.3,26.4,114.1,26.4,115.8,26.4,117.6,26.4,119.4,26.4,-114,28,-110.4,28,-108.5,28,-106.7,28,-104.9,28,-103.1,28,-101.3,28,-99.5,28,-97.7,28,-81.4,28,-12.7,28,-10.9,28,-9,28,-7.2,28,-5.4,28,-3.6,28,-1.8,28,0,28,1.8,28,3.6,28,5.4,28,7.2,28,9,28,10.9,28,12.7,28,14.5,28,16.3,28,18.1,28,19.9,28,21.7,28,23.5,28,25.3,28,27.1,28,28.9,28,30.8,28,32.6,28,36.2,28,38,28,39.8,28,41.6,28,43.4,28,45.2,28,47,28,52.5,28,54.3,28,56.1,28,57.9,28,59.7,28,61.5,28,63.3,28,65.1,28,66.9,28,68.7,28,70.6,28,72.4,28,74.2,28,76,28,77.8,28,79.6,28,81.4,28,83.2,28,85,28,86.8,28,88.6,28,90.5,28,92.3,28,94.1,28,95.9,28,97.7,28,99.5,28,101.3,28,103.1,28,104.9,28,106.7,28,108.5,28,110.4,28,112.2,28,114,28,115.8,28,117.6,28,119.4,28,-112,29.6,-110.2,29.6,-108.4,29.6,-106.5,29.6,-104.7,29.6,-102.9,29.6,-101,29.6,-99.2,29.6,-97.3,29.6,-95.5,29.6,-90,29.6,-82.7,29.6,-9.2,29.6,-7.3,29.6,-5.5,29.6,-3.7,29.6,-1.8,29.6,0,29.6,1.8,29.6,3.7,29.6,5.5,29.6,7.3,29.6,9.2,29.6,11,29.6,12.9,29.6,14.7,29.6,16.5,29.6,18.4,29.6,20.2,29.6,22,29.6,23.9,29.6,25.7,29.6,27.6,29.6,29.4,29.6,31.2,29.6,33.1,29.6,34.9,29.6,36.7,29.6,38.6,29.6,40.4,29.6,42.2,29.6,44.1,29.6,45.9,29.6,47.8,29.6,51.4,29.6,53.3,29.6,55.1,29.6,56.9,29.6,58.8,29.6,60.6,29.6,62.4,29.6,64.3,29.6,66.1,29.6,68,29.6,69.8,29.6,71.6,29.6,73.5,29.6,75.3,29.6,77.1,29.6,79,29.6,80.8,29.6,82.7,29.6,84.5,29.6,86.3,29.6,88.2,29.6,90,29.6,91.8,29.6,93.7,29.6,95.5,29.6,97.3,29.6,99.2,29.6,101,29.6,102.9,29.6,104.7,29.6,106.5,29.6,108.4,29.6,110.2,29.6,112,29.6,113.9,29.6,115.7,29.6,117.6,29.6,119.4,29.6,121.2,29.6,-115.3,31.2,-111.6,31.2,-109.7,31.2,-107.8,31.2,-105.9,31.2,-104.1,31.2,-102.2,31.2,-100.3,31.2,-98.4,31.2,-96.6,31.2,-94.7,31.2,-92.8,31.2,-90.9,31.2,-89.1,31.2,-87.2,31.2,-85.3,31.2,-83.4,31.2,-81.6,31.2,-8.4,31.2,-6.6,31.2,-4.7,31.2,-2.8,31.2,-0.9,31.2,0.9,31.2,2.8,31.2,4.7,31.2,6.6,31.2,8.4,31.2,10.3,31.2,12.2,31.2,14.1,31.2,15.9,31.2,21.6,31.2,23.4,31.2,25.3,31.2,27.2,31.2,30.9,31.2,34.7,31.2,36.6,31.2,38.4,31.2,40.3,31.2,42.2,31.2,44.1,31.2,45.9,31.2,47.8,31.2,49.7,31.2,51.6,31.2,53.4,31.2,55.3,31.2,57.2,31.2,59.1,31.2,60.9,31.2,62.8,31.2,64.7,31.2,66.6,31.2,68.4,31.2,70.3,31.2,72.2,31.2,74.1,31.2,75.9,31.2,77.8,31.2,79.7,31.2,81.6,31.2,83.4,31.2,85.3,31.2,87.2,31.2,89.1,31.2,90.9,31.2,92.8,31.2,94.7,31.2,96.6,31.2,98.4,31.2,100.3,31.2,102.2,31.2,104.1,31.2,105.9,31.2,107.8,31.2,109.7,31.2,111.6,31.2,113.4,31.2,115.3,31.2,117.2,31.2,119.1,31.2,120.9,31.2,-117.1,32.8,-115.2,32.8,-113.3,32.8,-111.4,32.8,-109.5,32.8,-107.6,32.8,-105.7,32.8,-103.8,32.8,-101.9,32.8,-100,32.8,-98.1,32.8,-96.2,32.8,-94.3,32.8,-92.4,32.8,-90.5,32.8,-88.6,32.8,-86.7,32.8,-84.8,32.8,-82.9,32.8,-81,32.8,-8.6,32.8,-6.7,32.8,-4.8,32.8,-2.9,32.8,-1,32.8,1,32.8,2.9,32.8,4.8,32.8,6.7,32.8,8.6,32.8,10.5,32.8,12.4,32.8,35.2,32.8,37.1,32.8,39,32.8,41,32.8,42.9,32.8,44.8,32.8,46.7,32.8,48.6,32.8,50.5,32.8,52.4,32.8,54.3,32.8,56.2,32.8,58.1,32.8,60,32.8,61.9,32.8,63.8,32.8,65.7,32.8,67.6,32.8,69.5,32.8,71.4,32.8,73.3,32.8,75.2,32.8,77.1,32.8,79,32.8,81,32.8,82.9,32.8,84.8,32.8,86.7,32.8,88.6,32.8,90.5,32.8,92.4,32.8,94.3,32.8,96.2,32.8,98.1,32.8,100,32.8,101.9,32.8,103.8,32.8,105.7,32.8,107.6,32.8,109.5,32.8,111.4,32.8,113.3,32.8,115.2,32.8,117.1,32.8,119,32.8,121,32.8,130.5,32.8,-119,34.4,-117.1,34.4,-115.2,34.4,-113.2,34.4,-111.3,34.4,-109.4,34.4,-107.4,34.4,-105.5,34.4,-103.5,34.4,-101.6,34.4,-99.7,34.4,-97.7,34.4,-95.8,34.4,-93.9,34.4,-91.9,34.4,-90,34.4,-88.1,34.4,-86.1,34.4,-84.2,34.4,-82.3,34.4,-80.3,34.4,-78.4,34.4,-4.8,34.4,-2.9,34.4,-1,34.4,1,34.4,2.9,34.4,4.8,34.4,6.8,34.4,8.7,34.4,37.7,34.4,39.7,34.4,41.6,34.4,43.5,34.4,45.5,34.4,47.4,34.4,49.4,34.4,51.3,34.4,53.2,34.4,55.2,34.4,57.1,34.4,59,34.4,61,34.4,62.9,34.4,64.8,34.4,66.8,34.4,68.7,34.4,70.6,34.4,72.6,34.4,74.5,34.4,76.5,34.4,78.4,34.4,80.3,34.4,82.3,34.4,84.2,34.4,86.1,34.4,88.1,34.4,90,34.4,91.9,34.4,93.9,34.4,95.8,34.4,97.7,34.4,99.7,34.4,101.6,34.4,103.5,34.4,105.5,34.4,107.4,34.4,109.4,34.4,111.3,34.4,113.2,34.4,115.2,34.4,117.1,34.4,119,34.4,132.6,34.4,136.5,34.4,-120.7,36,-118.7,36,-116.7,36,-114.7,36,-112.7,36,-110.8,36,-108.8,36,-106.8,36,-104.8,36,-102.9,36,-100.9,36,-98.9,36,-96.9,36,-94.9,36,-93,36,-91,36,-89,36,-87,36,-85.1,36,-83.1,36,-81.1,36,-79.1,36,-77.1,36,2,36,4,36,5.9,36,7.9,36,9.9,36,37.6,36,39.6,36,41.5,36,43.5,36,45.5,36,47.5,36,49.5,36,51.4,36,53.4,36,55.4,36,57.4,36,59.3,36,61.3,36,63.3,36,65.3,36,67.3,36,69.2,36,71.2,36,73.2,36,75.2,36,77.1,36,79.1,36,81.1,36,83.1,36,85.1,36,87,36,89,36,91,36,93,36,94.9,36,96.9,36,98.9,36,100.9,36,102.9,36,104.8,36,106.8,36,108.8,36,110.8,36,112.7,36,114.7,36,116.7,36,118.7,36,126.6,36,128.6,36,136.5,36,138.5,36,140.4,36,-122.4,37.6,-120.3,37.6,-118.3,37.6,-116.3,37.6,-114.3,37.6,-112.2,37.6,-110.2,37.6,-108.2,37.6,-106.2,37.6,-104.2,37.6,-102.1,37.6,-100.1,37.6,-98.1,37.6,-96.1,37.6,-94,37.6,-92,37.6,-90,37.6,-88,37.6,-86,37.6,-83.9,37.6,-81.9,37.6,-79.9,37.6,-77.9,37.6,-75.8,37.6,-7.1,37.6,-5.1,37.6,-3,37.6,-1,37.6,13.1,37.6,15.2,37.6,23.3,37.6,27.3,37.6,29.3,37.6,31.3,37.6,33.4,37.6,35.4,37.6,37.4,37.6,39.4,37.6,41.5,37.6,43.5,37.6,45.5,37.6,47.5,37.6,55.6,37.6,57.6,37.6,59.7,37.6,61.7,37.6,63.7,37.6,65.7,37.6,67.8,37.6,69.8,37.6,71.8,37.6,73.8,37.6,75.8,37.6,77.9,37.6,79.9,37.6,81.9,37.6,83.9,37.6,86,37.6,88,37.6,90,37.6,92,37.6,94,37.6,96.1,37.6,98.1,37.6,100.1,37.6,102.1,37.6,104.2,37.6,106.2,37.6,108.2,37.6,110.2,37.6,112.2,37.6,114.3,37.6,116.3,37.6,118.3,37.6,126.4,37.6,128.4,37.6,138.5,37.6,140.6,37.6,-122.1,39.2,-120,39.2,-117.9,39.2,-115.9,39.2,-113.8,39.2,-111.7,39.2,-109.7,39.2,-107.6,39.2,-105.5,39.2,-103.4,39.2,-101.4,39.2,-99.3,39.2,-97.2,39.2,-95.2,39.2,-93.1,39.2,-91,39.2,-89,39.2,-86.9,39.2,-84.8,39.2,-82.8,39.2,-80.7,39.2,-78.6,39.2,-76.6,39.2,-8.3,39.2,-6.2,39.2,-4.1,39.2,-2.1,39.2,16.6,39.2,20.7,39.2,22.8,39.2,26.9,39.2,29,39.2,31,39.2,33.1,39.2,35.2,39.2,37.2,39.2,39.3,39.2,41.4,39.2,43.4,39.2,45.5,39.2,47.6,39.2,53.8,39.2,55.9,39.2,57.9,39.2,60,39.2,62.1,39.2,64.1,39.2,66.2,39.2,68.3,39.2,70.3,39.2,72.4,39.2,74.5,39.2,76.6,39.2,78.6,39.2,80.7,39.2,82.8,39.2,84.8,39.2,86.9,39.2,89,39.2,91,39.2,93.1,39.2,95.2,39.2,97.2,39.2,99.3,39.2,101.4,39.2,103.4,39.2,105.5,39.2,107.6,39.2,109.7,39.2,111.7,39.2,113.8,39.2,115.9,39.2,117.9,39.2,122.1,39.2,126.2,39.2,140.7,39.2,-123.9,40.8,-121.8,40.8,-119.6,40.8,-117.5,40.8,-115.4,40.8,-113.3,40.8,-111.2,40.8,-109.1,40.8,-106.9,40.8,-104.8,40.8,-102.7,40.8,-100.6,40.8,-98.5,40.8,-96.4,40.8,-94.2,40.8,-92.1,40.8,-90,40.8,-87.9,40.8,-85.8,40.8,-83.6,40.8,-81.5,40.8,-79.4,40.8,-77.3,40.8,-75.2,40.8,-73.1,40.8,-7.4,40.8,-5.3,40.8,-3.2,40.8,-1.1,40.8,9.5,40.8,15.9,40.8,20.1,40.8,22.2,40.8,26.5,40.8,30.7,40.8,32.8,40.8,34.9,40.8,37.1,40.8,39.2,40.8,41.3,40.8,43.4,40.8,45.5,40.8,47.6,40.8,56.1,40.8,58.2,40.8,60.4,40.8,62.5,40.8,64.6,40.8,66.7,40.8,68.8,40.8,70.9,40.8,73.1,40.8,75.2,40.8,77.3,40.8,79.4,40.8,81.5,40.8,83.6,40.8,85.8,40.8,87.9,40.8,90,40.8,92.1,40.8,94.2,40.8,96.4,40.8,98.5,40.8,100.6,40.8,102.7,40.8,104.8,40.8,106.9,40.8,109.1,40.8,111.2,40.8,113.3,40.8,115.4,40.8,117.5,40.8,119.6,40.8,123.9,40.8,126,40.8,128.1,40.8,140.8,40.8,-123.6,42.4,-121.4,42.4,-119.3,42.4,-117.1,42.4,-114.9,42.4,-112.8,42.4,-110.6,42.4,-108.4,42.4,-106.3,42.4,-104.1,42.4,-101.9,42.4,-99.8,42.4,-97.6,42.4,-95.4,42.4,-93.3,42.4,-91.1,42.4,-88.9,42.4,-86.7,42.4,-84.6,42.4,-82.4,42.4,-80.2,42.4,-78.1,42.4,-75.9,42.4,-73.7,42.4,-71.6,42.4,-8.7,42.4,-6.5,42.4,-4.3,42.4,-2.2,42.4,0,42.4,2.2,42.4,8.7,42.4,13,42.4,19.5,42.4,21.7,42.4,23.9,42.4,26,42.4,43.4,42.4,45.5,42.4,47.7,42.4,54.2,42.4,56.4,42.4,58.6,42.4,60.7,42.4,62.9,42.4,65.1,42.4,67.2,42.4,69.4,42.4,71.6,42.4,73.7,42.4,75.9,42.4,78.1,42.4,80.2,42.4,82.4,42.4,84.6,42.4,86.7,42.4,88.9,42.4,91.1,42.4,93.3,42.4,95.4,42.4,97.6,42.4,99.8,42.4,101.9,42.4,104.1,42.4,106.3,42.4,108.4,42.4,110.6,42.4,112.8,42.4,114.9,42.4,117.1,42.4,119.3,42.4,121.4,42.4,123.6,42.4,125.8,42.4,128,42.4,130.1,42.4,141,42.4,143.1,42.4,-123.3,44,-121.1,44,-118.9,44,-116.7,44,-114.4,44,-112.2,44,-110,44,-107.8,44,-105.6,44,-103.3,44,-101.1,44,-98.9,44,-96.7,44,-94.4,44,-92.2,44,-90,44,-87.8,44,-85.6,44,-83.3,44,-81.1,44,-78.9,44,-76.7,44,-74.4,44,-72.2,44,-70,44,-65.6,44,-1.1,44,1.1,44,3.3,44,5.6,44,7.8,44,10,44,12.2,44,16.7,44,18.9,44,21.1,44,23.3,44,25.6,44,27.8,44,41.1,44,43.3,44,45.6,44,52.2,44,54.4,44,56.7,44,58.9,44,61.1,44,63.3,44,65.6,44,67.8,44,70,44,72.2,44,74.4,44,76.7,44,78.9,44,81.1,44,83.3,44,85.6,44,87.8,44,90,44,92.2,44,94.4,44,96.7,44,98.9,44,101.1,44,103.3,44,105.6,44,107.8,44,110,44,112.2,44,114.4,44,116.7,44,118.9,44,121.1,44,123.3,44,125.6,44,127.8,44,130,44,132.2,44,134.4,44,143.3,44,-122.7,45.6,-120.4,45.6,-118.1,45.6,-115.8,45.6,-113.5,45.6,-111.2,45.6,-108.9,45.6,-106.6,45.6,-104.3,45.6,-102,45.6,-99.7,45.6,-97.5,45.6,-95.2,45.6,-92.9,45.6,-90.6,45.6,-88.3,45.6,-86,45.6,-83.7,45.6,-81.4,45.6,-79.1,45.6,-76.8,45.6,-74.5,45.6,-72.2,45.6,-69.9,45.6,-67.6,45.6,-65.4,45.6,-63.1,45.6,-60.8,45.6,-1.1,45.6,1.1,45.6,3.4,45.6,5.7,45.6,8,45.6,10.3,45.6,12.6,45.6,14.9,45.6,17.2,45.6,19.5,45.6,21.8,45.6,24.1,45.6,26.4,45.6,28.7,45.6,33.2,45.6,37.8,45.6,40.1,45.6,42.4,45.6,44.7,45.6,47,45.6,53.9,45.6,56.2,45.6,58.5,45.6,60.8,45.6,63.1,45.6,65.4,45.6,67.6,45.6,69.9,45.6,72.2,45.6,74.5,45.6,76.8,45.6,79.1,45.6,81.4,45.6,83.7,45.6,86,45.6,88.3,45.6,90.6,45.6,92.9,45.6,95.2,45.6,97.5,45.6,99.7,45.6,102,45.6,104.3,45.6,106.6,45.6,108.9,45.6,111.2,45.6,113.5,45.6,115.8,45.6,118.1,45.6,120.4,45.6,122.7,45.6,125,45.6,127.3,45.6,129.6,45.6,131.8,45.6,134.1,45.6,136.4,45.6,-122.4,47.2,-120,47.2,-117.6,47.2,-115.3,47.2,-112.9,47.2,-110.6,47.2,-108.2,47.2,-105.9,47.2,-103.5,47.2,-101.2,47.2,-98.8,47.2,-96.5,47.2,-94.1,47.2,-91.8,47.2,-89.4,47.2,-87.1,47.2,-84.7,47.2,-82.4,47.2,-80,47.2,-77.6,47.2,-75.3,47.2,-72.9,47.2,-68.2,47.2,-65.9,47.2,-2.4,47.2,0,47.2,2.4,47.2,4.7,47.2,7.1,47.2,9.4,47.2,11.8,47.2,14.1,47.2,16.5,47.2,18.8,47.2,21.2,47.2,23.5,47.2,25.9,47.2,28.2,47.2,30.6,47.2,32.9,47.2,35.3,47.2,37.6,47.2,40,47.2,42.4,47.2,44.7,47.2,47.1,47.2,49.4,47.2,51.8,47.2,54.1,47.2,56.5,47.2,58.8,47.2,61.2,47.2,63.5,47.2,65.9,47.2,68.2,47.2,70.6,47.2,72.9,47.2,75.3,47.2,77.6,47.2,80,47.2,82.4,47.2,84.7,47.2,87.1,47.2,89.4,47.2,91.8,47.2,94.1,47.2,96.5,47.2,98.8,47.2,101.2,47.2,103.5,47.2,105.9,47.2,108.2,47.2,110.6,47.2,112.9,47.2,115.3,47.2,117.6,47.2,120,47.2,122.4,47.2,124.7,47.2,127.1,47.2,129.4,47.2,131.8,47.2,134.1,47.2,136.5,47.2,-124.1,48.8,-121.6,48.8,-119.2,48.8,-116.8,48.8,-114.3,48.8,-111.9,48.8,-109.5,48.8,-107,48.8,-104.6,48.8,-102.2,48.8,-99.7,48.8,-97.3,48.8,-94.9,48.8,-92.4,48.8,-90,48.8,-87.6,48.8,-85.1,48.8,-82.7,48.8,-80.3,48.8,-77.8,48.8,-75.4,48.8,-73,48.8,-70.5,48.8,-65.7,48.8,-58.4,48.8,-55.9,48.8,0,48.8,2.4,48.8,4.9,48.8,7.3,48.8,9.7,48.8,12.2,48.8,14.6,48.8,17,48.8,19.5,48.8,21.9,48.8,24.3,48.8,26.8,48.8,29.2,48.8,31.6,48.8,34.1,48.8,36.5,48.8,38.9,48.8,41.4,48.8,43.8,48.8,46.2,48.8,48.6,48.8,51.1,48.8,53.5,48.8,55.9,48.8,58.4,48.8,60.8,48.8,63.2,48.8,65.7,48.8,68.1,48.8,70.5,48.8,73,48.8,75.4,48.8,77.8,48.8,80.3,48.8,82.7,48.8,85.1,48.8,87.6,48.8,90,48.8,92.4,48.8,94.9,48.8,97.3,48.8,99.7,48.8,102.2,48.8,104.6,48.8,107,48.8,109.5,48.8,111.9,48.8,114.3,48.8,116.8,48.8,119.2,48.8,121.6,48.8,124.1,48.8,126.5,48.8,128.9,48.8,131.4,48.8,133.8,48.8,136.2,48.8,138.6,48.8,-123.4,50.4,-120.8,50.4,-118.3,50.4,-115.8,50.4,-113.3,50.4,-110.8,50.4,-108.3,50.4,-105.7,50.4,-103.2,50.4,-100.7,50.4,-98.2,50.4,-95.7,50.4,-93.1,50.4,-90.6,50.4,-88.1,50.4,-85.6,50.4,-83.1,50.4,-80.6,50.4,-78,50.4,-75.5,50.4,-73,50.4,-70.5,50.4,-68,50.4,-65.5,50.4,-62.9,50.4,-60.4,50.4,-5,50.4,2.5,50.4,5,50.4,7.6,50.4,10.1,50.4,12.6,50.4,15.1,50.4,17.6,50.4,20.1,50.4,22.7,50.4,25.2,50.4,27.7,50.4,30.2,50.4,32.7,50.4,35.2,50.4,37.8,50.4,40.3,50.4,42.8,50.4,45.3,50.4,47.8,50.4,50.3,50.4,52.9,50.4,55.4,50.4,57.9,50.4,60.4,50.4,62.9,50.4,65.5,50.4,68,50.4,70.5,50.4,73,50.4,75.5,50.4,78,50.4,80.6,50.4,83.1,50.4,85.6,50.4,88.1,50.4,90.6,50.4,93.1,50.4,95.7,50.4,98.2,50.4,100.7,50.4,103.2,50.4,105.7,50.4,108.3,50.4,110.8,50.4,113.3,50.4,115.8,50.4,118.3,50.4,120.8,50.4,123.4,50.4,125.9,50.4,128.4,50.4,130.9,50.4,133.4,50.4,135.9,50.4,138.5,50.4,143.5,50.4,-126.9,52,-124.3,52,-121.7,52,-119.1,52,-116.5,52,-114,52,-111.4,52,-108.8,52,-106.2,52,-103.6,52,-101,52,-98.4,52,-95.8,52,-93.2,52,-90.6,52,-88.1,52,-85.5,52,-82.9,52,-77.7,52,-75.1,52,-72.5,52,-69.9,52,-67.3,52,-64.7,52,-62.2,52,-59.6,52,-57,52,-7.8,52,-5.2,52,-2.6,52,0,52,5.2,52,7.8,52,10.4,52,12.9,52,15.5,52,18.1,52,20.7,52,23.3,52,25.9,52,28.5,52,31.1,52,33.7,52,36.3,52,38.8,52,41.4,52,44,52,46.6,52,49.2,52,51.8,52,54.4,52,57,52,59.6,52,62.2,52,64.7,52,67.3,52,69.9,52,72.5,52,75.1,52,77.7,52,80.3,52,82.9,52,85.5,52,88.1,52,90.6,52,93.2,52,95.8,52,98.4,52,101,52,103.6,52,106.2,52,108.8,52,111.4,52,114,52,116.5,52,119.1,52,121.7,52,124.3,52,126.9,52,129.5,52,132.1,52,134.7,52,137.3,52,139.9,52,142.4,52,158,52,-129,53.6,-126.3,53.6,-123.6,53.6,-120.9,53.6,-118.2,53.6,-115.5,53.6,-112.8,53.6,-110.1,53.6,-107.5,53.6,-104.8,53.6,-102.1,53.6,-99.4,53.6,-96.7,53.6,-94,53.6,-91.3,53.6,-88.7,53.6,-86,53.6,-83.3,53.6,-77.9,53.6,-75.2,53.6,-72.5,53.6,-69.9,53.6,-67.2,53.6,-64.5,53.6,-61.8,53.6,-59.1,53.6,-56.4,53.6,-8.1,53.6,-2.7,53.6,0,53.6,8.1,53.6,10.7,53.6,13.4,53.6,16.1,53.6,18.8,53.6,21.5,53.6,24.2,53.6,26.9,53.6,29.6,53.6,32.2,53.6,34.9,53.6,37.6,53.6,40.3,53.6,43,53.6,45.7,53.6,48.4,53.6,51,53.6,53.7,53.6,56.4,53.6,59.1,53.6,61.8,53.6,64.5,53.6,67.2,53.6,69.9,53.6,72.5,53.6,75.2,53.6,77.9,53.6,80.6,53.6,83.3,53.6,86,53.6,88.7,53.6,91.3,53.6,94,53.6,96.7,53.6,99.4,53.6,102.1,53.6,104.8,53.6,107.5,53.6,110.1,53.6,112.8,53.6,115.5,53.6,118.2,53.6,120.9,53.6,123.6,53.6,126.3,53.6,129,53.6,131.6,53.6,134.3,53.6,137,53.6,139.7,53.6,142.4,53.6,158.5,53.6,-161.7,55.2,-130.8,55.2,-128,55.2,-125.2,55.2,-122.3,55.2,-119.5,55.2,-116.7,55.2,-113.9,55.2,-111.1,55.2,-108.3,55.2,-105.5,55.2,-102.7,55.2,-99.8,55.2,-97,55.2,-94.2,55.2,-91.4,55.2,-88.6,55.2,-85.8,55.2,-83,55.2,-77.3,55.2,-74.5,55.2,-71.7,55.2,-68.9,55.2,-66.1,55.2,-63.3,55.2,-60.5,55.2,-4.2,55.2,23.9,55.2,26.7,55.2,29.5,55.2,32.3,55.2,35.2,55.2,38,55.2,40.8,55.2,43.6,55.2,46.4,55.2,49.2,55.2,52,55.2,54.8,55.2,57.7,55.2,60.5,55.2,63.3,55.2,66.1,55.2,68.9,55.2,71.7,55.2,74.5,55.2,77.3,55.2,80.2,55.2,83,55.2,85.8,55.2,88.6,55.2,91.4,55.2,94.2,55.2,97,55.2,99.8,55.2,102.7,55.2,105.5,55.2,108.3,55.2,111.1,55.2,113.9,55.2,116.7,55.2,119.5,55.2,122.3,55.2,125.2,55.2,128,55.2,130.8,55.2,133.6,55.2,156.1,55.2,158.9,55.2,161.7,55.2,-130.2,56.8,-127.3,56.8,-124.4,56.8,-121.5,56.8,-118.5,56.8,-115.6,56.8,-112.7,56.8,-109.8,56.8,-106.8,56.8,-103.9,56.8,-101,56.8,-98,56.8,-95.1,56.8,-92.2,56.8,-89.3,56.8,-74.6,56.8,-71.7,56.8,-68.8,56.8,-65.9,56.8,-62.9,56.8,-4.4,56.8,10.2,56.8,13.2,56.8,16.1,56.8,22,56.8,24.9,56.8,27.8,56.8,30.7,56.8,33.7,56.8,36.6,56.8,39.5,56.8,42.4,56.8,45.4,56.8,48.3,56.8,51.2,56.8,54.1,56.8,57.1,56.8,60,56.8,62.9,56.8,65.9,56.8,68.8,56.8,71.7,56.8,74.6,56.8,77.6,56.8,80.5,56.8,83.4,56.8,86.3,56.8,89.3,56.8,92.2,56.8,95.1,56.8,98,56.8,101,56.8,103.9,56.8,106.8,56.8,109.8,56.8,112.7,56.8,115.6,56.8,118.5,56.8,121.5,56.8,124.4,56.8,127.3,56.8,130.2,56.8,133.2,56.8,136.1,56.8,156.6,56.8,159.5,56.8,162.4,56.8,-157.1,58.4,-154.1,58.4,-135.8,58.4,-132.7,58.4,-129.7,58.4,-126.6,58.4,-123.6,58.4,-120.5,58.4,-117.5,58.4,-114.4,58.4,-111.4,58.4,-108.3,58.4,-105.3,58.4,-102.2,58.4,-99.2,58.4,-96.1,58.4,-93.1,58.4,-77.8,58.4,-74.7,58.4,-71.7,58.4,-68.6,58.4,-65.6,58.4,-4.6,58.4,7.6,58.4,13.7,58.4,25.9,58.4,29,58.4,32,58.4,35.1,58.4,38.1,58.4,41.2,58.4,44.2,58.4,47.3,58.4,50.3,58.4,53.4,58.4,56.4,58.4,59.5,58.4,62.5,58.4,65.6,58.4,68.6,58.4,71.7,58.4,74.7,58.4,77.8,58.4,80.8,58.4,83.9,58.4,86.9,58.4,90,58.4,93.1,58.4,96.1,58.4,99.2,58.4,102.2,58.4,105.3,58.4,108.3,58.4,111.4,58.4,114.4,58.4,117.5,58.4,120.5,58.4,123.6,58.4,126.6,58.4,129.7,58.4,132.7,58.4,135.8,58.4,138.8,58.4,160.2,58.4,-163.9,60,-160.7,60,-157.5,60,-154.3,60,-151.1,60,-141.4,60,-138.2,60,-135,60,-131.8,60,-128.6,60,-125.4,60,-122.1,60,-118.9,60,-115.7,60,-112.5,60,-109.3,60,-106.1,60,-102.9,60,-99.6,60,-96.4,60,-77.1,60,-73.9,60,-70.7,60,-64.3,60,6.4,60,9.6,60,12.9,60,16.1,60,32.1,60,35.4,60,38.6,60,41.8,60,45,60,48.2,60,51.4,60,54.6,60,57.9,60,61.1,60,64.3,60,67.5,60,70.7,60,73.9,60,77.1,60,80.4,60,83.6,60,86.8,60,90,60,93.2,60,96.4,60,99.6,60,102.9,60,106.1,60,109.3,60,112.5,60,115.7,60,118.9,60,122.1,60,125.4,60,128.6,60,131.8,60,135,60,138.2,60,141.4,60,144.6,60,147.9,60,151.1,60,154.3,60,163.9,60,170.4,60,-164.9,61.6,-161.5,61.6,-158.1,61.6,-154.8,61.6,-151.4,61.6,-148,61.6,-144.7,61.6,-141.3,61.6,-137.9,61.6,-134.6,61.6,-131.2,61.6,-127.9,61.6,-124.5,61.6,-121.1,61.6,-117.8,61.6,-114.4,61.6,-111,61.6,-107.7,61.6,-104.3,61.6,-100.9,61.6,-97.6,61.6,-94.2,61.6,-77.4,61.6,-74,61.6,-47.1,61.6,-43.7,61.6,6.7,61.6,10.1,61.6,13.5,61.6,16.8,61.6,23.6,61.6,26.9,61.6,30.3,61.6,33.6,61.6,37,61.6,40.4,61.6,43.7,61.6,47.1,61.6,50.5,61.6,53.8,61.6,57.2,61.6,60.6,61.6,63.9,61.6,67.3,61.6,70.7,61.6,74,61.6,77.4,61.6,80.7,61.6,84.1,61.6,87.5,61.6,90.8,61.6,94.2,61.6,97.6,61.6,100.9,61.6,104.3,61.6,107.7,61.6,111,61.6,114.4,61.6,117.8,61.6,121.1,61.6,124.5,61.6,127.9,61.6,131.2,61.6,134.6,61.6,137.9,61.6,141.3,61.6,144.7,61.6,148,61.6,151.4,61.6,154.8,61.6,161.5,61.6,164.9,61.6,168.2,61.6,171.6,61.6,-169.3,63.2,-162.2,63.2,-158.6,63.2,-155,63.2,-151.5,63.2,-147.9,63.2,-144.4,63.2,-140.8,63.2,-137.2,63.2,-133.7,63.2,-130.1,63.2,-126.5,63.2,-123,63.2,-119.4,63.2,-115.8,63.2,-112.3,63.2,-108.7,63.2,-105.1,63.2,-101.6,63.2,-98,63.2,-94.5,63.2,-90.9,63.2,-69.5,63.2,-65.9,63.2,-48.1,63.2,-44.6,63.2,8.9,63.2,12.5,63.2,16,63.2,23.2,63.2,26.7,63.2,30.3,63.2,33.9,63.2,37.4,63.2,41,63.2,44.6,63.2,48.1,63.2,51.7,63.2,55.2,63.2,58.8,63.2,62.4,63.2,65.9,63.2,69.5,63.2,73.1,63.2,76.6,63.2,80.2,63.2,83.8,63.2,87.3,63.2,90.9,63.2,94.5,63.2,98,63.2,101.6,63.2,105.1,63.2,108.7,63.2,112.3,63.2,115.8,63.2,119.4,63.2,123,63.2,126.5,63.2,130.1,63.2,133.7,63.2,137.2,63.2,140.8,63.2,144.4,63.2,147.9,63.2,151.5,63.2,155,63.2,158.6,63.2,162.2,63.2,165.7,63.2,169.3,63.2,172.9,63.2,176.4,63.2,-174.4,64.8,-163.1,64.8,-159.4,64.8,-155.6,64.8,-151.9,64.8,-148.1,64.8,-144.4,64.8,-140.6,64.8,-136.9,64.8,-133.1,64.8,-129.4,64.8,-125.6,64.8,-121.9,64.8,-118.1,64.8,-114.4,64.8,-110.6,64.8,-106.9,64.8,-103.1,64.8,-99.4,64.8,-95.6,64.8,-91.9,64.8,-88.1,64.8,-84.4,64.8,-76.9,64.8,-73.1,64.8,-69.4,64.8,-50.6,64.8,-46.9,64.8,-43.1,64.8,-20.6,64.8,-16.9,64.8,13.1,64.8,16.9,64.8,20.6,64.8,28.1,64.8,31.9,64.8,43.1,64.8,46.9,64.8,50.6,64.8,54.4,64.8,58.1,64.8,61.9,64.8,65.6,64.8,69.4,64.8,73.1,64.8,76.9,64.8,80.6,64.8,84.4,64.8,88.1,64.8,91.9,64.8,95.6,64.8,99.4,64.8,103.1,64.8,106.9,64.8,110.6,64.8,114.4,64.8,118.1,64.8,121.9,64.8,125.6,64.8,129.4,64.8,133.1,64.8,136.9,64.8,140.6,64.8,144.4,64.8,148.1,64.8,151.9,64.8,155.6,64.8,159.4,64.8,163.1,64.8,166.9,64.8,170.6,64.8,174.4,64.8,178.1,64.8,-180,66.4,-176,66.4,-172,66.4,-164,66.4,-160,66.4,-156,66.4,-152,66.4,-148,66.4,-144,66.4,-140,66.4,-136,66.4,-132,66.4,-128,66.4,-124,66.4,-120,66.4,-116,66.4,-112,66.4,-108,66.4,-104,66.4,-100,66.4,-96,66.4,-92,66.4,-88,66.4,-84,66.4,-72,66.4,-68,66.4,-64,66.4,-52,66.4,-48,66.4,-44,66.4,-40,66.4,-36,66.4,-16,66.4,16,66.4,20,66.4,24,66.4,28,66.4,32,66.4,40,66.4,48,66.4,52,66.4,56,66.4,60,66.4,64,66.4,68,66.4,76,66.4,80,66.4,84,66.4,88,66.4,92,66.4,96,66.4,100,66.4,104,66.4,108,66.4,112,66.4,116,66.4,120,66.4,124,66.4,128,66.4,132,66.4,136,66.4,140,66.4,144,66.4,148,66.4,152,66.4,156,66.4,160,66.4,164,66.4,168,66.4,172,66.4,176,66.4,-177.9,68,-165,68,-160.7,68,-156.4,68,-152.1,68,-147.9,68,-143.6,68,-139.3,68,-135,68,-130.7,68,-126.4,68,-122.1,68,-117.9,68,-105,68,-96.4,68,-92.1,68,-83.6,68,-70.7,68,-66.4,68,-49.3,68,-45,68,-40.7,68,-36.4,68,-32.1,68,19.3,68,23.6,68,27.9,68,32.1,68,36.4,68,45,68,53.6,68,57.9,68,62.1,68,66.4,68,70.7,68,75,68,79.3,68,83.6,68,87.9,68,92.1,68,96.4,68,100.7,68,105,68,109.3,68,113.6,68,117.9,68,122.1,68,126.4,68,130.7,68,135,68,139.3,68,143.6,68,147.9,68,152.1,68,156.4,68,160.7,68,165,68,169.3,68,173.6,68,177.9,68,-159.2,69.6,-154.6,69.6,-150,69.6,-145.4,69.6,-140.8,69.6,-131.5,69.6,-126.9,69.6,-122.3,69.6,-113.1,69.6,-108.5,69.6,-103.8,69.6,-99.2,69.6,-94.6,69.6,-85.4,69.6,-76.2,69.6,-71.5,69.6,-53.1,69.6,-48.5,69.6,-43.8,69.6,-39.2,69.6,-34.6,69.6,-30,69.6,-25.4,69.6,20.8,69.6,25.4,69.6,30,69.6,62.3,69.6,71.5,69.6,76.2,69.6,80.8,69.6,85.4,69.6,90,69.6,94.6,69.6,99.2,69.6,103.8,69.6,108.5,69.6,113.1,69.6,117.7,69.6,122.3,69.6,126.9,69.6,131.5,69.6,136.2,69.6,140.8,69.6,145.4,69.6,150,69.6,154.6,69.6,159.2,69.6,163.8,69.6,173.1,69.6,-115.9,71.2,-111,71.2,-106,71.2,-96.2,71.2,-86.3,71.2,-81.4,71.2,-76.4,71.2,-51.8,71.2,-46.8,71.2,-41.9,71.2,-37,71.2,-32.1,71.2,-27.1,71.2,-22.2,71.2,71.5,71.2,76.4,71.2,81.4,71.2,86.3,71.2,91.2,71.2,96.2,71.2,101.1,71.2,106,71.2,111,71.2,115.9,71.2,120.8,71.2,125.8,71.2,135.6,71.2,140.5,71.2,145.5,71.2,150.4,71.2,-123.6,72.8,-112.8,72.8,-107.5,72.8,-102.1,72.8,-53.7,72.8,-48.4,72.8,-43,72.8,-37.6,72.8,-32.2,72.8,-26.9,72.8,53.7,72.8,69.9,72.8,80.6,72.8,86,72.8,91.3,72.8,96.7,72.8,102.1,72.8,107.5,72.8,112.8,72.8,118.2,72.8,123.6,72.8,-56.1,74.4,-50.2,74.4,-44.3,74.4,-38.4,74.4,-32.5,74.4,-26.6,74.4,-20.7,74.4,56.1,74.4,91.5,74.4,97.4,74.4,103.3,74.4,109.2,74.4,-56.7,76,-50,76,-43.3,76,-36.7,76,-30,76,-23.3,76,63.3,76,103.3,76,110,76,-112.5,77.6,-82.5,77.6,-67.5,77.6,-60,77.6,-52.5,77.6,-45,77.6,-37.5,77.6,-30,77.6,-22.5,77.6,15,77.6,22.5,77.6,-90,79.2,-81.4,79.2,-64.3,79.2,-55.7,79.2,-47.1,79.2,-38.6,79.2,-30,79.2,-21.4,79.2,12.9,79.2,98.6,79.2,-80,80.8,-70,80.8,-60,80.8,-50,80.8,-40,80.8,-30,80.8,-20,80.8,50,80.8,-78,82.4,-66,82.4,-42,82.4,-30,82.4],"places":[["Black Rock City","USA","Americas",40.786,-119.206,"Burning Man: nine burns, 2016–2026 (2016: Icarus, Ohm and Big Imagination 747 art cars; 2017: Trifucta Art Bus, Solar Beatz, Kazbah, Kalliope, Icarus, Trifucta Stage, Playa School, Ooligan Alley (flyer schedule); Pink Mammoth, Playground, PlayAlchemist, Fluffy Cloud, Dusty Delight, BiPolar Express; 2026: ~20 shows incl. Long Feng, Kuker, Hermes, Eden, Polaris, Favela art cars, Black Rock Philharmonic) · Metaverse set, Playground (2020)",1],["New York","USA","Americas",40.7,-73.95,"House of Yes (Elevation season opening, Jan 2019, sold out; Nov 2024) · Cityfox Live at Avant Gardner (29 Feb 2020) · Knockdown Center (NYE 2021) · 99 Scott Ave (Nov 2019) · Superior Ingredients (Katermukke showcase, Nov 2024)",1],["The Hamptons","USA","Americas",40.96,-72.18,"Private event, with Crystal Waters (2023)",0],["San Francisco","USA","Americas",37.77,-122.42,"F8, Icarus Re-Entry (Sep 2016) · 251 Club, with Mathame (Nov 2019) · Public Works, with Be Svendsen (c. 2017)",0],["Rio de Janeiro","Brazil","Americas",-22.91,-43.17,"Techno for Peace, charity night in the favelas (10 Sep 2016)",0],["Los Angeles","USA","Americas",34.05,-118.25,"Le Jardin Hollywood (2019) · NAACH × Le Bohemia (26 Apr 2025) · SBCLTR, Lovestruckk (10 Nov 2019)",0],["Buena Vista Lake","USA","Americas",35.2,-119.3,"Lightning in a Bottle, on the Kuker art car (May 2024)",1],["Burnet, Texas","USA","Americas",30.76,-98.23,"Texas Eclipse, with Kuker and Shamani (Apr 2024)",1],["Dana Point","USA","Americas",33.47,-117.7,"StillWater (2013)",0],["Miami","USA","Americas",25.79,-80.13,"Do Not Sit On The Furniture, Miami Beach (Jan and Aug 2019) · Soundtuary, Day of the Dead (1 Nov 2019) · ATV Records, Art Week closing (Dec 2021)",0],["Sebastian, Florida","USA","Americas",27.82,-80.47,"ChoZen Retreat, Sacbe NYE, with Dear Humans (2024)",0],["Chicago","USA","Americas",41.88,-87.63,"Fame (2021) · 2020 · Intimate Affair, Venue (28 Feb 2020)",0],["St. Louis","USA","Americas",38.63,-90.2,"Nightchaser (7 Nov 2019) · Love Lab, Saint Louis Science Center (11 Dec 2021)",0],["Montréal","Canada","Americas",45.5,-73.57,"Stereo with Jimi Jules (2020) · Newspeak (24 Aug 2019)",1],["Toronto","Canada","Americas",43.65,-79.42,"Böehmer, Día de los Muertos (2019) · PH03 Project (22 Nov 2024)",0],["Vancouver","Canada","Americas",49.28,-123.12,"You Plus One’s Hausparty (7 Mar 2020)",0],["Playa del Carmen","Mexico","Americas",20.63,-87.08,"The BPM Festival: All Day I Dream at Martina, with Lee Burridge (9 Jan 2016)",1],["Chemuyil","Mexico","Americas",20.35,-87.36,"Project Heart, with Be Svendsen (c. 2015)",0],["Puebla","Mexico","Americas",19.04,-98.21,"Hedoné 10th anniversary festival (17–22 Apr 2025)",1],["Tulum","Mexico","Americas",20.21,-87.47,"Y'AM at Casa Tulum, with Sartori (Sat 12 Jan 2019)",0],["San Miguel de Allende","Mexico","Americas",20.91,-100.74,"Long Feng Community (spring 2026)",0],["Colón coast","Panama","Americas",9.55,-79.6,"Tribal Gathering (2020)",0],["Playa Venao","Panama","Americas",7.43,-80.19,"Reactor Venao (spring 2026)",0],["San Salvador","El Salvador","Americas",13.69,-89.22,"The House (2013)",0],["Little Corn Island","Nicaragua","Americas",12.29,-83.06,"Live set with violin, Café Desideri (Feb 2013)",0],["Berlin","Germany","Europe",52.52,13.4,"Ritter Butzke (3000° Wanderzirkus with Kokü, Jan 2012; 3000 Grad nights 2014–18, Surreal Club Festival; Oct 2021) · re:publica (May 2012) · con.vent Adlershof (2012) · Johnny Knüppel, EP release (Jun 2015) · Edelweiss (2013) · Kosmonaut (Apr 2016) · Magdalena (Jul 2016) · Polygon (2016, 2018) · Admiralspalast (9 Sep 2017) · KitKatClub (HEDONÉ Anniversary, 5 Apr 2026) · Suicide Circus · Kater Holzig · Kater Blau (Grr mit Brr, Sasomo, 24 Sep 2017) · Sisyphos, with BEC (c. 2018/19) · Zug der Liebe (2016–) · Klunkerkranich · Stereo Express album release night · AfrikaBurn fundraiser (Apr 2016) · Birgit & Bier (21 Oct 2017) · PREMIUM night, Praegewerk (Jul 2015) · Michalsky’s 50th (2017) · Burning Castle 2020 (Venue, 28 Aug 2020) · Music&art, Suicide Circus (2 Dec 2017) · 3000grad on Tour, Ritter Butzke (22 Oct 2016; 18 Nov 2017) · Into the Desert, Ritter Butzke (16 Apr 2017) · Surreal Club Festival 3017, Ritter Butzke (13–14 Jan 2017) · Marco Remus B-day, Magdalena (12 Nov 2016) · Kellergedeck, Kultstätte Keller (11 Jun 2016) · m ist Offen Opening, Magdalena (26–28 Feb 2016) · Soundsurfer Open Air, Lichtpark (18 Jul 2014) · Bebetta / Spada, Ritter Butzke (17 Jun 2022) · Niconé & Dirty Doering, Ritter Butzke (13 May 2023)",1],["Hamburg","Germany","Europe",53.55,9.99,"Docks (2014–2020; 3000 Grad Wanderzirkus, 12 Feb 2017, 2.5 h live) · Uebel & Gefährlich (Feb and Jul 2019) · 3000 Grad Wanderzirkus, St. Pauli (Feb 2015, Feb 2016) · Elbjazz: Prinzessin Löwenherz (May 2015) · Prinzenbar (May 2015) · WEIRD Boat, MS Koi (ARTEMIDES, 10 Jun 2023) · StrandPauli (Komm tanzen 10 Years, 2024) · WEIRD after-show (10 Jun 2023) · WEIRD Sundaze × Rebellion der Träumer (14 Aug 2022) · Alice im Wunderland, Docks (8 Feb 2020) · WEIRD, Docks (27 Oct 2018) · A Tribe Called Kotori, Uebel & Gefährlich (9 Feb 2019) · Surreal Club Festival 3015, Docks (20 Jan 2015)",1],["Kiel","Germany","Europe",54.32,10.14,"3000 Grad showcase, Traum GmbH, with Dole & Kom (Apr 2016)",0],["Munich","Germany","Europe",48.14,11.58,"Harry Klein (2017, 2019) · Kunsthalle (2018) · Big Harry, Wannda Circus (2019) · Bahnwärter Thiel (2022) · Inhorgenta: show score, P1 night with Lena Meyer-Landrut (2016); Inhorgenta Award gala with Michalsky, Postpalast (19 Feb 2017) · Käfer, Kir Royal night · openings: Talbot Runhof with Nena, Jaguar Land Rover (2015; I-PACE launch 2017), Cotidiano (2016, 2017) · Jim Thompson Europe, 10-year jubilee, Ready Made Collection (24 Mar 2017, 6 h live)",1],["Lärz","Germany","Europe",53.3,12.73,"Fusion Festival (Seebühne with Kokü 2010 and 2012; 2014; Luftschloss 2016; Sonnendeck 2018; 2019 b2b Andre Victor at Bachstelzen; 2024 Palapabar with Haptik) · SOS U.Ground (3000 Grad), Datscha hangar, Kulturkosmos (10 Mar 2018)",1],["Dresden","Germany","Europe",51.05,13.74,"GrooveStation (8 Sep 2017) · GrooveStation (as Schön Schwarz & Kokü from 3 Oct 2008, New Year’s Eve 2008–2010, Sep 2011, Oct 2012; Coq au Vin, 4th birthday Nov 2015; Sep 2014; Nov 2018; reunion Jan 2020) · Landespresseball (with Kokü, 13 Nov 2010) · Staatsschauspiel, Kleines Haus (Feb 2010) and Großes Haus (Sep 2010) · Festspielhaus Hellerau (Apr 2010) · Yes-Party (May 2011) · Lipsiusbau (Nov 2011) · Mitschnitt-Festival (Jul 2012) · Neptunalia III (Aug 2016) · Sektor Evolution (Aug 2016) · Ich und Du Open Air, Puschkin (Jun 2017) · Campuswiese open air, with Dirty Doering (Jun 2013)",1],["Halle (Saale)","Germany","Europe",51.48,11.97,"Charles Bronson (with Kokü, May and Dec 2010, Jun 2012; Herrlich Dunkel, Mar 2012; Bongolicious with Rosco Drum, Nov 2012; Magnolia EP, May 2012; 2012–2015 incl. Absolut Bronson Festival 2014; All Are One showcase, Apr 2019) · Expedition Burg (Jul 2011) · MAZE sessions with Ectoplastic: Reilfest, Turm, Kiosk am Reileck (2013–14) · VANTA Open Air, Bergschenke, with Martin Waslewski (30 Jun 2017) · La Bim (Dec 2017) · Dark Angel · Universitätsklinikum Halle: art exhibition opening in paediatrics (9 Nov 2012) and the 10th Symposium for Pain Medicine (7 Nov 2026) · 3 Jahre Insel der Jugend (11 Apr 2020)",1],["Burgscheidungen","Germany","Europe",51.25,11.66,"Crypto Castle: All is One (May 2022)",0],["Leipzig / Großpösna","Germany","Europe",51.27,12.5,"elipamanoke, 3000 Grad showcase (May 2016) · Mind World (2024) · GFZK and Campusfest, with Ectoplastic’s MAZE (2013)",0],["Magdeburg","Germany","Europe",52.13,11.63,"Church of St. Johann Baptist, Salbke: “Salbke taucht in ein anderes Licht”, with Matthias Marggraff on cello, light art by Visual Noise Artworks (23 Aug 2014) · Triebwerk (Dec 2015) · 3000 Grad Wanderzirkus, Festung Mark (21 Jan 2017)",0],["Nuremberg","Germany","Europe",49.45,11.08,"Rakete, Jeden Tag ein Set live (2018) · Techno für Nürnberg (14 Jun 2019)",1],["Ingolstadt","Germany","Europe",48.77,11.42,"Show",0],["Passau","Germany","Europe",48.57,13.43,"Nackt & Nebel",0],["Rügen","Germany","Europe",54.47,13.57,"Tag am Meer (2024)",0],["Goch","Germany","Europe",51.68,6.16,"Kloster Graefenthal: The Monastery by The Gardens of Babylon (Jul 2018, straight after Boom; 2019), Memento (2023) · 3000 Grad showcase (Aug 2014) · Thuishaven op Reis, Kloster Graefenthal (8 Aug 2014)",1],["Hanover","Germany","Europe",52.37,9.73,"SoSoSo Festival, 3000 Grad (May 2015) · Chez Heinz (18 Mar 2017) · Weidendamm (3000 Grad, 2 Oct 2015; 2018)",1],["Brunswick","Germany","Europe",52.27,10.52,"Eulenglück (Dec 2014, Dec 2015, Jan 2018)",0],["Bremen","Germany","Europe",53.08,8.8,"Pier 2 (2015)",0],["Kierspe","Germany","Europe",51.13,7.59,"Katzensprung Festival, Gut Haarbecke (2019)",0],["Lichterfeld","Germany","Europe",51.62,13.8,"Feel Festival (2015; 2017; Exit Stage 2018; 2019) · Artlake Festival",1],["Pütnitz","Germany","Europe",54.25,12.47,"Pangea Festival (2014, 2015)",0],["Bitterfeld","Germany","Europe",51.63,12.33,"Sputnik Spring Break (2012, with Hartmut Kiss; 2013)",0],["Wittichenau","Germany","Europe",51.38,14.24,"Roxy Club, New Year’s Eve (2013) · Stadtteichfestival (2015) · Wittichenau Open Air, Marktplatz, 400 Jahre Schadowitz, with Lydgen as ARTEMIDES (15 Jun 2024)",0],["Görlitz","Germany","Europe",51.15,14.99,"Nostromo-Club (ARTEMIDES, 2023)",0],["Hoyerswerda","Germany","Europe",51.44,14.24,"Hoy ist bunt Open Air · Coming Home, Block D (21 Dec 2024)",0],["Cologne","Germany","Europe",50.94,6.96,"Heinz Gaul (Aug 2015) · 3000 Grad × JackWho (Jun 2016) · Odonien (Jul 2017) · Reineke Fuchs, Beatverliebt (May 2018)",0],["Rudolstadt","Germany","Europe",50.72,11.34,"Saalgärten, Leuchtkammer Nächte „Musik im Herzen“, live set with E-violin (11 Feb 2017)",0],["Saarbrücken","Germany","Europe",49.24,6.99,"Mauerpfeiffer, Phenomena (25 Mar 2017)",0],["Merzig","Germany","Europe",49.44,6.64,"Villa Tocksberg (many times since 2024)",0],["Frankfurt (Oder)","Germany","Europe",52.32,14.5,"Bucht der Träumer festival, Helenesee (2019, on the bill with Monolink and Oliver Huntemann; Saga stage, b2b Hot Oasis)",0],["Finsterwalde","Germany","Europe",51.63,13.71,"Utopia Festival, Tower (4–6 Sep 2020)",0],["Kassel","Germany","Europe",51.31,9.48,"MAZE with Ectoplastic (Nov 2013) · Anima Festival, A.R.M. (Jun 2015)",0],["Feldberg","Germany","Europe",53.34,13.43,"3000 Grad Festival (2013 with Ectoplastic’s MAZE; 2014, 2016; Waldbühne 2015; Utopia Stage 2017, with Martin Waslewski)",1],["Kühlungsborn","Germany","Europe",54.15,11.75,"SeaBorn Festival, first edition (May 2018)",0],["Peenemünde","Germany","Europe",54.14,13.77,"Meeresrausch Festival, Usedom (with Kokü, Aug 2011; 3000 Grad stage)",0],["Konstanz","Germany","Europe",47.66,9.18,"Campus Festival, Uni-Wald (1–2 Jun 2018)",1],["Heidelberg","Germany","Europe",49.4,8.69,"Jun 2017",0],["Beesenstedt","Germany","Europe",51.57,11.73,"Schloss Beesenstedt: Burning Bär (Feb 2018) · Unfamiliar Festival",0],["Cuxhaven","Germany","Europe",53.78,8.62,"Deichbrand Festival, Seeflughafen (22 Jul 2016)",0],["Kägsdorf","Germany","Europe",54.15,11.7,"Zuparken Festival, Baltic beach (Jun 2014 and later years)",0],["Elend (Harz)","Germany","Europe",51.75,10.68,"Rocken am Brocken (Jul 2016; 2–4 Aug 2018)",0],["Saurach","Germany","Europe",49.13,10.1,"Jungle Beat Festival (28–30 Jul 2017)",0],["Pleinfeld","Germany","Europe",49.1,10.98,"Burning Beach, Brombachsee (16–18 Jun 2017)",1],["Stuttgart","Germany","Europe",48.78,9.18,"Rutual Digital (4 Mar 2017)",0],["Rostock","Germany","Europe",54.09,12.13,"Stadtpalast, with Kokü (Nov 2011) · Peter-Weiss-Haus: Kommt Zusammen Festival (Apr 2014), Because We Are Friends warm-up (8 Apr 2017) · JAZ (3000 Grad, Sep 2015; Mar 2016)",0],["Essen","Germany","Europe",51.46,7.01,"First show in Essen (20 Oct 2017)",0],["Lübeck","Germany","Europe",53.87,10.69,"Hafenglück, main floor (19 Aug 2016)",0],["Chemnitz","Germany","Europe",50.83,12.92,"Sonnendeck Open Air, Alte Spinnerei (20 Aug 2016)",0],["Lorch am Rhein","Germany","Europe",50.04,7.8,"Tropentango (5 Aug 2016)",1],["Ulm","Germany","Europe",48.4,9.99,"Club Rio, with Kollektiv Ost (19 Dec 2014)",0],["Merseburg","Germany","Europe",51.35,11.99,"Tube Club (21 Sep 2013)",0],["Amsterdam","Netherlands","Europe",52.37,4.9,"DGTL (2018) · Paradiso, Pleinvrees on tour 2017 (18 Feb 2017) · Paradiso, Pleinvrees on tour: closing after Andhim and &ME (17 Feb 2018) · ADE (hosted twice; Pleinvrees × Watergate at Westerunie 2018; The Seekers of Light 2022) · Mystic Garden (Jun 2023) · Thuishaven (3000 Grad Winterzirkus, closing night 2 Feb 2014, and Feb 2015; ADE showcase 2015) · Pllek (Nov 2014) · De Marktkantine (La Rêve, 18 Jan 2019; Nov 2019) · KAAP (ADE, 21 Oct 2023: WeR1 “Revolution Rising”, ARTEMIDES set; hosted the WeR1 panel) · Toekomstmuziek · The Other Side (ARTEMIDES, ADE 2023) · Katermukke night (Nov 2019) · Pleinvrees (2016–2018; 4 Jun 2022), where a delayed flight turned into an unplanned back-to-back with Acid Pauli · Komm Schon Alter (11 Jun 2022) · Thuishaven Open Air (Aug 2016) · La Rêve Festival (Jul 2019) · Das Festival, Komm Schon Alter (May 2023) · Plaisirs Sonores, ADE (Oct 2023) · Club Atelier (18 Feb 2023) · Pleinvrees Festival 2020, NDSM (30 May 2020) · Platzangst, Thuishaven (22 Sep 2018) · ADE Special Watergate x Club Feierei, WestWeelde (19 Oct 2018) · Pleinvrees am Strand, Blijburg (3 Jun 2017; 19 May 2018) · La Rêve, Marktkantine (27 Jan 2018) · Thuishaven Wintercircus (22 Jan 2017)",1],["Utrecht","Netherlands","Europe",52.09,5.12,"TivoliVredenburg, Pleinvrees on tour (3 Feb 2018, Area 1, set 01:00–02:00; 1 Feb 2020, live 00:15–01:15) · La Rêve Winterfestival, Central Studios (26 Nov 2022)",1],["Baarlo","Netherlands","Europe",51.33,6.1,"Bosburcht Winter, Kasteel De Berckt (live, 24 Nov 2024)",0],["Lelystad","Netherlands","Europe",52.52,5.43,"WattrWorld Beyond, Batavia Haven (Jul 2021)",0],["Kraggenburg","Netherlands","Europe",52.66,5.9,"Wildeburg, De Kas stage (Fri 7 Jul 2023, set 02:00–04:00, recorded)",1],["Boom","Belgium","Europe",51.09,4.37,"Tomorrowland 2019: Do Not Sit On The Furniture stage, Fri 26 Jul, 17:30–19:30 (between Kora and Behrouz; WhoMadeWho closing)",0],["Brussels","Belgium","Europe",50.85,4.35,"Bazaar (Nov and Dec 2015) · Mirano, with Shkoon (Dec 2019)",0],["Antwerp","Belgium","Europe",51.22,4.4,"Club Vaag, Vage Nachten (Feb 2016)",0],["Zürich","Switzerland","Europe",47.37,8.54,"Hive (13 Jahre Hive, Feb 2019; 15 Aug 2019; Wunderlampe, Jan 2020; Nov 2023) · SpaceMonki (Mar 2018) · Rakete im Wunderland, Hive (24 Sep 2022) · Zurich Music Week masterclass (5 Aug 2024) · Rakete im Wunderland, Hive (25 Sep 2021) · Rakete am Turm, as ARTEMIDES (29 Jul 2023)",1],["Basel","Switzerland","Europe",47.56,7.59,"Das Viertel, many times (2018–2021): 3000 Grad and Katermukke nights, Berliner Luft · with Mollono.Bass (2018) · Katermukke showcase (22 Oct 2022) · Berliner Luft, Viertel (2 Mar 2019)",1],["Oberwil-Lieli","Switzerland","Europe",47.33,8.39,"Lamalagahla Festival, main stage (2024)",0],["Gstaad","Switzerland","Europe",46.47,7.29,"Gstaad Menuhin Festival: Visions of Classical Music – Trans-Classics X, Berghaus Eggli, following the Vision String Quartet (7 Aug 2024)",0],["Arosa","Switzerland","Europe",46.78,9.68,"Arosa Electronica, Arosa & Lenzerheide (Mar 2019), with Steve Bug, YokoO, Adriatique, Jan Blomqvist, Einmusik",0],["Verbier","Switzerland","Europe",46.1,7.23,"Vintage Voyage (2026)",1],["Richterswil","Switzerland","Europe",47.21,8.7,"Rakete – The Lake (Sat 15 Jun 2019, with Adam Beyer, ANNA, Giorgia Angiuli, Jan Blomqvist)",0],["Graz","Austria","Europe",47.07,15.44,"Springfestival Graz (May 2016)",0],["Paris","France","Europe",48.86,2.35,"IRCAM Live, Gaîté Lyrique, with Ectoplastic’s MAZE (Nov 2013) · 3000 Grad on tour × Ayahuasca, Les Etoiles (Mar 2018) · Rituel Days, Le Kilowatt (Jul 2019) · Rituel Off, several times (incl. Oct 2020), with Mira & Chris Schwarzwälder and Stimming · Centrale93 (Oct 2021) · Kömma Paris, live (15 Apr 2020) · Agapë II, Venue (28 Oct 2018)",1],["Biarritz","France","Europe",43.48,-1.56,"2019",0],["Marseille","France","Europe",43.3,5.37,"Klassified showcase (Jun 2019) · Baou, with Blond:ish (Aug 2020)",0],["Bordeaux","France","Europe",44.84,-0.58,"Croix Jaune Open Air, on an art car (May 2020) · Les Vivres de l'Art (21 May 2022)",0],["Montpellier","France","Europe",43.61,3.88,"Milk, Le Palladium: Milkshake special, with DJ Shaper (Gabriel Bourgeais) (24 Nov 2013)",0],["London","UK","Europe",51.51,-0.13,"Electric Brixton (2024) · Hovarda (Oct 2019) · Oscars Mayfair (Mar 2022) · Night Tales, Rituel Recordings showcase (2 Oct 2022)",1],["Noseley","UK","Europe",52.6,-0.93,"Noisily Festival, Coney Woods (2016; Jul 2017)",0],["Ibiza","Spain","Europe",38.98,1.43,"Heart Ibiza, Do Not Sit with Behrouz, Atish & Igor Marijuan (Jun 2019) · Woomoon at Cova Santa (Jul 2019) · Akasha (Nov 2021, Jul 2022, Jun 2023) · Playground Foundation fundraiser at Akasha (Dec 2023)",0],["Marbella","Spain","Europe",36.51,-4.88,"Momento (7 Dec 2019)",1],["Barcelona","Spain","Europe",41.39,2.17,"Show",0],["Idanha-a-Nova","Portugal","Europe",39.92,-7.24,"Boom Festival (2018 Alchemy Circle, three-hour set, 11 am–2 pm; 2023 Funky Beach, surprise set with D-Nox)",1],["Faro","Portugal","Europe",37.02,-7.93,"Private wedding (May 2017)",0],["Porto","Portugal","Europe",41.15,-8.61,"Pérola Negra (Nov 2021)",0],["Madeira","Portugal","Europe",32.76,-16.96,"Private show in nature",0],["Copenhagen","Denmark","Europe",55.68,12.57,"KB18 (May 2015, Feb 2016, Tanzen Bitte, 10 Feb 2017) · Banana Club at Kulturkajen Docken, with Be Svendsen (Feb 2018)",1],["Szczecin","Poland","Europe",53.43,14.55,"Summer Contrast, Niemierzyno (Aug 2019)",0],["Garbicz","Poland","Europe",52.32,15.07,"Garbicz Festival, Hedone stage (2019)",0],["Kyiv","Ukraine","Europe",50.45,30.52,"CHI by Decadence House (6 Jul 2019) · Villa Liberty, Kyiv region",0],["Nizhny Novgorod","Russia","Europe",56.33,44.0,"Alfa Future People (2019)",0],["Krasnodar","Russia","Europe",45.04,38.98,"Focus Bar (2019)",1],["Moscow","Russia","Europe",55.76,37.62,"Community Moscow (7 Dec 2018) · Gazgolder, main floor with Connected (12 Mar 2022) · Liberty",0],["Tallinn","Estonia","Europe",59.44,24.75,"9/11 Club · Nov 2023",0],["Saaremaa","Estonia","Europe",58.38,22.56,"I Land Sound festival (Jul 2023)",1],["Oslo","Norway","Europe",59.91,10.75,"Nova Radio live set (Feb 2015) · Awards show · Robtronica Festival on an island off Norway (Jul 2020)",0],["Stockholm","Sweden","Europe",59.33,18.07,"Elly Awards (Apr 2016)",0],["Tbilisi","Georgia","Europe",41.72,44.79,"Mono Hall, Eleven (May 2023)",1],["Tuscany","Italy","Europe",43.35,11.2,"Private wedding (2024)",0],["Cagliari","Italy","Europe",39.22,9.12,"La Nostra Domenica Vol. 1, Seaside Vibe, La Paillote (30 Jul 2017), with Lascar",1],["Milan","Italy","Europe",45.46,9.19,"Macao, Hidden Mirror (Nov 2014; online set Jan 2015) · The Sanctuary (Dec 2022)",1],["Sicily","Italy","Europe",37.6,14.0,"Private event (18 Jun 2022)",0],["Montenegro","Montenegro","Europe",42.43,18.77,"Private event (8 Oct 2022)",0],["Istanbul","Turkey","Europe",41.01,28.98,"Grand Pera (Nov 2018) · Feb 2020 · AYZ (Mar 2023) · Kaffes (former Suma Beach) · Mitte Karaköy (22 Sep 2017) · Mitte (Mar 2018) · Luna Festival (Jul 2019)",1],["Bodrum","Turkey","Europe",37.03,27.43,"Root Bodrum, Sunset to Sunrise (Jun 2019)",0],["Izmir","Turkey","Europe",38.42,27.14,"Sunset to Sunrise (8 Jun 2019)",0],["Ankara","Turkey","Europe",39.93,32.86,"Pixel Club, Therapy Live Sessions (3 Mar 2017)",1],["Akyaka","Turkey","Europe",37.05,28.33,"Bonjuk Bay (Aug 2025)",0],["Bran (Transylvania)","Romania","Europe",45.52,25.37,"Ever After Transylvania at Dracula's Castle, twice: sunrise set (Jun 2025) and Halloween with Protocols (Oct 2025)",1],["Bonțida","Romania","Europe",46.91,23.81,"Electric Castle festival, Bánffy Castle: closing set on the rooftop stage; with Britta Arnold (Aug 2021)",0],["Negev desert","Israel","Africa & Middle East",30.87,34.79,"Midburn (May 2018): seven sets, Led Burn to Sunrise Kingdom",1],["Tel Aviv","Israel","Africa & Middle East",32.08,34.78,"Monochrome (Apr 2019) · The Block (Jun 2019) · Spoons at Shalvata (Jun 2021) · P.E.A.K. Festival (20 May 2022) · Desert Dreams, Jaffa (4 May 2022) · Peak in the City, Haoman 17 (24 Jun 2022)",1],["Caesarea","Israel","Africa & Middle East",32.5,34.9,"Monochrome, Caesarea Beach, Shavuot (20 May 2018)",1],["Amman","Jordan","Africa & Middle East",31.95,35.93,"Overground (Mar 2017) · CLSTR (28 Nov 2019)",1],["Wadi Rum","Jordan","Africa & Middle East",29.57,35.42,"Private electro burn event (13 Nov 2022)",0],["Dubai","UAE","Africa & Middle East",25.2,55.27,"22 Mar 2018 · Iris Dubai (2020) · Onze, NYE (2022) · Surf Club",0],["Umm Al Quwain","UAE","Africa & Middle East",25.56,55.55,"SUNKSSD at Lumi Beach (Dec 2024)",0],["Kilifi","Kenya","Africa & Middle East",-3.63,39.85,"Kilifi New Year 2017–2020: at the backpackers, then Beneath the Baobabs",1],["Lamu","Kenya","Africa & Middle East",-2.27,40.9,"Diamond Beach Club (Jan 2020)",0],["Nairobi","Kenya","Africa & Middle East",-1.29,36.82,"Alchemist, Kenya Nights (16 Sep 2017, Apr 2018)",1],["Tankwa Karoo","South Africa","Africa & Middle East",-32.51,19.95,"AfrikaBurn: ten burns (incl. 2016; 2017: Everland (25 Apr), Hauptbahnhof (26 Apr), Sonic Dragon art car (26 Apr), secret set (26 Apr), Spirit Train (28 Apr), Wonky Willy's and Camp Skaduwee (29 Apr), The Watering Hole (date open); 2022 as ARTEMIDES; 2023; 2024)",1],["Cape Town","South Africa","Africa & Middle East",-33.92,18.42,"Pre-burn event (21 Apr 2022) · Beyond the Mountain NYE (30 Dec 2025) · Spirit Train fundraiser (c. 2016–17) · Midnight Circus, South African National Circus School, Observatory, ca. 1,300 guests, only live act (22 Apr 2017) · Essence, private gathering, Noordhoek (11 Oct 2019)",0],["Stellenbosch","South Africa","Africa & Middle East",-33.93,18.86,"Littlegig Festival, Wiesenhof farm, Night Stage headline (28–29 Jan 2017)",0],["Sedgefield","South Africa","Africa & Middle East",-34.02,22.8,"Skyland, Cloud 9 (2022: sunset set and Sunday closing; 2023)",1],["Johannesburg","South Africa","Africa & Middle East",-26.2,28.05,"Singularity Summit South Africa (closing set on Day 1, 21 Oct 2026; speaker on Day 2) · Skaduwee Sessions, Camp Skaduwee fundraiser, with ANTIC. (27 Jan 2017)",1],["Karoo (Place of Dreams)","South Africa","Africa & Middle East",-32.94,20.06,"Place of Dreams festival, canyon set (Oct 2026)",0],["Beirut","Lebanon","Africa & Middle East",33.89,35.5,"Uberhaus / The Gärten (ADE after, with Audiofly, Oct 2018) · Le Rock (Dec 2018) · Mayan Warrior x Uberhaus at The Gärten, with Audiofly and Mandrake (May 2019) · B018 · Odin",1],["Kampala","Uganda","Africa & Middle East",0.35,32.58,"Sip 'n Dip (Apr 2018)",0],["Harare","Zimbabwe","Africa & Middle East",-17.83,31.05,"Private wedding at Wild Is Life, the wildlife sanctuary",0],["Chicomo","Mozambique","Africa & Middle East",-23.15,35.45,"WeR1 Executive Launch, New Year’s Eve 2023/24",0],["Namib Desert","Namibia","Africa & Middle East",-23.55,15.84,"Rostock Ritz Desert Lodge",0],["Cairo","Egypt","Africa & Middle East",30.04,31.24,"Cairo Jazz Club 610 (Dec 2018) · private club night (Feb 2020)",0],["Tunis","Tunisia","Africa & Middle East",36.87,10.33,"Bora Bora, Gammarth (11 Aug 2018)",0],["Sousse","Tunisia","Africa & Middle East",35.83,10.64,"2K18 (Aug 2018)",0],["Doha","Qatar","Africa & Middle East",25.29,51.53,"Monkey Tale, with Niconé & Britta Arnold (Mar 2023) · Dec 2022 · Zamna, with Seth Troxler and Guti",0],["Zanzibar","Tanzania","Africa & Middle East",-6.16,39.19,"Kae Funk Sunset Bar (Feb 2026) · B4 Beach Club · B4 Boutique Hotel",1],["Mauritius","Mauritius","Africa & Middle East",-20.2,57.5,"Hot Mauritius, as ARTEMIDES (Oct 2023)",0],["Mumbai","India","Asia & Oceania",19.08,72.88,"Kitty Su (22 Nov 2019)",0],["Hyderabad","India","Asia & Oceania",17.39,78.49,"Block 22 (Sep 2018) · Tabula Rasa (Nov 2019)",0],["Bangalore","India","Asia & Oceania",12.97,77.59,"Ritz-Carlton rooftop (8 Sep 2018, first India tour) · Pebble (Nov 2019)",0],["Gurugram","India","Asia & Oceania",28.46,77.03,"India tour (Nov 2019)",0],["Tokyo","Japan","Asia & Oceania",35.68,139.69,"BerlinGut x Japan (2017) · Circus (1 Nov 2017), b2b with Solvane · Bonobo and A-UN, two sets in one night (3 Nov 2017) · Deutschlandfest (5 Nov 2017)",1],["Kyoto","Japan","Asia & Oceania",35.01,135.77,"Octavekyoto (2 Nov 2017, Japan tour)",0],["Osaka","Japan","Asia & Oceania",34.69,135.5,"Japan tour (Nov 2017)",0],["Nagoya","Japan","Asia & Oceania",35.18,136.91,"About (4 Nov 2017, Japan tour)",0],["Melbourne","Australia","Asia & Oceania",-37.81,144.96,"The Third Day, North Melbourne (5 Feb 2023)",0],["Macedon Ranges","Australia","Asia & Oceania",-37.35,144.57,"Festival No. 23, 27–29 Jan 2023 (Flow Music tour)",0],["Sydney","Australia","Asia & Oceania",-33.87,151.21,"Maniac Love with Tabularasa, The Abercrombie Hotel (4 Feb 2023)",0],["Byron Bay","Australia","Asia & Oceania",-28.65,153.61,"Byron Bay theatre (11 Feb 2023)",1],["La Croix-Valmer","France","Europe",43.207,6.567,"Private event, Côte d'Azur (2024)",0],["Saalau","Germany","Europe",51.385,14.29,"Show, village near Wittichenau (2014/15)",0],["Managua","Nicaragua","Americas",12.136,-86.251,"Moods: “En Concierto desde Alemania”, with Soul Green and Stve Alfaro (2012/13)",0],["Auerstedt","Germany","Europe",51.097,11.57,"Auerworld Festival, as Schön Schwarz & Kokü (23 Jul 2011)",1],["Haldensleben","Germany","Europe",52.29,11.41,"Pippi im Wunderland, with Kokü (27 Aug 2011)",0],["Zittau","Germany","Europe",50.896,14.807,"Artfestival im Emil, with Kokü (5 Feb 2011)",0],["Leubingen","Germany","Europe",51.205,11.17,"Tag am See, Sunset Beach Club, near Sömmerda (9 Jul 2017)",0],["Niedergörsdorf","Germany","Europe",51.975,13.0,"Zurück zu den Wurzeln Festival (Zug der Liebe showcase, 8 Jun 2017)",0],["Freiburg","Germany","Europe",47.999,7.842,"3000 Grad Wanderzirkus tour (21 Feb 2015)",0],["San Juan del Sur","Nicaragua","Americas",11.253,-85.871,"Pitaya Festival (Feb 2013)",0],["Kazan","Russia","Europe",55.796,49.106,"Palladium (11 Mar 2022)",0],["Viirelaid","Estonia","Europe",58.505,23.43,"Burning Rabbit, the Estonian regional burn, by the Viirelaiu lighthouse (5 Jul 2025)",0],["Kõue Manor, Triigi","Estonia","Europe",59.1,25.27,"Private show at Kõue (Kau) Manor (21 Jan 2023)",0],["Ometepe","Nicaragua","Americas",11.497,-85.553,"Finca El Zopilote, New Year’s Eve between the volcanoes (2012/13)",0],["Dreikretscham (Haslow)","Germany","Europe",51.262,14.47,"Pawk Festival, as Schön Schwarz & Kokü (15 Oct 2011)",0],["Nebelschütz","Germany","Europe",51.262,14.163,"Meta Solis Festival, Miltitz quarry lake (summer 2026)",0],["Grimma","Germany","Europe",51.238,12.725,"Electronic Castle, with Hartmut Kiss, before Ostblockschlampen (9 Jun 2012)",1],["Rüdersdorf","Germany","Europe",52.477,13.785,"“Away To”, Factory People × Creative State, filmed one-hour set (Jan 2021)",1],["Fujairah","UAE","Africa & Middle East",25.49,56.36,"Carnival Island, Snoopy Island (27 Apr 2018)",0],["Eldena","Germany","Europe",53.23,11.42,"Indian Spirit Festival, Mushroom Stage (26–30 Aug 2021)",0]]}</script>
+<div class="cur" id="cur" aria-hidden="true"><i></i></div>
+
+<div class="testbar">Clone test · 18 Nov 2026 · not the live site, nothing here is published</div>
+
+<header>
+  <div class="wrap bar">
+    <div class="mark" id="mark">SETH SCHWARZ <em id="markSub">Night</em></div>
+    <nav class="jump" id="jump" aria-label="On this page"></nav>
+    <button class="tgl" id="tgl" role="switch" aria-checked="true" aria-label="Switch between day and night">
+      <span class="pill" aria-hidden="true"></span><span class="d">Day</span><span class="n">Night</span>
+    </button>
+  </div>
+</header>
+
+<main>
+
+<!-- ============================ NIGHT ============================ -->
+<div class="panel on" id="night">
+
+  <section class="hero" id="n-top">
+    <img class="shot" src="img/n-hero.webp" alt="" decoding="async">
+    <canvas class="viz" id="viz" aria-hidden="true"></canvas>
+    <div class="veil"></div>
+    <div class="wrap">
+      <div class="k">Seth Schwarz · DJ · Electric violin · Live</div>
+      <h1>Where classical violin<span class="line2">meets club culture.</span></h1>
+      <p class="sub">He plays electric violin live over his own DJ set. No band, no backing track. The violin answers the music as it happens, so no two nights sound the same.</p>
+      <div class="ctas">
+        <button class="btn pri" data-open="book">Request a show</button>
+        <a class="btn sec" href="#n-listen">Hear a set</a>
+      </div>
+      <div class="figs">
+        <div><b>189</b><span>Cities</span></div>
+        <div><b>46</b><span>Countries</span></div>
+        <div><b>6</b><span>Continents</span></div>
+        <div><b>20</b><span>Burns</span></div>
+        <div><b>26M+</b><span>Plays</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="n-listen"><div class="wrap">
+    <div class="k rv">01 · Listen</div>
+    <h2 class="rv">Eight tracks, one dock.</h2>
+    <p class="sub rv">Thirty-second excerpts from his own releases. The player stays with you while you read on.</p>
+    <div class="grid g3" id="tracks"></div>
+  </div></section>
+
+  <section id="n-anatomy"><div class="wrap">
+    <div class="k rv">02 · On stage</div>
+    <h2 class="rv">Anatomy of a live set.</h2>
+    <p class="sub rv">Three things happen at once: a loop he plays into the pedalboard, the track under it, and the room. Tap a layer to hear it alone and watch it draw itself.</p>
+    <div class="anat">
+      <div class="layers rv" id="layers"></div>
+      <div class="stage rv">
+        <canvas id="stageCv" aria-label="Drawing of the layer that is playing"></canvas>
+        <p class="note" id="stageNote">Nothing playing. Tap a layer.</p>
+      </div>
+    </div>
+    <p class="flag rv"><b>Honest note:</b> these three layers are tones generated in your browser for the demonstration, not the original studio stems. The real multitracks open once a month in the “Stems of the month” section of the live site.</p>
+  </div></section>
+
+  <section id="n-plate"><div class="wrap">
+    <div class="k rv">03 · Sound made visible</div>
+    <h2 class="rv">A note you can look at.</h2>
+    <p class="sub rv">Sand on a steel plate gathers where the plate stands still. Change the note and the pattern changes with it. This is the thing he puts on stage behind the violin, and the thing he studies by day.</p>
+    <div class="plate rv">
+      <div class="pbox"><canvas id="plate" aria-label="Sand pattern on a vibrating plate"></canvas></div>
+      <div class="pside">
+        <div class="k">Frequency</div>
+        <div class="pfreq" id="pFreq">214 Hz</div>
+        <input id="pSlide" type="range" min="0" max="11" value="3" step="1" aria-label="Choose the frequency">
+        <p class="note">Drag the slider. The grains move to the lines where the plate is not moving — the higher the note, the finer the figure.</p>
+        <div class="ctas">
+          <button class="btn sec" id="pTone" aria-pressed="false">Hear the note</button>
+        </div>
+        <p class="note" id="pNote">Sound off. The pattern runs either way.</p>
+      </div>
+    </div>
+  </div></section>
+
+  <section id="n-watch"><div class="wrap">
+    <div class="k rv">04 · Watch</div>
+    <h2 class="rv">Played, filmed, kept.</h2>
+    <p class="sub rv">Full sets and one music video, from the archive. Opens on YouTube.</p>
+    <div class="vids" id="vids"></div>
+  </div></section>
+
+  <section id="n-globe"><div class="wrap">
+    <div class="k rv">05 · The archive</div>
+    <h2 class="rv">189 cities. 46 countries. Spin it.</h2>
+    <p class="sub rv">Every dot is a place he has played, 2008 to 2026. Drag the globe, zoom in, tap a dot. A ringed dot has a recording from that night.</p>
+    <div class="gwrap rv">
+      <div class="gbox">
+        <canvas id="globe" role="img" aria-label="Globe with the 189 cities Seth Schwarz has played"></canvas>
+        <div class="gctl">
+          <button type="button" id="gIn" aria-label="Zoom in">+</button>
+          <button type="button" id="gOut" aria-label="Zoom out">−</button>
+          <button type="button" id="gSpin" aria-pressed="true" aria-label="Pause the rotation">❚❚</button>
+        </div>
+        <div class="gcard" id="gCard" hidden></div>
+      </div>
+      <div class="gside">
+        <label class="k" for="gq">Search the list</label>
+        <input id="gq" type="search" placeholder="City, country or venue" autocomplete="off">
+        <div class="gfilt" id="gFilt"></div>
+        <div class="glist" id="gList" role="listbox" aria-label="Places"></div>
+        <p class="note" id="gCount"></p>
+      </div>
+    </div>
+  </div></section>
+
+  <section id="n-dust"><div class="wrap">
+    <div class="k rv">06 · Ten years in the dust</div>
+    <h2 class="rv">Twenty burns, in his own schedules.</h2>
+    <p class="sub rv">Nine Burning Man, ten AfrikaBurn, one Midburn. Sound camps, art cars and deep playa, sunrise to sundown. A schedule with an arrow opens the recording.</p>
+    <div class="playa rv" id="playa"></div>
+  </div></section>
+
+  <section id="n-wax"><div class="wrap">
+    <div class="k rv">07 · On wax</div>
+    <h2 class="rv">Nine records you can hold.</h2>
+    <p class="sub rv">His own EPs on What! What! and Acker Records, the All Day I Dream 12″, and the records where his violin plays on friends' tracks. Each sleeve opens its Discogs page.</p>
+    <div class="vinyl rv" id="vinyl"></div>
+  </div></section>
+
+  <section id="n-tour"><div class="wrap">
+    <div class="k rv">08 · Tour and booking</div>
+    <h2 class="rv">2027 is being planned now.</h2>
+    <div class="tour rv">
+      <div class="empty">
+        <div>
+          <h3>No public dates at this moment.</h3>
+          <p class="sub" style="margin-top:8px">The 2027 calendar is filling through the agency and is not public yet. Promoters: write with the date, the city, the venue and the slot, and you get an answer within 48 hours.</p>
+        </div>
+        <button class="btn pri" data-open="book">Request a show</button>
+      </div>
+      <div class="rule" style="margin:26px 0 0"></div>
+      <div class="k" style="margin-top:22px">Press kit and material</div>
+      <ul class="dl" id="dlNight"></ul>
+    </div>
+  </div></section>
+
+  <section id="n-bridge"><div class="wrap">
+    <div class="k rv">09 · The other side</div>
+    <div class="bridge rv">
+      <div class="k">Precision &amp; harmony</div>
+      <h3 style="margin-top:10px">The same hands, twelve hours earlier.</h3>
+      <p class="sub">By day he is a specialist in radiation oncology at the university hospital in Halle: millimetres, protocols, patients who have to lie still. That discipline is the reason a set can be built on a loop that must land exactly on the beat — and the improvisation of a night is the reason he can keep his judgement when a plan on the ward has to change.</p>
+      <div class="ctas"><button class="btn pri" data-go="day">Switch to day — Dr. Martin Zschornak</button></div>
+    </div>
+  </div></section>
+</div>
+
+<!-- ============================ DAY ============================ -->
+<div class="panel" id="day">
+
+  <section class="hero dhero" id="d-top">
+    <div class="wrap">
+      <div class="dgrid">
+        <div class="dcol">
+          <div class="k">Dr. Martin Zschornak · Radiation oncology · Halle (Saale), Germany</div>
+          <h1>What sound does<span class="line2">to people.</span></h1>
+          <p class="sub">A specialist physician in radiation oncology who has played to crowds on six continents. He treats patients, teaches, and leads a trial on whether sound can lower the fear of lying still in a radiotherapy machine — clear about what is known, and where it ends.</p>
+          <div class="ctas">
+            <button class="btn pri" data-open="talk">Invite him to speak</button>
+            <a class="btn sec" href="#d-focus">The clinical focus</a>
+          </div>
+        </div>
+        <figure class="dfig">
+          <canvas class="viz" id="viz2" aria-hidden="true"></canvas>
+          <img src="img/d-keynote.webp" alt="Dr. Martin Zschornak on stage at a conference, a sine wave on the screen behind him" decoding="async">
+          <figcaption class="k">Singularity Summit South Africa · keynote</figcaption>
+        </figure>
+      </div>
+      <div class="figs">
+        <div><b>15</b><span>Years in both rooms</span></div>
+        <div><b>3</b><span>Peer-reviewed entries</span></div>
+        <div><b>4</b><span>Countries trained in</span></div>
+        <div><b>1</b><span>Trial he leads</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="d-focus"><div class="wrap">
+    <div class="k rv">01 · Clinical focus</div>
+    <h2 class="rv">Precision medicine, and the person inside the machine.</h2>
+    <p class="sub rv">Radiotherapy is measured in millimetres and minutes. The part that is harder to measure is what the minutes feel like for the person lying still inside the device. He works on both.</p>
+    <div class="grid g3" id="focus"></div>
+  </div></section>
+
+  <section id="d-pub"><div class="wrap">
+    <div class="k rv">02 · Publications and press</div>
+    <h2 class="rv">On the record.</h2>
+    <p class="sub rv">His published research is laboratory work on brain tumour cells. It is not about music. The press pieces are about a doctor who also plays.</p>
+    <div class="filters rv" id="pubFilters"></div>
+    <div class="rows" id="pubRows"></div>
+  </div></section>
+
+  <section id="d-talks"><div class="wrap">
+    <div class="k rv">03 · Talks</div>
+    <h2 class="rv">Live music inside the talk.</h2>
+    <p class="sub rv">Where another speaker shows a slide, he plays. The room hears the point instead of reading it. In English or German.</p>
+    <div class="grid g2" id="talks"></div>
+    <div class="tour rv" style="margin-top:26px">
+      <div class="k">Download</div>
+      <ul class="dl" id="dlDay"></ul>
+    </div>
+  </div></section>
+
+  <section id="d-bridge"><div class="wrap">
+    <div class="k rv">04 · The other side</div>
+    <div class="bridge rv">
+      <div class="k">Precision &amp; harmony</div>
+      <h3 style="margin-top:10px">After six in the evening, this page belongs to someone else.</h3>
+      <p class="sub">The empathy a consultation needs and the attention a room needs are the same muscle. One is practised on a ward, the other on a stage in 189 cities. He uses each to stay honest in the other: no promise in the clinic that the evidence cannot carry, and no night on stage that is played on autopilot.</p>
+      <div class="ctas"><button class="btn pri" data-go="night">Switch to night — Seth Schwarz</button></div>
+    </div>
+  </div></section>
+</div>
+</main>
+
+<footer><div class="wrap">
+  <div><b>Clone test build</b> · 18 November 2026 · not the live site, not indexed.</div>
+  <div>Shows: hello@schwarzbooking.com · Talks: doctor.martin@icloud.com · Halle (Saale), Germany</div>
+  <div>Every number on this page is read from the project's own source of truth: 189 cities, 46 countries, 20 burns, 26M+ plays (counted 16 Nov 2026).</div>
+</div></footer>
+
+<!-- audio dock -->
+<div class="dock" id="dock" aria-label="Audio player">
+  <div class="wrap dockin">
+    <button class="pbtn" id="pbtn" aria-label="Play or pause">▶</button>
+    <div class="now"><b id="nowT">—</b><span id="nowA">—</span></div>
+    <div class="wave" id="wave" role="slider" aria-label="Seek" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0"><canvas id="waveCv"></canvas></div>
+    <button class="skip" id="prev">Prev</button>
+    <button class="skip" id="next">Next</button>
+    <button class="x" id="closeDock" aria-label="Close the player">✕</button>
+  </div>
+</div>
+
+<!-- modal -->
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+  <div class="sheet">
+    <div class="k" id="mKick">Booking</div>
+    <h3 id="mTitle" style="margin-top:8px">Request a show</h3>
+    <p class="sub" id="mSub" style="font-size:15px">Fill this in and it builds the e-mail for you. Nothing is sent from this page; the button opens your own mail programme.</p>
+    <label for="f1">Event and city</label><input id="f1" placeholder="Festival, club or private event · city">
+    <label for="f2">Date or window</label><input id="f2" placeholder="e.g. 14 June 2027, or “summer 2027”">
+    <label for="f3">Slot and length</label><input id="f3" placeholder="e.g. 02:00–04:00, two hours, main stage">
+    <label for="f4">Anything else</label><textarea id="f4" placeholder="Capacity, other names on the bill, travel."></textarea>
+    <div class="mailout" id="mailout"></div>
+    <div class="ctas">
+      <a class="btn pri" id="mSend" href="#">Open in my mail app</a>
+      <button class="btn sec" id="mCopy">Copy the text</button>
+      <button class="btn sec" data-close>Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+var root=document.documentElement, calm=matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ---------------- data: every figure and name comes from the project's facts ------------- */
+var TRACKS=[
+ {t:"Create The Universe",a:"Seth Schwarz & Solidmind feat. Lydgen & ARTEMIDES",lb:"All Day I Dream · 2024",f:"../audio/createuniverse.mp3"},
+ {t:"Leap of Faith (Follow Your Heart)",a:"Seth Schwarz as ARTEMIDES, with Lydgen",lb:"NASAJA · 2024",f:"../audio/leapoffaith.mp3"},
+ {t:"Who We Are",a:"ARTEMIDES with Lydgen",lb:"NASAJA · 2024",f:"../audio/whoweare.mp3"},
+ {t:"Un Rêve Étrange (Rodriguez Jr. Remix)",a:"Hicky & Kalo, Seth Schwarz",lb:"Plaisirs Sonores · 2020",f:"../audio/unreve.mp3"},
+ {t:"Nothing Happens By Chance",a:"Cioz feat. Seth Schwarz",lb:"Einmusika Recordings · 2018",f:"../audio/nothinghappens.mp3"},
+ {t:"The Bar Tender",a:"Seth Schwarz & Be Svendsen",lb:"All Day I Dream · 2015",f:"../audio/bartender.mp3"},
+ {t:"Fly Bar",a:"Dole & Kom feat. Seth Schwarz",lb:"3000 Grad · 2015",f:"../audio/flybar.mp3"},
+ {t:"Elysium",a:"Seth Schwarz · Jabel EP",lb:"Acker Records · 2014",f:"../audio/elysium.mp3"}
+];
+var VIDS=[
+ {id:"tZ0Ta_j4jpo",img:"img/v/tZ0Ta_j4jpo_hi.webp",t:"BiPolar Express",s:"Burning Man 2025 · live"},
+ {id:"556myX8Ymn0",img:"img/v/556myX8Ymn0.webp",t:"AfrikaBurn",s:"2017 · live"},
+ {id:"HFoCk4BvjrI",img:"img/v/HFoCk4BvjrI.webp",t:"Animals at the Watering Hole",s:"Music video · Burning Man 2018"},
+ {id:"PXnHk19ihxM",img:"img/v/PXnHk19ihxM.webp",t:"Burning Man",s:"2024 · live set from the playa"},
+ {id:"E4nwW9uGkTU",img:"img/v/E4nwW9uGkTU.webp",t:"Fusion Festival",s:"2016 · live"},
+ {id:"gT9IZoVMSv4",img:"img/v/gT9IZoVMSv4.webp",t:"The Bar Tender",s:"2015 · with Be Svendsen"}
+];
+var KITS=[
+ {n:"Press Kit",f:"Seth_Schwarz_Press_Kit_2026.pdf",s:"PDF · 10 MB",side:"n"},
+ {n:"Booking Kit",f:"Seth_Schwarz_Booking_Kit_2026.pdf",s:"PDF · 2.3 MB",side:"n"},
+ {n:"Private Events Kit",f:"Seth_Schwarz_Private_Events_2026.pdf",s:"PDF · 1.0 MB",side:"n"},
+ {n:"Press Pictures",f:"Seth_Schwarz_Press_Pictures_2026.pdf",s:"PDF · 4.6 MB",side:"n"},
+ {n:"Speaker Sheet",f:"Dr_Martin_Zschornak_Speaking_2026.pdf",s:"PDF · 2.9 MB",side:"d"}
+];
+var KITBASE="https://sethschwarz.com/kits/";
+var LAYERS=[
+ {k:"violin",n:"Violin loop",d:"Played live into the pedalboard, then looped under itself.",c:"#D97706"},
+ {k:"bass",n:"Bassline",d:"The track underneath. It never stops while he plays.",c:"#06B6D4"},
+ {k:"perc",n:"Percussion",d:"The clock everything else is measured against: 124 beats a minute.",c:"#A1A1AA"}
+];
+var FOCUS=[
+ {t:"Radiation oncology",d:"Specialist physician at Universitätsklinikum Halle, where he also teaches."},
+ {t:"Doctorate, 2022",d:"Laboratory work on glioblastoma brain tumour cells under normal and low oxygen, Martin Luther University Halle-Wittenberg."},
+ {t:"Clinical trial",d:"He leads a trial on sound and anxiety during radiotherapy. What is known, what is promising, and where the evidence ends are kept apart."},
+ {t:"Trained in four countries",d:"Radiation oncology at AKH Vienna and at Acıbadem, Istanbul. Surgery and obstetrics at Hospital Alemán Nicaragüense, 2012/13."},
+ {t:"Cusanuswerk",d:"Merit scholar throughout his medical studies. Research poster prize at OncoRay."},
+ {t:"Teaching and talks",d:"A few talks a year, planned around the clinic: Singularity Summit South Africa, Amsterdam Dance Event, Music Frontiers Berlin."}
+];
+var PUBS=[
+ {y:"2022",k:"Thesis",t:"Doctoral thesis, Martin Luther University Halle-Wittenberg",d:"Molecular and radiobiological studies on betulinic acid and betulin in human glioblastoma cell lines, under normal and low oxygen. Written in German."},
+ {y:"2014",k:"Paper",t:"International Journal of Molecular Sciences",d:"Bache M, Bernhardt S, Passin S, Wichmann H, Hein A, Zschornak M, et al. Betulinic acid derivatives NVX-207 and B10 for treatment of glioblastoma: an in vitro study of cytotoxicity and radiosensitization. 15(11):19777–90."},
+ {y:"2011",k:"Paper",t:"Radiation Oncology",d:"Bache M, Zschornak MP, Passin S, et al. Increased betulinic acid induced cytotoxicity and radiosensitivity in glioma cells under hypoxic conditions. 6:111."},
+ {y:"2016",k:"Feature",t:"Universitätsmedizin Halle, blog",d:"“Der Elektro-Geiger im Arztkittel”: the electric violinist in a doctor’s coat. 30 September 2016."},
+ {y:"2016",k:"Print",t:"Mitteldeutsche Zeitung",d:"On the invitation to Burning Man 2016, the doctoral thesis and music at the clinic. By Iris Stein. 3 September 2016."},
+ {y:"2016",k:"Print",t:"BILD München",d:"“Tagsüber Arzt, nachts ein Star an den Turntables”: a doctor by day, at the turntables by night. 31 March 2016."}
+];
+var TALKS=[
+ {t:"What sound does to fear",m:"45 min · keynote",d:"The clinical one. What is known about sound, attention and anxiety, what is still only promising, and what he is testing himself with patients who have to lie still inside a machine."},
+ {t:"Improvisation as a discipline",m:"30 to 45 min",d:"What twenty years of playing without a plan teaches about judgement under pressure. A delayed flight that became a back-to-back set, a sunrise that could not be rehearsed."},
+ {t:"The instrument and the machine",m:"30 min",d:"A classically trained violinist who builds tracks from seventy hand-played parts, on what is gained and lost when a craft meets a machine."},
+ {t:"Talk and closing set",m:"Talk + 60 to 90 min",d:"He speaks in the programme and closes the evening on violin and decks. One traveller, two slots. Done at the Singularity Summit."}
+];
+var NAV={night:[["n-listen","Listen"],["n-anatomy","Live set"],["n-plate","Plate"],["n-watch","Watch"],["n-globe","Globe"],["n-dust","Burns"],["n-wax","Wax"],["n-tour","Tour"],["n-bridge","Day side"]],
+         day:[["d-focus","Clinic"],["d-pub","Research"],["d-talks","Talks"],["d-bridge","Night side"]]};
+var PLAYA=[
+ ["flyer-2016","2016","https://soundcloud.com/seth-schwarz/seth-schwarz-747-big-imagination-burning-man-2016"],
+ ["flyer-2017-sq","2017","https://soundcloud.com/besvendsen/be-svendsen-unders-ft-seth-schwarz-playalchemist-pyramid-burning-man-2017"],
+ ["flyer-2018","2018","https://soundcloud.com/pink-mammoth-official/seth-schwarz-live-pink-mammoth-burning-man-2018"],
+ ["flyer-midburn2018","Midburn 2018",""],
+ ["flyer-2019","2019","https://soundcloud.com/maxaxaman/seth-schwarz-maxa-burning-man-2019/s-muYR1qWQhsQ"],
+ ["flyer-ab2022","AfrikaBurn 2022",""],
+ ["flyer-2022","2022","https://soundcloud.com/playalchemist/seth-schwarz-playalchemist-pyramid-burning-man-2022"],
+ ["flyer-2023","2023 · ARTEMIDES","https://soundcloud.com/seth-schwarz/burningman2023"],
+ ["flyer-ab2023","AfrikaBurn 2023","https://soundcloud.com/seth-schwarz/afrika-burn-2023"],
+ ["flyer-2024","2024","https://www.youtube.com/watch?v=PXnHk19ihxM"],
+ ["flyer-2025","2025","https://www.youtube.com/watch?v=tZ0Ta_j4jpo"],
+ ["flyer-2026","2026",""]
+];
+var WAX=[
+ ["Monkey Safari","Big Mama EP","Jackmode Music · 2011","big-mama","https://www.discogs.com/release/3401181"],
+ ["Monkey Safari","Happy Body Music LP","Mambo · 2012","happy-body-music","https://www.discogs.com/release/3708586"],
+ ["Seth Schwarz","Magnolia EP","What! What! Records · 2012","magnolia-ep","https://www.discogs.com/release/3717473"],
+ ["Seth Schwarz","Jabel EP","Acker Records · 2014","jabel","https://www.discogs.com/release/5822061"],
+ ["Mollono.Bass","& Friends Part One","3000 Grad · 2014","friends-part-1","https://www.discogs.com/release/5688951"],
+ ["Dole & Kom","Salto Mortale","3000 Grad · 2015","salto-mortale","https://www.discogs.com/release/6627613"],
+ ["Skazka Orchestra","Kalamburage Remixes","Acker Records · 2015","kalamburage-remix","https://www.discogs.com/release/6949672"],
+ ["Seth Schwarz & Be Svendsen","The Bar Tender","All Day I Dream · 2016","the-bar-tender","https://www.discogs.com/release/8326715"],
+ ["Various","A Winter Sampler VI","All Day I Dream · 2024","a-winter-sampler-vi","https://www.discogs.com/release/29888038"]
+];
+
+/* ---------------- build the lists ------------------------------------------------------- */
+function el(t,c,h){var e=document.createElement(t); if(c)e.className=c; if(h!=null)e.innerHTML=h; return e;}
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");}
+
+var tracksEl=document.getElementById("tracks");
+TRACKS.forEach(function(t,i){
+  var b=el("button","card");
+  b.type="button";
+  b.innerHTML='<div class="k">'+esc(t.lb)+'</div><h3>'+esc(t.t)+'</h3><p>'+esc(t.a)+'</p>';
+  b.addEventListener("click",function(){ play(i); });
+  tracksEl.appendChild(b);
+});
+
+var vidsEl=document.getElementById("vids");
+VIDS.forEach(function(v){
+  var a=el("a","vid");
+  a.href="https://www.youtube.com/watch?v="+v.id; a.target="_blank"; a.rel="noopener";
+  a.innerHTML='<img src="'+v.img+'" alt="" loading="lazy" decoding="async"><span class="play">▶</span>'+
+              '<span class="meta"><b>'+esc(v.t)+'</b><span>'+esc(v.s)+'</span></span>';
+  vidsEl.appendChild(a);
+});
+
+function kits(side,host){
+  KITS.filter(function(k){return k.side===side;}).forEach(function(k){
+    var li=el("li",""), a=el("a","");
+    a.href=KITBASE+k.f; a.target="_blank"; a.rel="noopener";
+    a.innerHTML="<b>"+esc(k.n)+"</b><span>"+esc(k.s)+"</span>";
+    li.appendChild(a); host.appendChild(li);
+  });
+}
+kits("n",document.getElementById("dlNight"));
+kits("d",document.getElementById("dlDay"));
+
+var focusEl=document.getElementById("focus");
+FOCUS.forEach(function(f){ focusEl.appendChild(el("div","card",'<h3>'+esc(f.t)+'</h3><p>'+esc(f.d)+'</p>')); });
+
+var talksEl=document.getElementById("talks");
+TALKS.forEach(function(t){ talksEl.appendChild(el("div","card",'<div class="k">'+esc(t.m)+'</div><h3 style="margin-top:10px">'+esc(t.t)+'</h3><p>'+esc(t.d)+'</p>')); });
+
+var rowsEl=document.getElementById("pubRows"), fltEl=document.getElementById("pubFilters"), filter="All";
+function drawPubs(){
+  rowsEl.textContent="";
+  PUBS.filter(function(p){return filter==="All"||p.k===filter;}).forEach(function(p){
+    rowsEl.appendChild(el("div","row",'<div class="yr">'+esc(p.y)+'</div><div><b>'+esc(p.t)+'</b><p>'+esc(p.d)+'</p></div><span class="tag">'+esc(p.k)+'</span>'));
+  });
+}
+["All","Paper","Thesis","Feature","Print"].forEach(function(k){
+  var b=el("button",null,k); b.type="button"; b.setAttribute("aria-pressed",String(k==="All"));
+  b.addEventListener("click",function(){
+    filter=k; drawPubs();
+    Array.prototype.forEach.call(fltEl.children,function(x){ x.setAttribute("aria-pressed",String(x===b)); });
+  });
+  fltEl.appendChild(b);
+});
+drawPubs();
+
+var playaEl=document.getElementById("playa");
+PLAYA.forEach(function(f){
+  var a=el(f[2]?"a":"div","fly");
+  if(f[2]){ a.href=f[2]; a.target="_blank"; a.rel="noopener"; }
+  a.innerHTML='<img src="img/playa/'+f[0]+'.webp" alt="Burn schedule, '+esc(f[1])+'" loading="lazy" decoding="async">'+
+              '<span class="fc">'+esc(f[1])+(f[2]?" ↗":"")+'</span>';
+  playaEl.appendChild(a);
+});
+
+var vinylEl=document.getElementById("vinyl");
+WAX.forEach(function(w){
+  var a=el("a","vy"); a.href=w[4]; a.target="_blank"; a.rel="noopener";
+  a.innerHTML='<span class="sl"><span class="disc" aria-hidden="true"></span>'+
+              '<img class="cvr" src="img/covers/'+w[3]+'.webp" alt="Sleeve of '+esc(w[1])+'" loading="lazy" width="400" height="400" decoding="async"></span>'+
+              '<span class="m"><b>'+esc(w[1])+'</b><span>'+esc(w[0])+'</span><span>'+esc(w[2])+'</span></span>';
+  vinylEl.appendChild(a);
+});
+
+/* ---------------- the plate -------------------------------------------------------------
+   A Chladni figure: grains on a square plate drift to the lines that stand still.
+   The maths is the classic standing wave cos(m pi x)cos(n pi y) - cos(n pi x)cos(m pi y). */
+(function(){
+  var cv=document.getElementById("plate"), c=cv.getContext("2d");
+  var MODES=[[1,2,96],[2,3,147],[1,4,214],[3,4,289],[2,5,352],[3,5,431],[4,5,523],
+             [2,7,640],[4,7,784],[5,7,932],[5,8,1046],[6,9,1245]];
+  var mi=3, m=1,n=4, N=2200, px=new Float32Array(N), py=new Float32Array(N), raf=0, vis=false;
+  var osc=null, ac2=null, gn=null, on=false;
+  function seed(){ for(var i=0;i<N;i++){ px[i]=Math.random(); py[i]=Math.random(); } }
+  function amp(x,y){ return Math.cos(m*Math.PI*x)*Math.cos(n*Math.PI*y)-Math.cos(n*Math.PI*x)*Math.cos(m*Math.PI*y); }
+  function step(){
+    for(var i=0;i<N;i++){
+      var a=Math.abs(amp(px[i],py[i]));
+      var s=0.0022+a*0.05;                       /* still spots barely move, loud spots jump */
+      px[i]+=(Math.random()-0.5)*s; py[i]+=(Math.random()-0.5)*s;
+      if(px[i]<0)px[i]=0; if(px[i]>1)px[i]=1; if(py[i]<0)py[i]=0; if(py[i]>1)py[i]=1;
+    }
+  }
+  function draw(){
+    raf=0;
+    var r=cv.getBoundingClientRect(); if(!r.width) return;
+    var dpr=Math.min(2,window.devicePixelRatio||1), W=r.width;
+    if(cv.width!==(W*dpr|0)){ cv.width=W*dpr|0; cv.height=W*dpr|0; }
+    c.setTransform(dpr,0,0,dpr,0,0);
+    var night=root.getAttribute("data-mode")==="night";
+    c.fillStyle=night?"#0b0b0d":"#ffffff"; c.fillRect(0,0,W,W);
+    if(!calm) step();
+    var pad=W*0.07, S=W-pad*2, d=Math.max(1,W/330);
+    c.fillStyle=night?"rgba(250,250,249,.85)":"rgba(15,23,42,.8)";
+    for(var i=0;i<N;i++) c.fillRect(pad+px[i]*S,pad+py[i]*S,d,d);
+    c.strokeStyle=night?"rgba(250,250,249,.12)":"rgba(15,23,42,.12)";
+    c.strokeRect(pad,pad,S,S);
+    if(!calm&&vis) raf=requestAnimationFrame(draw);
+  }
+  function kick(){ if(!raf) raf=requestAnimationFrame(draw); }
+  function set(i){
+    mi=i; m=MODES[i][0]; n=MODES[i][1];
+    document.getElementById("pFreq").textContent=MODES[i][2]+" Hz";
+    seed(); kick();
+    if(on&&osc) osc.frequency.setTargetAtTime(MODES[i][2],ac2.currentTime,0.05);
+  }
+  document.getElementById("pSlide").addEventListener("input",function(e){ set(+e.target.value); });
+  document.getElementById("pTone").addEventListener("click",function(){
+    var b=this, note=document.getElementById("pNote");
+    if(on){ try{ gn.gain.setTargetAtTime(0.0001,ac2.currentTime,0.05); osc.stop(ac2.currentTime+0.4); }catch(e){}
+      osc=null; on=false; b.setAttribute("aria-pressed","false"); b.textContent="Hear the note";
+      note.textContent="Sound off. The pattern runs either way."; return; }
+    stopAudio();
+    try{
+      if(!ac2) ac2=new AC(); if(ac2.state==="suspended") ac2.resume();
+      osc=ac2.createOscillator(); gn=ac2.createGain();
+      osc.type="sine"; osc.frequency.value=MODES[mi][2];
+      gn.gain.value=0.0001; osc.connect(gn); gn.connect(ac2.destination); osc.start();
+      gn.gain.linearRampToValueAtTime(0.11,ac2.currentTime+0.25);
+      on=true; b.setAttribute("aria-pressed","true"); b.textContent="Stop the note";
+      note.textContent="A pure sine at "+MODES[mi][2]+" Hz. Small speakers lose the low notes.";
+    }catch(e){ note.textContent="This browser would not start the tone."; }
+  });
+  seed(); set(3);
+  if("IntersectionObserver" in window) new IntersectionObserver(function(en){
+    vis=en[0].isIntersecting; if(vis) kick(); },{rootMargin:"100px"}).observe(cv);
+  else { vis=true; kick(); }
+  addEventListener("resize",kick,{passive:true});
+})();
+
+/* ---------------- the globe --------------------------------------------------------------
+   189 places from the project's own gig list, on a dotted land grid. Drag to turn it,
+   wheel or the buttons to zoom, tap a dot to read what he played there.                  */
+var globeRedraw=function(){};
+(function(){
+  var cv=document.getElementById("globe"), ctx=cv.getContext("2d");
+  var DOTS=null, P=[], view=[], sel=-1, region="All", q="";
+  var lam=-10, phi=14, Z=1, spin=!calm, raf=0, onscreen=false, loaded=false, flyT=0;
+  var listEl=document.getElementById("gList"), cardEl=document.getElementById("gCard"),
+      countEl=document.getElementById("gCount"), filtEl=document.getElementById("gFilt");
+
+  /* the data sits in the page as JSON and is parsed the first time the globe is needed */
+  function load(){
+    if(loaded) return;
+    try{
+      var d=JSON.parse(document.getElementById("globeData").textContent);
+      DOTS=d.dots; P=d.places; loaded=true; buildFilters();
+    }catch(e){ countEl.textContent="The place list could not be read."; }
+  }
+
+  function buildFilters(){
+    var regs=["All"]; P.forEach(function(p){ if(p[2]&&regs.indexOf(p[2])<0) regs.push(p[2]); });
+    regs.forEach(function(r){
+      var b=el("button",null,r==="All"?"All 189":esc(r)); b.type="button";
+      b.setAttribute("aria-pressed",String(r===region));
+      b.addEventListener("click",function(){
+        region=r; Array.prototype.forEach.call(filtEl.children,function(x){ x.setAttribute("aria-pressed",String(x===b)); });
+        list(); draw();
+      });
+      filtEl.appendChild(b);
+    });
+    list();
+  }
+  function matches(p){
+    if(region!=="All"&&p[2]!==region) return false;
+    if(!q) return true;
+    return (p[0]+" "+p[1]+" "+p[5]).toLowerCase().indexOf(q)>=0;
+  }
+  function list(){
+    listEl.textContent="";
+    var n=0, recs=0;
+    P.forEach(function(p,i){
+      if(!matches(p)) return;
+      n++; if(p[6]) recs++;
+      var b=el("button",null,'<b>'+esc(p[0])+'</b><span>'+esc(p[1])+(p[6]?' · <span class="rec">recording</span>':'')+'</span>');
+      b.type="button"; b.setAttribute("aria-selected",String(i===sel));
+      b.addEventListener("click",function(){ select(i,true); });
+      listEl.appendChild(b);
+    });
+    countEl.textContent = n ? (n+" of 189 places shown · "+recs+" with a recording.")
+                            : "Nothing matches that. Try a country, or clear the search.";
+  }
+  document.getElementById("gq").addEventListener("input",function(e){ q=e.target.value.trim().toLowerCase(); list(); draw(); });
+
+  function select(i,fly){
+    sel=i; var p=P[i];
+    cardEl.hidden=false;
+    cardEl.innerHTML='<button class="x" type="button" aria-label="Close">✕</button>'+
+      '<span class="cty">'+esc(p[1])+(p[2]?" · "+esc(p[2]):"")+'</span><b>'+esc(p[0])+'</b>'+
+      (p[5]?'<p>'+esc(p[5].length>420?p[5].slice(0,420)+"…":p[5])+'</p>':'');
+    cardEl.querySelector(".x").addEventListener("click",function(){
+      cardEl.hidden=true; sel=-1; list(); draw(); });
+    if(fly) flyTo(-p[4],p[3]); else draw();
+    list();
+  }
+  function flyTo(tl,tp){
+    var l0=lam,p0=phi,t0=performance.now(),dur=calm?0:700;
+    var dl=((tl-l0+540)%360)-180, dp=tp-p0;
+    spin=false; sync();
+    if(flyT) cancelAnimationFrame(flyT);
+    if(!dur){ lam=tl; phi=tp; draw(); return; }
+    flyT=requestAnimationFrame(function step(now){
+      var k=Math.min(1,(now-t0)/dur), e=1-Math.pow(1-k,3);
+      lam=l0+dl*e; phi=p0+dp*e; draw();
+      if(k<1) flyT=requestAnimationFrame(step); else flyT=0;
+    });
+  }
+  function proj(lon,lat,R,cx,cy){
+    var l=(lon+lam)*Math.PI/180, b=lat*Math.PI/180, p=phi*Math.PI/180;
+    var cosc=Math.sin(p)*Math.sin(b)+Math.cos(p)*Math.cos(b)*Math.cos(l);
+    if(cosc<0) return null;
+    return [cx+R*Math.cos(b)*Math.sin(l), cy-R*(Math.cos(p)*Math.sin(b)-Math.sin(p)*Math.cos(b)*Math.cos(l)), cosc];
+  }
+  function draw(){
+    var r=cv.getBoundingClientRect(); if(!r.width||!r.height) return;
+    var dpr=Math.min(2,window.devicePixelRatio||1), W=r.width;
+    if(cv.width!==(W*dpr|0)){ cv.width=W*dpr|0; cv.height=W*dpr|0; }
+    var c=ctx; c.setTransform(dpr,0,0,dpr,0,0); c.clearRect(0,0,W,W);
+    var R=W/2*0.88*Z, cx=W/2, cy=W/2, night=root.getAttribute("data-mode")==="night";
+    var g=c.createRadialGradient(cx-R*0.3,cy-R*0.35,R*0.1,cx,cy,R);
+    g.addColorStop(0,night?"#18181c":"#ffffff"); g.addColorStop(1,night?"#0b0b0d":"#e2e8f0");
+    c.beginPath(); c.arc(cx,cy,R,0,6.2832); c.fillStyle=g; c.fill();
+    c.strokeStyle=night?"rgba(250,250,249,.14)":"rgba(15,23,42,.14)"; c.lineWidth=1; c.stroke();
+    if(!loaded) return;
+    var ds=Math.max(0.7,R/230), i, pt;
+    c.fillStyle=night?"rgba(161,161,170,.40)":"rgba(100,116,139,.45)";
+    for(i=0;i<DOTS.length;i+=2){
+      pt=proj(DOTS[i],DOTS[i+1],R,cx,cy); if(!pt) continue;
+      c.fillRect(pt[0]-ds/2,pt[1]-ds/2,ds,ds);
+    }
+    view.length=0;
+    for(var j=0;j<P.length;j++){
+      var p=P[j]; if(!matches(p)) continue;
+      var s=proj(-p[4],p[3],R,cx,cy); if(!s) continue;
+      var a=0.35+0.65*s[2], rad=Math.max(1.8,R/150)*(j===sel?1.9:1);
+      view.push([s[0],s[1],j]);
+      if(p[6]){ c.beginPath(); c.arc(s[0],s[1],rad*2.1,0,6.2832);
+        c.strokeStyle="rgba(6,182,212,"+(a*0.6).toFixed(3)+")"; c.lineWidth=1; c.stroke(); }
+      c.beginPath(); c.arc(s[0],s[1],rad,0,6.2832);
+      c.fillStyle=(j===sel?"rgba(6,182,212,1)":"rgba(217,119,6,"+a.toFixed(3)+")"); c.fill();
+      if(j===sel){
+        c.beginPath(); c.arc(s[0],s[1],rad*3.2,0,6.2832);
+        c.strokeStyle="rgba(6,182,212,.55)"; c.lineWidth=1.4; c.stroke();
+        c.font='500 11px Plex, ui-monospace, monospace';
+        c.fillStyle=night?"#FAFAF9":"#0F172A";
+        var tx=s[0]+rad*4; c.textAlign="left";
+        if(tx>W-90){ tx=s[0]-rad*4; c.textAlign="right"; }
+        c.fillText(p[0],tx,s[1]+4); c.textAlign="left";
+      }
+    }
+  }
+  function frame(){ raf=0; if(spin&&!calm&&onscreen&&!flyT){ lam-=0.055; draw(); kick(); } }
+  function kick(){ if(!raf) raf=requestAnimationFrame(frame); }
+  function sync(){ var b=document.getElementById("gSpin");
+    b.setAttribute("aria-pressed",String(spin)); b.textContent=spin?"❚❚":"▶";
+    b.setAttribute("aria-label",spin?"Pause the rotation":"Start the rotation"); }
+
+  var down=false,lx=0,ly=0,moved=0;
+  cv.addEventListener("pointerdown",function(e){ down=true; moved=0; lx=e.clientX; ly=e.clientY;
+    try{ cv.setPointerCapture(e.pointerId); }catch(err){} spin=false; sync(); });
+  cv.addEventListener("pointermove",function(e){ if(!down) return;
+    var dx=e.clientX-lx, dy=e.clientY-ly; lx=e.clientX; ly=e.clientY; moved+=Math.abs(dx)+Math.abs(dy);
+    lam+=dx*0.28/Z; phi=Math.max(-85,Math.min(85,phi+dy*0.28/Z)); draw(); });
+  cv.addEventListener("pointerup",function(e){
+    down=false;
+    if(moved>6) return;                       /* a drag, not a tap */
+    var r=cv.getBoundingClientRect(), x=e.clientX-r.left, y=e.clientY-r.top, best=-1, bd=1e9;
+    for(var i=0;i<view.length;i++){
+      var d=(view[i][0]-x)*(view[i][0]-x)+(view[i][1]-y)*(view[i][1]-y);
+      if(d<bd){ bd=d; best=view[i][2]; }
+    }
+    if(best>=0&&bd<900) select(best,false);
+    else { cardEl.hidden=true; sel=-1; list(); draw(); }
+  });
+  cv.addEventListener("wheel",function(e){ e.preventDefault();
+    Z=Math.max(1,Math.min(3.2,Z*(e.deltaY<0?1.12:0.89))); draw(); },{passive:false});
+  document.getElementById("gIn").addEventListener("click",function(){ Z=Math.min(3.2,Z*1.3); draw(); });
+  document.getElementById("gOut").addEventListener("click",function(){ Z=Math.max(1,Z/1.3); draw(); });
+  document.getElementById("gSpin").addEventListener("click",function(){ spin=!spin; sync(); kick(); });
+  addEventListener("resize",draw,{passive:true});
+  sync();
+  if("IntersectionObserver" in window)
+    new IntersectionObserver(function(en){ onscreen=en[0].isIntersecting;
+      if(onscreen){ load(); draw(); kick(); } },{rootMargin:"300px"}).observe(cv);
+  else { onscreen=true; load(); draw(); kick(); }
+  globeRedraw=function(){ load(); draw(); };
+})();
+
+/* ---------------- day / night ----------------------------------------------------------- */
+var tgl=document.getElementById("tgl"), markSub=document.getElementById("markSub"), mark=document.getElementById("mark");
+function navFor(m){
+  var n=document.getElementById("jump"); n.textContent="";
+  NAV[m].forEach(function(p){ var a=el("a",null,p[1]); a.href="#"+p[0]; n.appendChild(a); });
+}
+function setMode(m,push){
+  if(root.getAttribute("data-mode")===m) return;
+  root.setAttribute("data-mode",m);
+  tgl.setAttribute("aria-checked",String(m==="night"));
+  document.getElementById("night").classList.toggle("on",m==="night");
+  document.getElementById("day").classList.toggle("on",m==="day");
+  mark.firstChild.nodeValue=(m==="night"?"SETH SCHWARZ ":"DR. MARTIN ZSCHORNAK ");
+  markSub.textContent=(m==="night"?"Night":"Day");
+  navFor(m);
+  if(m==="day") stopAudio();
+  var vz=(m==="day"?viz2:viz1); if(vz) vz.relayout();
+  globeRedraw();
+  if(push) history.replaceState(null,"","#"+m);
+  window.scrollTo({top:0,behavior:calm?"auto":"smooth"});
+  revealAll();
+}
+tgl.addEventListener("click",function(){ setMode(root.getAttribute("data-mode")==="night"?"day":"night",true); });
+document.addEventListener("click",function(e){
+  var g=e.target.closest("[data-go]"); if(g){ setMode(g.getAttribute("data-go"),true); }
+});
+(function(){ var h=(location.hash||"").replace("#",""); navFor("night"); if(h==="day") setMode("day",false); })();
+
+/* ---------------- hero visualiser (cursor and audio reactive) --------------------------- */
+function visualiser(cv){
+  var c=cv.getContext("2d"), W=0,H=0,dpr=1,t=0,mx=.5,my=.5,tx=.5,ty=.5,raf=0,vis=true;
+  function size(){ var r=cv.getBoundingClientRect(); dpr=Math.min(2,window.devicePixelRatio||1);
+    W=Math.max(1,r.width); H=Math.max(1,r.height); cv.width=W*dpr|0; cv.height=H*dpr|0; }
+  function frame(now){
+    raf=0;
+    c.setTransform(dpr,0,0,dpr,0,0); c.clearRect(0,0,W,H);
+    t+=calm?0:0.0065; mx+=(tx-mx)*.06; my+=(ty-my)*.06;
+    var night=root.getAttribute("data-mode")==="night";
+    var lv=level(), lines=night?26:12, amp=H*(night?0.10:0.055)*(1+lv*1.5);
+    for(var i=0;i<lines;i++){
+      var p=i/(lines-1), y=H*(0.30+p*0.56);
+      c.beginPath();
+      for(var x=0;x<=W;x+=Math.max(6,W/120)){
+        var u=x/W, d=Math.abs(u-mx), pull=Math.exp(-d*d*26);
+        var yy=y+Math.sin(u*6.283*(1.1+p*1.3)+t*(1+p)+p*2.2)*amp*(0.35+pull*1.4)
+               -pull*amp*2.1*(0.5+0.5*Math.sin(t*1.7+p*3.0))-(my-0.5)*22*pull;
+        if(x===0) c.moveTo(x,yy); else c.lineTo(x,yy);
+      }
+      var a=(night?0.30:0.22)*(1-p*0.55)+lv*0.25;
+      c.strokeStyle=night
+        ? (i%3===0?"rgba(217,119,6,"+a.toFixed(3)+")":"rgba(6,182,212,"+(a*0.75).toFixed(3)+")")
+        : "rgba(13,148,136,"+(a*0.65).toFixed(3)+")";
+      c.lineWidth=(i%3===0?1.4:0.8); c.stroke();
+    }
+    if(!calm&&vis) raf=requestAnimationFrame(frame);
+  }
+  function kick(){ if(!raf) raf=requestAnimationFrame(frame); }
+  size(); kick();
+  addEventListener("resize",function(){ size(); kick(); },{passive:true});
+  function clamp01(v){ return (v>=0&&v<=1)?v:(v>1?1:(v<0?0:0.5)); }
+  addEventListener("pointermove",function(e){ var r=cv.getBoundingClientRect();
+    if(!r.width||!r.height) return;            /* hidden panel: no pointer maths, or we get NaN */
+    tx=clamp01((e.clientX-r.left)/r.width); ty=clamp01((e.clientY-r.top)/r.height); kick(); },{passive:true});
+  if("IntersectionObserver" in window) new IntersectionObserver(function(en){ vis=en[0].isIntersecting; kick(); }).observe(cv);
+  document.addEventListener("visibilitychange",function(){ if(!document.hidden) kick(); });
+  return {kick:kick,relayout:function(){ size(); kick(); }};
+}
+var viz1=visualiser(document.getElementById("viz")), viz2=visualiser(document.getElementById("viz2"));
+(root.getAttribute("data-mode")==="day"?viz2:viz1).relayout();
+
+/* ---------------- audio dock ------------------------------------------------------------ */
+var dock=document.getElementById("dock"), pbtn=document.getElementById("pbtn"),
+    nowT=document.getElementById("nowT"), nowA=document.getElementById("nowA"),
+    waveCv=document.getElementById("waveCv"), waveBox=document.getElementById("wave"),
+    audio=null, AC=window.AudioContext||window.webkitAudioContext, ac=null, an=null, buf=null, idx=-1, lvl=0;
+
+function level(){
+  if(!an||!audio||audio.paused) { lvl*=0.92; return lvl; }
+  an.getByteFrequencyData(buf); var e=0,n=Math.min(40,buf.length);
+  for(var i=2;i<n;i++) e+=buf[i]; e/=(n-2)*255;
+  lvl=lvl*0.75+e*0.25; return lvl;
+}
+function ensure(){
+  if(audio) return;
+  audio=document.createElement("audio");
+  audio.preload="metadata"; audio.setAttribute("playsinline","");
+  audio.style.display="none"; dock.appendChild(audio);
+  audio.addEventListener("timeupdate",drawWave);
+  audio.addEventListener("ended",function(){ play((idx+1)%TRACKS.length); });
+  audio.addEventListener("play",function(){ pbtn.textContent="❚❚"; viz1.kick(); });
+  audio.addEventListener("pause",function(){ pbtn.textContent="▶"; });
+}
+/* The analyser is wired only once the context is really running, and only
+   inside a tap. If it is not running, the element plays on its own: sound
+   matters more than reactive bars, and on iOS a suspended context is silent. */
+function wire(){
+  if(an===false||an) return;
+  try{
+    if(!ac) ac=new AC();
+    if(ac.state==="suspended") ac.resume();
+    if(ac.state!=="running"){ return; }
+    var src=ac.createMediaElementSource(audio);
+    an=ac.createAnalyser(); an.fftSize=256; buf=new Uint8Array(an.frequencyBinCount);
+    src.connect(an); an.connect(ac.destination);
+  }catch(e){ an=false; }
+}
+function play(i){
+  ensure();
+  if(i!==idx){ idx=i; audio.src=TRACKS[i].f; audio.currentTime=0; seeds=null; }
+  nowT.textContent=TRACKS[i].t; nowA.textContent=TRACKS[i].a;
+  dock.classList.add("up"); document.documentElement.style.setProperty("--dock", (window.innerWidth<620?"64px":"72px"));
+  var p=audio.play();
+  if(p&&p.then) p.then(function(){ wire(); },function(){ pbtn.textContent="▶"; });
+  else wire();
+  drawWave();
+}
+function stopAudio(){ if(audio&&!audio.paused) audio.pause(); }
+pbtn.addEventListener("click",function(){ if(idx<0){ play(0); return; } if(audio.paused) play(idx); else audio.pause(); });
+document.getElementById("next").addEventListener("click",function(){ play(((idx<0?0:idx)+1)%TRACKS.length); });
+document.getElementById("prev").addEventListener("click",function(){ play(((idx<0?0:idx)-1+TRACKS.length)%TRACKS.length); });
+document.getElementById("closeDock").addEventListener("click",function(){ stopAudio(); dock.classList.remove("up"); document.documentElement.style.setProperty("--dock","0px"); });
+
+var seeds=null;
+function drawWave(){
+  var w=waveBox.clientWidth, h=44, dpr=Math.min(2,window.devicePixelRatio||1);
+  if(!w) return;
+  waveCv.width=w*dpr|0; waveCv.height=h*dpr|0;
+  var c=waveCv.getContext("2d"); c.setTransform(dpr,0,0,dpr,0,0); c.clearRect(0,0,w,h);
+  var bars=Math.max(24,Math.floor(w/4.2));
+  if(!seeds||seeds.length!==bars){ seeds=[]; var s=(idx<0?1:idx+1)*9301;
+    for(var i=0;i<bars;i++){ s=(s*9301+49297)%233280; var r=s/233280;
+      seeds.push(0.22+0.78*Math.pow(Math.abs(Math.sin(i*0.21+(idx+2)))*0.6+r*0.6,1.25)); } }
+  var prog=(audio&&audio.duration)?(audio.currentTime/audio.duration):0;
+  var live=level();
+  for(var i=0;i<bars;i++){
+    var x=i*(w/bars), bw=Math.max(1.6,(w/bars)-1.6), amp=seeds[i]*(1+(audio&&!audio.paused?live*0.6:0));
+    var bh=Math.max(2,amp*h*0.82), y=(h-bh)/2, done=(i/bars)<prog;
+    if(done){ var g=c.createLinearGradient(0,y,0,y+bh); g.addColorStop(0,"#D97706"); g.addColorStop(1,"#06B6D4"); c.fillStyle=g; }
+    else c.fillStyle="rgba(161,161,170,.34)";
+    c.fillRect(x,y,bw,bh);
+  }
+  waveBox.setAttribute("aria-valuenow",Math.round(prog*100));
+}
+function seek(e){ if(!audio||!audio.duration) return; var r=waveBox.getBoundingClientRect();
+  audio.currentTime=Math.max(0,Math.min(1,(e.clientX-r.left)/r.width))*audio.duration; drawWave(); }
+waveBox.addEventListener("click",seek);
+waveBox.addEventListener("keydown",function(e){ if(!audio||!audio.duration) return;
+  if(e.key==="ArrowRight"){ audio.currentTime=Math.min(audio.duration,audio.currentTime+3); drawWave(); e.preventDefault(); }
+  if(e.key==="ArrowLeft"){ audio.currentTime=Math.max(0,audio.currentTime-3); drawWave(); e.preventDefault(); } });
+addEventListener("resize",function(){ seeds=null; drawWave(); },{passive:true});
+setInterval(function(){ if(audio&&!audio.paused) drawWave(); },120);
+
+/* ---------------- anatomy of a live set -------------------------------------------------- */
+var layersEl=document.getElementById("layers"), stageCv=document.getElementById("stageCv"),
+    stageNote=document.getElementById("stageNote"), lac=null, nodes={}, active=null, sraf=0;
+LAYERS.forEach(function(L){
+  var b=el("button","layer"); b.type="button"; b.setAttribute("aria-pressed","false");
+  b.innerHTML='<span class="dot"></span><span><b>'+esc(L.n)+'</b><small>'+esc(L.d)+'</small></span>';
+  b.addEventListener("click",function(){ toggleLayer(L,b); });
+  layersEl.appendChild(b);
+});
+function actx(){ if(!lac) lac=new AC(); if(lac.state==="suspended") lac.resume(); return lac; }
+function stopLayer(){
+  if(!nodes.on) return;
+  var c=lac, t=c.currentTime;
+  nodes.g.gain.cancelScheduledValues(t); nodes.g.gain.setValueAtTime(nodes.g.gain.value,t);
+  nodes.g.gain.linearRampToValueAtTime(0.0001,t+0.25);
+  var old=nodes; setTimeout(function(){ try{ old.stop(); }catch(e){} },320);
+  nodes={on:false}; active=null;
+  Array.prototype.forEach.call(layersEl.children,function(x){ x.setAttribute("aria-pressed","false"); });
+  stageNote.textContent="Nothing playing. Tap a layer.";
+}
+function toggleLayer(L,btn){
+  if(active===L.k){ stopLayer(); return; }
+  stopLayer(); stopAudio();
+  var c=actx(), t=c.currentTime, g=c.createGain(); g.gain.value=0.0001; g.connect(c.destination);
+  var made=[];
+  if(L.k==="violin"){
+    [0,7,12].forEach(function(st,i){
+      var o=c.createOscillator(), og=c.createGain(); o.type=i?"triangle":"sawtooth";
+      o.frequency.value=220*Math.pow(2,st/12); og.gain.value=i?0.18:0.3;
+      var lf=c.createOscillator(), lg=c.createGain(); lf.frequency.value=5.2; lg.gain.value=2.4+i;
+      lf.connect(lg); lg.connect(o.frequency); lf.start();
+      var f=c.createBiquadFilter(); f.type="lowpass"; f.frequency.value=2600;
+      o.connect(og); og.connect(f); f.connect(g); o.start(); made.push(o,lf);
+    });
+    g.gain.linearRampToValueAtTime(0.16,t+0.5);
+  } else if(L.k==="bass"){
+    var o=c.createOscillator(); o.type="sine"; o.frequency.value=55;
+    var o2=c.createOscillator(); o2.type="triangle"; o2.frequency.value=110;
+    var g2=c.createGain(); g2.gain.value=0.25; o2.connect(g2); g2.connect(g);
+    var lf2=c.createOscillator(), lg2=c.createGain(); lf2.frequency.value=124/60/2; lg2.gain.value=18;
+    lf2.connect(lg2); lg2.connect(o.frequency); lf2.start();
+    o.connect(g); o.start(); o2.start(); made.push(o,o2,lf2);
+    g.gain.linearRampToValueAtTime(0.26,t+0.4);
+  } else {
+    var len=c.sampleRate*2, b=c.createBuffer(1,len,c.sampleRate), d=b.getChannelData(0);
+    for(var i=0;i<len;i++) d[i]=(Math.random()*2-1)*Math.pow(1-(i%(c.sampleRate*60/124))/(c.sampleRate*60/124),6);
+    var src=c.createBufferSource(); src.buffer=b; src.loop=true;
+    var f2=c.createBiquadFilter(); f2.type="bandpass"; f2.frequency.value=1900; f2.Q.value=0.8;
+    src.connect(f2); f2.connect(g); src.start(); made.push(src);
+    g.gain.linearRampToValueAtTime(0.2,t+0.3);
+  }
+  nodes={on:true,g:g,stop:function(){ made.forEach(function(n){ try{n.stop();}catch(e){} }); try{g.disconnect();}catch(e){} }};
+  active=L.k;
+  Array.prototype.forEach.call(layersEl.children,function(x,i){ x.setAttribute("aria-pressed",String(LAYERS[i].k===L.k)); });
+  stageNote.textContent=L.n+" alone · "+L.d+" (demonstration tone)";
+  drawStage(L);
+}
+function drawStage(L){
+  cancelAnimationFrame(sraf);
+  var c=stageCv.getContext("2d"), t0=performance.now(), cw=0,ch=0;
+  function f(now){
+    var r=stageCv.getBoundingClientRect(), dpr=Math.min(2,window.devicePixelRatio||1);
+    if(r.width!==cw||r.height!==ch){ cw=r.width; ch=r.height;
+      stageCv.width=cw*dpr|0; stageCv.height=ch*dpr|0; }
+    c.setTransform(dpr,0,0,dpr,0,0); c.clearRect(0,0,r.width,r.height);
+    var s=(now-t0)/1000, W=r.width, H=r.height;
+    c.strokeStyle=L.c; c.lineWidth=1.6; c.beginPath();
+    for(var x=0;x<=W;x+=3){
+      var u=x/W, y;
+      if(L.k==="violin") y=H/2+Math.sin(u*34+s*2.4)*H*0.22*Math.sin(u*3.1+s*0.8)+Math.sin(u*96+s*6)*H*0.05;
+      else if(L.k==="bass") y=H/2+Math.sin(u*7+s*1.6)*H*0.3;
+      else { var beat=(u*4+s*2.0667)%1; y=H/2+(Math.random()-0.5)*H*0.5*Math.pow(1-beat,5); }
+      if(x===0) c.moveTo(x,y); else c.lineTo(x,y);
+    }
+    c.stroke();
+    if(!calm&&active===L.k) sraf=requestAnimationFrame(f);
+  }
+  sraf=requestAnimationFrame(f);
+}
+
+/* ---------------- modal ------------------------------------------------------------------ */
+var modal=document.getElementById("modal"), kind="book";
+var F=["f1","f2","f3","f4"].map(function(i){return document.getElementById(i);});
+function build(){
+  var to=kind==="book"?"hello@schwarzbooking.com":"doctor.martin@icloud.com";
+  var subj=kind==="book"?"Show request — Seth Schwarz":"Speaking request — Dr. Martin Zschornak";
+  var body=(kind==="book"?"Event and city: ":"Event and city: ")+(F[0].value||"—")+"\n"+
+           "Date or window: "+(F[1].value||"—")+"\n"+
+           (kind==="book"?"Slot and length: ":"Format and length: ")+(F[2].value||"—")+"\n"+
+           "Notes: "+(F[3].value||"—")+"\n";
+  document.getElementById("mailout").textContent="To: "+to+"\nSubject: "+subj+"\n\n"+body;
+  document.getElementById("mSend").href="mailto:"+to+"?subject="+encodeURIComponent(subj)+"&body="+encodeURIComponent(body);
+}
+F.forEach(function(i){ i.addEventListener("input",build); });
+document.addEventListener("click",function(e){
+  var o=e.target.closest("[data-open]");
+  if(o){ kind=o.getAttribute("data-open");
+    document.getElementById("mKick").textContent=kind==="book"?"Booking":"Speaking";
+    document.getElementById("mTitle").textContent=kind==="book"?"Request a show":"Invite him to speak";
+    F[2].placeholder=kind==="book"?"e.g. 02:00–04:00, two hours, main stage":"e.g. 45-minute keynote, English";
+    build(); modal.classList.add("on"); F[0].focus(); return; }
+  if(e.target.closest("[data-close]")||e.target===modal) modal.classList.remove("on");
+});
+document.addEventListener("keydown",function(e){ if(e.key==="Escape") modal.classList.remove("on"); });
+document.getElementById("mCopy").addEventListener("click",function(){
+  var t=document.getElementById("mailout").textContent;
+  if(navigator.clipboard) navigator.clipboard.writeText(t).then(function(){ document.getElementById("mCopy").textContent="Copied"; setTimeout(function(){document.getElementById("mCopy").textContent="Copy the text";},1600); });
+});
+build();
+
+/* ---------------- cursor + reveal -------------------------------------------------------- */
+var cur=document.getElementById("cur"), cx=0,cy=0,px=0,py=0,craf=0;
+if(matchMedia("(hover:hover) and (pointer:fine)").matches&&!calm){
+  addEventListener("pointermove",function(e){ cx=e.clientX; cy=e.clientY; if(!craf) craf=requestAnimationFrame(moveCur); },{passive:true});
+}
+function moveCur(){ craf=0; px+=(cx-px)*0.22; py+=(cy-py)*0.22;
+  cur.style.transform="translate("+px.toFixed(1)+"px,"+py.toFixed(1)+"px)";
+  if(Math.abs(cx-px)>0.4||Math.abs(cy-py)>0.4) craf=requestAnimationFrame(moveCur); }
+
+var io=("IntersectionObserver" in window)?new IntersectionObserver(function(en){
+  en.forEach(function(x){ if(x.isIntersecting){ x.target.classList.add("in"); io.unobserve(x.target); } });
+},{rootMargin:"0px 0px -8% 0px"}):null;
+function revealAll(){
+  var list=document.querySelectorAll(".panel.on .rv:not(.in)");
+  if(!io){ Array.prototype.forEach.call(list,function(n){n.classList.add("in");}); return; }
+  Array.prototype.forEach.call(list,function(n){ io.observe(n); });
+}
+Array.prototype.forEach.call(document.querySelectorAll("section .card, section .vid, section .row"),function(n){ n.classList.add("rv"); });
+revealAll();
+})();
+</script>
+</body>
+</html>
