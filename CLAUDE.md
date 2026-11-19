@@ -19,9 +19,19 @@ Two sessions change `index.html` at the same time and one overwrites the other. 
 5. One writer per folder: if another conversation is writing into the same folder right now, stop, leave a note next
    to the files and ask Martin which conversation finishes (Martin's rule, 18 Nov 2026).
 
+## Martin's rules of 19 Nov 2026 (START_HERE.md, rules 16 to 18)
+- Fixes go the fast way: a change that only repairs something broken, and changes nothing a visitor sees, reads or
+  hears beyond that, may go live without asking first; Martin is told right after. In doubt it is not a fix.
+- Short answers: ask by item number ("go 30?"). Only "go <number>" is a go; "oki", "cool", "it worked" are feedback.
+  Every test result says phone or laptop.
+- Write once: the full story of a change stands in its own `source/<topic>/README.md`; START_HERE and README get one
+  line each. Finished items go to `START_HERE_archive.md`, live drafts and their notes to `99_Archiv/`.
+
 ## Before publishing
 These run in the working folder (`sethschwarz-site/`); `source/` is deliberately not in this repository.
-- `python3 source/check_site.py` prints OK (it also checks that every picture, font and sound file the page names is there).
+- `python3 source/check_site.py` prints OK (it also checks that every picture, font and sound file the page names is there,
+  and since 19 Nov that no code hides behind a `//` comment, where it never runs).
+- `python3 source/tests/check_merged.py <url>` passes (46 checks; since 19 Nov every cabinet game three times in a row).
 - `python3 source/check_facts.py` prints OK (the page, the scripts and the documents carry what the facts say; see below).
 - The page loads without script errors on both sides, at desktop and phone width. Tests: `source/tests/` (Playwright).
 - After a new picture: `python3 source/polish/make_assets.py` (writes the WebP copies and thumbnails).
