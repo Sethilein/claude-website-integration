@@ -6521,29 +6521,27 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
   font-weight:500;letter-spacing:.16em;text-transform:uppercase;background:var(--g4pink);color:#fff;cursor:pointer;min-height:44px}
 .g4-btn:active{transform:translateY(1px)}
 .g4-btn:focus-visible,.g4-pad:focus-visible{outline:2px solid #fff;outline-offset:2px}
-.g4-deck{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-top:9px;border-radius:14px;
-  outline:2px solid transparent;outline-offset:3px;transition:outline-color .05s}
-.g4-deck.beat{outline-color:var(--g4pink)}   /* der Takt ist pink */
-.g4-pad{appearance:none;-webkit-appearance:none;border:2px solid var(--g4ink);border-radius:12px;height:62px;cursor:pointer;
-  opacity:.55;transition:opacity .07s,transform .07s;position:relative;padding:0;
+.g4.g4-sq .g4-stage{aspect-ratio:1/1}
+/* Drei große Spuren-Knöpfe, genau unter den Spuren im Bild. Farbe = Spur (Gold, Papier, Blau). */
+.g4-deck{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:9px}
+.g4-pad{appearance:none;-webkit-appearance:none;border:2px solid var(--g4lane,#fff);border-radius:16px;height:88px;cursor:pointer;
+  background:rgba(255,255,255,.05);position:relative;padding:0;transition:background .06s,transform .06s;
   touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
-.g4-pad.lit{opacity:1;transform:translateY(-3px)}
-.g4-pad.dim{opacity:.22}
-.g4-pad:active{transform:translateY(2px)}
-.g4-pad i{position:absolute;left:0;right:0;bottom:5px;font-style:normal;font-family:var(--g4mono);font-size:10px;color:rgba(0,0,0,.6);font-weight:500}
+.g4-pad::after{content:"";position:absolute;left:50%;top:50%;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;
+  border:3px solid var(--g4lane,#fff);opacity:.9}
+.g4-pad.lit{background:rgba(255,255,255,.14)}
+.g4-pad.lit::after{background:var(--g4lane,#fff)}
+.g4-pad.press{background:var(--g4lane,#fff);transform:translateY(2px)}
+.g4-pad.press::after{border-color:#000}
+.g4-pad i{position:absolute;left:0;right:0;bottom:6px;font-style:normal;font-family:var(--g4mono);font-size:10.5px;letter-spacing:.08em;color:rgba(255,255,255,.7)}
 .g4-pad .g4-kh{display:none}
-.g4-pad.press{opacity:1;filter:brightness(1.18)}
 .g4-keys{display:none;text-align:center;font-size:11px;color:var(--g4dim);margin-top:6px}
 .g4-keys b{display:inline-block;min-width:20px;padding:1px 6px;margin:0 2px;border:1px solid var(--g4line);border-radius:5px;color:#fff;font-family:var(--g4mono);font-weight:500}
-/* Laptop: Maus und Tastatur. Felder eng zusammen, damit die Maus kurze Wege hat;
-   kein Hüpfen beim Aufleuchten, damit das Feld nicht unter dem Zeiger wegrutscht. */
+/* Laptop: die drei Knöpfe stehen mittig unter den Spuren (30 / 50 / 70 % der Bühne). */
 @media (pointer:fine){
-  .g4 .g4-deck{max-width:400px;margin-left:auto;margin-right:auto;gap:5px}
-  .g4 .g4-pad{height:74px}
-  .g4 .g4-pad.lit{transform:none;box-shadow:0 0 0 3px #fff,inset 0 0 0 3px #000}
-  .g4 .g4-pad:active{transform:none}
+  .g4 .g4-deck{width:60%;margin-left:auto;margin-right:auto}
+  .g4 .g4-pad{height:72px}
   .g4 .g4-pad .g4-kh{display:inline}
-  .g4 .g4-pad i{font-size:12px}
   .g4 .g4-keys{display:block}
 }
 .g4-hud{display:flex;gap:10px;align-items:center;margin-top:9px;font-family:var(--g4mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--g4soft);flex-wrap:wrap}
@@ -6561,7 +6559,7 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
     <div class="ac-head">
       <div class="eyebrow">Arcade lounge · Game 04</div>
       <h2>Elves of Karoo.</h2>
-      <p class="sub">Seth's nutshell boat crosses the ocean from Europe to South Africa, the voyage of his music video. On the way every animal sings you a phrase. Answer it on the beat and it comes aboard with its own track of the song, until the whole crew plays it.</p>
+      <p class="sub">Seth's nutshell boat crosses the ocean from Europe to South Africa, the voyage of his music video, to the song itself. On the way the animals sing to you: their notes drop towards the boat. Tap them as they land, on the beat, and the animal comes aboard. The fuller the boat, the fuller the song.</p>
     </div>
 <div class="g4" data-g4="root">
   <div class="g4-mq"><b data-g4="mqT">Elves of Karoo</b><span data-g4="mqS">Game 04</span></div>
@@ -6580,113 +6578,86 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
     <p class="g4-credit">Track and characters: Seth Schwarz &amp; Be Svendsen. The scene is the animation of the music video, directed by Yves Paradis.</p>
   </div></section></template>
 <script type="application/json" id="g4Art">{"v":1,"files":{"boat.start":{"src":"img/game4/boat_start.mp4","video":true},"boat.full":{"src":"img/game4/boat_full.mp4","video":true},"boat.violin":{"src":"img/game4/boat_violin.mp4","video":true}}}</script>
-<script type="application/json" id="g4Stems">{"bpm":120,"bars":2,"files":{}}</script>
+<script type="application/json" id="g4Song">{"bpm":123.0,"firstBeat":0.2105,"length":140.6,"notes":[64,67,71],"source":"Gnomes 2018_V5:4FINAL_Videoclip_endwater_Soundfile.wav (Dropbox, Elves of Karoo_ANIMATION part1)","cut":"bars 1-32 (0:00-1:02.65) + bars 137-176 (4:25.59-5:43.64), 4 s fade at the end; 128 kbps","src":"audio/elvesofkaroo.mp3"}</script>
 <script>
 /* ==========================================================================
-   Elves of Karoo — Game 04 · das Spiel
+   Elves of Karoo — Game 04 · das Spiel (Fassung 8)
    Ein Skript für beide Hüllen: die eigenständige Seite (elves-of-karoo.html)
    und den Block in der Website (game4.html). Es fasst nur Elemente innerhalb
    seines Wurzelbereichs an (Attribut data-g4), nie die übrige Seite.
 
-     ElvesOfKaroo(root, {lang, art, stems, names, keysActive, visible,
+     ElvesOfKaroo(root, {lang, art, song, names, keysActive, visible,
                          lazyArt, onStart, debugName})  ->  api
 
-   Gebaut aus Fassung 6 der eigenständigen Seite (15. Nov 2026), am 18. Nov
-   auf diesen Aufbau umgestellt. Quelle: source/game4/ im Website-Ordner.
+   Fassung 8 (19. Nov 2026), nach Martins Rückmeldung „die Bedienung ist schlecht,
+   keiner kann es benutzen", „der Basiston nervt", „wir wollten den Song benutzen":
+   - Der echte Song läuft. Kein Dauerton, kein Klick mehr.
+   - Ruf und Antwort, aber nichts merken: Was ein Tier singt, fällt als Noten zum
+     Boot herunter. Tippen, wenn eine Note unten ankommt — genau einen Takt später.
+   - Drei große Spuren (links, Mitte, rechts) statt fünf kleiner Felder.
+   - Eine Runde dauert so lang wie der Song. Kein Verlieren mittendrin.
+   - Das Spiel lernt das Timing des Geräts mit (Bluetooth-Kopfhörer, langsame Handys).
    ========================================================================== */
 window.ElvesOfKaroo = function(root, opt){
 "use strict";
 opt = opt || {};
 
 /* ==========================================================================
-   KONFIGURATION
-   Alles, was sich einstellen lässt, steht hier oben. Darunter beginnt die
-   Logik — die muss man zum Nachjustieren nicht anfassen.
-   Zahlen in "Schlägen" sind Anteile eines Schlags: 0.19 = knapp ein Fünftel.
+   KONFIGURATION — alles, was sich einstellen lässt, steht hier.
+   Zeiten in Sekunden, wenn nicht anders gesagt.
    ========================================================================== */
 var CFG={
 
-  takt:{
-    // 120 BPM gemessen an den Animationsloops: 120 Frames bei 29,97 fps
-    // = 4,004 s = exakt zwei Takte. Bild und Musik teilen dasselbe Raster.
-    bpm:120,
-    loopTakte:2          // Länge der Schleife in Takten (Stems und Videoloops)
+  /* Der Song. Tempo und erster Taktschlag kommen aus der Messung (source/game4/song.json),
+     die build.py hier einsetzt; ohne Messung gelten diese Werte. */
+  song:{ bpm:120, ersterSchlag:0.0, laenge:140 },
+
+  zeit:{
+    perfekt:0.075,       // so nah am Schlag zählt ein Ton als PERFECT
+    gut:0.150,           // ... als GOOD (dahinter: daneben)
+    mausFaktor:1.3,      // mit der Maus etwas großzügiger (Weg zwischen den Feldern)
+    lernen:0.5,          // wie stark sich das Spiel nach jedem Tier an dein Timing anpasst (0 = gar nicht)
+    lernenMax:0.30       // höchstens so viel Ausgleich (Bluetooth-Kopfhörer liegen bei ~0,2 s)
   },
 
-  antwort:{
-    fenster:0.19,        // Treffergenauigkeit in Schlägen
-    fensterKatze:0.30,   // ... mit der Katze an Bord
-    mausFaktor:1.45,     // mit der Maus wird das Fenster so viel breiter (Wege zwischen den Feldern)
-    verfallen:0.72       // so lange nach dem Schlag gilt ein Ton als verpasst
+  ablauf:{
+    introTakte:2,        // Takte, bevor das erste Tier singt, und zwischen den Etappen
+    versuche:2,          // so oft kommt ein Tier höchstens (dann schwimmt es weiter)
+    finaleTakte:4        // so lang spielt der Song nach dem letzten Tier noch, dann blendet er aus
   },
 
-  /* Tastenbelegung, Feld 1 bis 5 von links nach rechts.
-     Zwei Sätze gleichzeitig: Zahlen 1–5 und D F Leer J K — die übliche
-     Fünf-Spuren-Belegung bei Rhythmusspielen, beide Hände auf der Grundreihe. */
-  tasten:{
-    belegung:{"1":0,"2":1,"3":2,"4":3,"5":4, "d":0,"f":1," ":2,"j":3,"k":4}
-  },
-
-  phrasen:{
-    etappe:[[3,4],[4,5],[5,6]],  // kürzeste und längste Phrase je Etappe
-    max:7,
-    elefantPlus:1,               // der Elefant verlängert jede Phrase
-    affeChance:0.22,             // wie oft zwei Felder zugleich leuchten
-    keineWiederholung:0.6        // wie stark gleiche Töne hintereinander vermieden werden
-  },
-
-  energie:{
-    start:100,
-    proFehler:7,
-    hoechstensProPhrase:26,
-    zurueckProTier:8
-  },
-
-  punkte:{
-    tonImTakt:120,
-    tonDaneben:60,
-    tierAnBord:400,
-    chorus:700
-  },
-
-  boni:{
-    elefant:2,           // Punkte mal …
-    strauss:1.5,
-    straussTempo:1.08,   // … und Tempo mal … (entfällt, wenn echte Stems laufen)
-    fieber:2
-  },
-
-  fieber:{
-    serie:3,             // so viele saubere Phrasen am Stück
-    dauerSchlaege:8
-  },
-
-  anzeige:{
-    ergebnisSekunden:1.5,
-    vorlaufSekunden:0.9  // Pause, bevor ein Tier seine Phrase ruft
-  },
-
-  /* Tonvorrat der fünf Felder: d-Moll-Pentatonik.
-     Wird durch die gemessenen Werte aus source/dna/analyze.py ersetzt. */
-  /* Farben nach dem Games-Kapitel des Brand Books (18. Nov): die vier Saiten der Geige
-     (G Gold, D Grün, A Blau, E Tint) und in der Mitte Papier-Weiß. Kein Rot (Rot heißt
-     „tut weh"), kein Pink (Pink heißt „der Takt und was er zahlt"). */
-  felder:[
-    {c:"#FFD36B",m:62},  // D4 · G-Saite
-    {c:"#7AFFC8",m:65},  // F4 · D-Saite
-    {c:"#FFFFFF",m:67},  // G4 · Papier
-    {c:"#6FB8FF",m:69},  // A4 · A-Saite
-    {c:"#F7C6DD",m:72}   // C5 · E-Saite
+  /* Rhythmen pro Etappe: Positionen in Achteln innerhalb eines Takts (0–7).
+     Etappe 1 nur Viertel, Etappe 2 mit Achteln, Etappe 3 bis vier Töne. */
+  muster:[
+    [[0,4],[0,2],[2,6],[4,6],[0,6],[2,4]],
+    [[0,2,4],[0,4,6],[0,3,4],[2,4,6],[0,2,6],[0,3,6]],
+    [[0,2,4,6],[0,3,4,6],[0,2,3,4],[0,4,5,6],[2,3,4,6],[0,2,4],[0,3,6]]
   ],
 
-  /* Harmonie des Loops: vier Akkorde zu je zwei Schlägen — Dm, B♭, F, C */
-  akkorde:[[62,65,69],[58,62,65],[65,69,72],[60,64,67]],
-  grundtoene:[38,34,41,36]
-};
+  punkte:{ perfekt:100, gut:60, anBord:300, fieberMal:2 },
+  fieber:{ serie:3, tiere:2 },     // drei Tiere ohne Fehler -> die nächsten zwei zählen doppelt
 
-/* Die drei Hauptfiguren. Regel 4 der Website: in den Spielen nur erfundene Namen.
+  /* Klang der Töne: drei Tonhöhen aus der Tonart des Songs (MIDI), weich gezupft.
+     Werden durch die Messung ersetzt, wenn sie eine Tonart findet. */
+  toene:[62,65,69],
+  lautstaerke:{ song:0.9, ruf:0.20, antwort:0.16 },
+
+  /* Der Song öffnet sich, je voller das Boot ist: Tiefpass von … bis … Hz */
+  filter:{ leer:1400, voll:20000 },
+
+  /* Farben der drei Spuren (Brand Book, Kapitel 11): G-Saite Gold, Papier, A-Saite Blau */
+  spuren:["#FFD36B","#FFFFFF","#6FB8FF"],
+
+  tasten:{ belegung:{"arrowleft":0,"a":0,"s":0,"d":0,"f":0,"1":0,
+                     " ":1,"arrowdown":1,"arrowup":1,"g":1,"h":1,"2":1,
+                     "arrowright":2,"j":2,"k":2,"l":2,"3":2} }
+};
+if(opt.song && opt.song.bpm){ CFG.song.bpm=opt.song.bpm; CFG.song.ersterSchlag=opt.song.firstBeat||0;
+  CFG.song.laenge=opt.song.length||CFG.song.laenge; if(opt.song.notes) CFG.toene=opt.song.notes; }
+
+/* Die Hauptfiguren. Regel 4 der Website: in den Spielen nur erfundene Namen.
    Die Fee heißt „Forest Fairy" (Martin, 18. Nov, 22:02); Be ist nur gezeichnet. */
-var NAMES = opt.names || {seth:"Seth Schwarz", be:"", fairy:"Forest Fairy"};   // Martin, 18. Nov, 22:02: keine echten Namen
+var NAMES = opt.names || {seth:"Seth Schwarz", be:"", fairy:"Forest Fairy"};
 
 /* ==========================================================================
    TEXTE — alles, was ein Spieler liest, in beiden Sprachen.
@@ -6694,560 +6665,473 @@ var NAMES = opt.names || {seth:"Seth Schwarz", be:"", fairy:"Forest Fairy"};   /
 var TXT={
  en:{
   animals:{
-   puffin:{n:"Puffin",ab:"Echo call",abT:"Sings you every phrase twice.",role:"Shaker",line:"Stands by the speaker and plays the offbeat."},
-   penguin:{n:"Penguin",ab:"Night vision",abT:"The pads stay lit in the storm.",role:"Kick",line:"Stands at the turntables and lays down four on the floor."},
-   dog:{n:"Dog",ab:"Fetch",abT:"A missed animal comes right back.",role:"Percussion",line:"Drums the small hits between the bars."},
-   duck:{n:"Duck",ab:"Paddle along",abT:"One wrong note per leg is free.",role:"Bass",line:"Bobs on the root notes and holds it all together."},
-   elephant:{n:"Elephant",ab:"Long memory",abT:"One note longer, double points.",role:"Sub bass",line:"Lays the sub underneath, felt more than heard."},
-   cat:{n:"Cat",ab:"Swing",abT:"The timing window gets wider.",role:"Rhodes",line:"Puts the chords between the beats."},
-   turtle:{n:"Tortoise",ab:"Shell",abT:"One botched phrase per leg costs no energy.",role:"Pads",line:"Holds the long pads under everything."},
-   ostrich:{n:"Ostrich",ab:"Sprint",abT:"The tempo picks up, points times one and a half.",role:"Hi-hat",line:"Drives the sixteenths and pushes the tempo."},
-   monkey:{n:"Monkey",ab:"Double grip",abT:"Sometimes two pads light at once; either counts.",role:"Arpeggio",line:"Climbs the chord tones up and down."},
-   crane:{n:"Crane",ab:"Lookout",abT:"Shows the first note of your answer.",role:"Lead",line:"Carries the melody over everything."}
+   puffin:{n:"Puffin",line:"Stands by the speaker and plays the offbeat."},
+   penguin:{n:"Penguin",line:"Takes the turntables."},
+   dog:{n:"Dog",line:"Drums the little hits between the bars."},
+   duck:{n:"Duck",line:"Bobs along on the bass line."},
+   elephant:{n:"Elephant",line:"Brings the low end you feel more than hear."},
+   cat:{n:"Cat",line:"Puts the chords between the beats."},
+   turtle:{n:"Tortoise",line:"Holds the long notes under everything."},
+   ostrich:{n:"Ostrich",line:"Drives the hi-hats."},
+   monkey:{n:"Monkey",line:"Climbs the melody up and down."},
+   crane:{n:"Crane",line:"Carries the tune over everything."}
   },
-  fams:{Puls:"Pulse",Fundament:"Foundation",Harmonie:"Harmony",Melodie:"Melody",Antrieb:"Drive"},
-  legs:[{n:"Departure",s:"Europe · calm sea",tip:"Listen, then answer. The same pads, on the beat."},
-        {n:"Open Ocean",s:"Night and storm",tip:"Two voices, and the storm takes your sight."},
-        {n:"Arrival · Karoo",s:"Land, jungle, the celebration",tip:"Land ahoy. Five animals are waiting, and the fairy at the end."}],
+  legs:[{n:"Departure",s:"Europe · calm sea"},{n:"Open Ocean",s:"Night and storm"},{n:"Arrival · Karoo",s:"Land and jungle"}],
   leg:function(i){ return "Leg "+i+" of 3"; },
-  go:"Go", again:"Sail again", start:"Start the voyage", cont:"Continue",
-  keyNames:["D","F","Space","J","K"],
-  keysLine:"Keys: <b>D</b><b>F</b><b>Space</b><b>J</b><b>K</b> or <b>1</b><b>2</b><b>3</b><b>4</b><b>5</b> · Enter starts",
-  energy:"Energy",
+  start:"Start the voyage", again:"Sail again", cont:"Continue", loading:"Loading the song …",
+  lanes:["Left","Middle","Right"], keyLanes:["← / F","Space","→ / J"],
+  keysLine:"Keys: <b>←</b> or <b>F</b> · <b>Space</b> · <b>→</b> or <b>J</b> · Enter starts",
+  song:"Song", crewLab:function(n){ return "Crew "+n+"/10"; },
   title:function(){ return "<h1>Elves of Karoo</h1>"+
-    "<p>The nutshell boat sails from Europe to South Africa. On the way every animal sings you a phrase. "+
-    "Answer it on the beat, and it comes aboard.</p>"+
-    "<p>And every animal brings a track: kick, bass, Rhodes, pads, lead. The fuller the boat, the fuller "+
-    "the song. By the end your crew plays the whole track.</p>"+
-    "<p class='g4-sm'>Five pads. On a phone with your thumbs; on a computer best with the keys "+
-    "<b>D F Space J K</b> or <b>1–5</b>, Enter starts. Sound on: it doesn't work without.</p>"; },
-  over:function(n,sc,best){ return "<h2>Drifted too far</h2><p>The crew isn't complete yet: "+n+
-    " of 10 aboard.</p><p class='g4-sm'>Score "+sc+" · Best "+best+"</p>"; },
-  finale:function(sc,best){ return "<h1>"+NAMES.fairy+"</h1><p>At the end of the third leg she stands in the jungle: "+
-    "all leaves, a golden crown, eyes closed. The whole crew is aboard.</p>"+
-    "<p class='g4-sm'>Score "+sc+" · Best "+best+" · 10 of 10 animals</p>"; },
-  arrived:"Arrived",
-  paused:"<h2>Paused</h2><p class='g4-sm'>The boat waits for you.</p>",
-  fever:"FEVER · the whole crew sings along",
+    "<p>The nutshell boat sails from Europe to South Africa. On the way the animals sing to you. "+
+    "Sing back, and they come aboard.</p>"+
+    "<p><b>How:</b> an animal sings a few notes. They drop down towards the boat. "+
+    "Tap when a note lands on its ring, on the beat of the song. Nothing to remember.</p>"+
+    "<p class='g4-sm'>Three lanes: tap left, middle or right, on the screen or on the big buttons. "+
+    "Sound on. The fuller the boat, the fuller the song.</p>"; },
+  sing:function(n){ return n+" sings"; },
+  yourTurn:"Your turn",
   aboard:function(n){ return n+" is aboard"; },
-  swims:function(n){ return n+" swims on"; },
-  newTrack:function(r){ return "new track · "+r; },
-  shell:"The shell took it.",
-  off:function(e){ return e+(e===1?" note":" notes")+" off"; },
-  chorus:function(f){ return "Group "+f+" complete · chorus!"; },
-  arr:function(n){ return "Arrangement · <b>"+n+" of 10 tracks</b>"+(n?" · each belongs to an animal":" · only the beat so far"); }
+  again1:function(n){ return n+" swims on · comes back once more"; },
+  gone:function(n){ return n+" swims on"; },
+  judge:{p:"PERFECT",g:"GOOD",m:"MISS",early:"EARLY",late:"LATE"},
+  fever:"FEVER · double points",
+  end:function(n,sc,best){ return "<h1>"+NAMES.fairy+"</h1>"+
+    "<p>"+(n===10?"The whole crew is aboard. In the jungle the fairy is waiting: all leaves, a golden crown.":
+      n+" of 10 animals are aboard. The fairy waits in the jungle for the rest.")+"</p>"+
+    "<p class='g4-sm'>Score "+sc+" · Best "+best+"</p>"; },
+  paused:"<h2>Paused</h2><p class='g4-sm'>The boat and the song wait for you.</p>",
+  noSong:"<h2>The song did not load</h2><p class='g4-sm'>Check the connection and try again.</p>"
  },
  de:{
   animals:{
-   puffin:{n:"Papageientaucher",ab:"Vorsänger",abT:"Die Phrase wird dir zweimal vorgesungen.",role:"Shaker",line:"Er steht vorn an der Box und gibt das Offbeat."},
-   penguin:{n:"Pinguin",ab:"Nachtsicht",abT:"Im Sturm bleiben die Felder hell.",role:"Kick",line:"Er steht am Plattenspieler und legt den Viervierteltakt."},
-   dog:{n:"Hund",ab:"Apportiert",abT:"Ein verpasstes Tier kommt sofort zurück.",role:"Perkussion",line:"Er trommelt die kleinen Schläge zwischen die Takte."},
-   duck:{n:"Ente",ab:"Schwimmt mit",abT:"Ein falscher Ton pro Etappe kostet nichts.",role:"Bass",line:"Sie dümpelt auf den Grundtönen und hält alles zusammen."},
-   elephant:{n:"Elefant",ab:"Langes Gedächtnis",abT:"Ein Ton mehr, dafür doppelte Punkte.",role:"Sub-Bass",line:"Er legt den Sub darunter, den man eher spürt als hört."},
-   cat:{n:"Katze",ab:"Krummer Gang",abT:"Das Zeitfenster wird breiter.",role:"Rhodes",line:"Sie setzt die Akkorde auf die Zwischenschläge."},
-   turtle:{n:"Schildkröte",ab:"Panzer",abT:"Eine verpatzte Phrase pro Etappe kostet keine Energie.",role:"Flächen",line:"Sie hält die langen Flächen unter dem Ganzen."},
-   ostrich:{n:"Strauß",ab:"Spurt",abT:"Das Tempo zieht an, Punkte mal anderthalb.",role:"Hi-Hat",line:"Er treibt die Sechzehntel und zieht das Tempo an."},
-   monkey:{n:"Affe",ab:"Doppelgriff",abT:"Manchmal zwei Felder zugleich — eines genügt.",role:"Arpeggio",line:"Er klettert die Akkordtöne rauf und runter."},
-   crane:{n:"Kranich",ab:"Weitblick",abT:"Der erste Ton deiner Antwort wird gezeigt.",role:"Lead",line:"Er trägt die Melodie, die über allem liegt."}
+   puffin:{n:"Papageientaucher",line:"Er steht vorn an der Box und spielt das Offbeat."},
+   penguin:{n:"Pinguin",line:"Er übernimmt die Plattenspieler."},
+   dog:{n:"Hund",line:"Er trommelt die kleinen Schläge zwischen die Takte."},
+   duck:{n:"Ente",line:"Sie wippt auf der Basslinie mit."},
+   elephant:{n:"Elefant",line:"Er bringt den Bass, den man eher spürt als hört."},
+   cat:{n:"Katze",line:"Sie setzt die Akkorde zwischen die Schläge."},
+   turtle:{n:"Schildkröte",line:"Sie hält die langen Töne unter allem."},
+   ostrich:{n:"Strauß",line:"Er treibt die Hi-Hats."},
+   monkey:{n:"Affe",line:"Er klettert die Melodie rauf und runter."},
+   crane:{n:"Kranich",line:"Er trägt die Melodie über allem."}
   },
-  fams:{Puls:"Puls",Fundament:"Fundament",Harmonie:"Harmonie",Melodie:"Melodie",Antrieb:"Antrieb"},
-  legs:[{n:"Abfahrt",s:"Europa · ruhige See",tip:"Hör zu, dann antworte. Dieselben Felder, im Takt."},
-        {n:"Offener Ozean",s:"Nacht und Sturm",tip:"Zwei Stimmen, und der Sturm nimmt dir die Sicht."},
-        {n:"Ankunft Karoo",s:"Land, Dschungel, Fest",tip:"Das Land ist da. Fünf Tiere warten, und am Ende die Fee."}],
+  legs:[{n:"Abfahrt",s:"Europa · ruhige See"},{n:"Offener Ozean",s:"Nacht und Sturm"},{n:"Ankunft Karoo",s:"Land und Dschungel"}],
   leg:function(i){ return "Etappe "+i+" von 3"; },
-  go:"Los", again:"Noch einmal", start:"Los geht's", cont:"Weiter",
-  keyNames:["D","F","Leer","J","K"],
-  keysLine:"Tastatur: <b>D</b><b>F</b><b>Leer</b><b>J</b><b>K</b> oder <b>1</b><b>2</b><b>3</b><b>4</b><b>5</b> · Enter startet",
-  energy:"Energie",
+  start:"Los geht's", again:"Noch einmal", cont:"Weiter", loading:"Der Song lädt …",
+  lanes:["Links","Mitte","Rechts"], keyLanes:["← / F","Leer","→ / J"],
+  keysLine:"Tastatur: <b>←</b> oder <b>F</b> · <b>Leertaste</b> · <b>→</b> oder <b>J</b> · Enter startet",
+  song:"Song", crewLab:function(n){ return "Crew "+n+"/10"; },
   title:function(){ return "<h1>Elves of Karoo</h1>"+
-    "<p>Das Nussschalen-Boot fährt von Europa nach Südafrika. Unterwegs singt dir jedes Tier eine Phrase vor — "+
-    "antworte ihr im Takt, dann kommt es an Bord.</p>"+
-    "<p>Und jedes Tier bringt eine Spur mit: Kick, Bass, Rhodes, Fläche, Lead. Je voller das Boot, "+
-    "desto vollständiger der Song. Am Ende spielt deine Crew den ganzen Track.</p>"+
-    "<p class='g4-sm'>Fünf Felder. Am Handy mit den Daumen, am Rechner am besten mit der Tastatur: "+
-    "<b>D F Leer J K</b> oder <b>1–5</b>, Enter startet. Ton an — ohne Ton geht es nicht.</p>"; },
-  over:function(n,sc,best){ return "<h2>Zu weit abgetrieben</h2><p>Die Crew ist noch nicht vollzählig — "+n+
-    " von 10 an Bord.</p><p class='g4-sm'>Punkte "+sc+" · Bestes "+best+"</p>"; },
-  finale:function(sc,best){ return "<h1>"+NAMES.fairy+"</h1><p>Am Ende der dritten Etappe steht sie im Dschungel — ganz aus Blättern, "+
-    "goldene Krone, geschlossene Augen. Die ganze Crew ist an Bord.</p>"+
-    "<p class='g4-sm'>Punkte "+sc+" · Bestes "+best+" · 10 von 10 Tieren</p>"; },
-  arrived:"Angekommen",
-  paused:"<h2>Pause</h2><p class='g4-sm'>Das Boot wartet auf dich.</p>",
-  fever:"FIEBER — die ganze Crew singt mit",
+    "<p>Das Nussschalen-Boot fährt von Europa nach Südafrika. Unterwegs singen dir die Tiere etwas vor. "+
+    "Sing zurück, dann kommen sie an Bord.</p>"+
+    "<p><b>So geht's:</b> Ein Tier singt ein paar Töne. Die fallen als Noten zum Boot herunter. "+
+    "Tippen, wenn eine Note auf ihrem Ring landet, im Takt des Songs. Nichts merken.</p>"+
+    "<p class='g4-sm'>Drei Spuren: links, Mitte, rechts tippen, auf dem Bild oder auf den großen Knöpfen. "+
+    "Ton an. Je voller das Boot, desto voller der Song.</p>"; },
+  sing:function(n){ return n+" singt"; },
+  yourTurn:"Du bist dran",
   aboard:function(n){ return n+" ist an Bord"; },
-  swims:function(n){ return n+" schwimmt weiter"; },
-  newTrack:function(r){ return "neue Spur · "+r; },
-  shell:"Der Panzer hat es geschluckt.",
-  off:function(e){ return e+(e===1?" Ton":" Töne")+" daneben"; },
-  chorus:function(f){ return "Gruppe "+f+" vollzählig — Chorus!"; },
-  arr:function(n){ return "Arrangement · <b>"+n+" von 10 Spuren</b>"+(n?" — jede gehört einem Tier":" — noch spielt nur der Takt"); }
+  again1:function(n){ return n+" schwimmt weiter · kommt noch einmal"; },
+  gone:function(n){ return n+" schwimmt weiter"; },
+  judge:{p:"PERFEKT",g:"GUT",m:"DANEBEN",early:"FRÜH",late:"SPÄT"},
+  fever:"FIEBER · doppelte Punkte",
+  end:function(n,sc,best){ return "<h1>"+NAMES.fairy+"</h1>"+
+    "<p>"+(n===10?"Die ganze Crew ist an Bord. Im Dschungel wartet die Fee: ganz aus Blättern, mit goldener Krone.":
+      n+" von 10 Tieren sind an Bord. Die Fee wartet im Dschungel auf den Rest.")+"</p>"+
+    "<p class='g4-sm'>Punkte "+sc+" · Bestes "+best+"</p>"; },
+  paused:"<h2>Pause</h2><p class='g4-sm'>Das Boot und der Song warten auf dich.</p>",
+  noSong:"<h2>Der Song hat nicht geladen</h2><p class='g4-sm'>Verbindung prüfen und noch einmal versuchen.</p>"
  }
 };
 var T = TXT[opt.lang] || TXT.en;
 
-var BPM=CFG.takt.bpm, SPB=60/BPM;
-var PADS=CFG.felder;
-
-/* Jedes Tier ist eine Spur des Arrangements. Kommt es an Bord, läuft seine Schicht
-   dauerhaft mit — die Crew baut den Track Stück für Stück auf.
-   fam = die Gruppe (vollzählig => Chorus); Namen und Texte stehen in TXT. */
-var ANIMALS={
-  puffin:{fam:"Puls",et:0}, penguin:{fam:"Puls",et:0}, dog:{fam:"Puls",et:0},
-  duck:{fam:"Fundament",et:0}, elephant:{fam:"Fundament",et:2},
-  cat:{fam:"Harmonie",et:0}, turtle:{fam:"Harmonie",et:2},
-  ostrich:{fam:"Antrieb",et:2},
-  monkey:{fam:"Melodie",et:2}, crane:{fam:"Melodie",et:2}
-};
-Object.keys(ANIMALS).forEach(function(k){ var t=T.animals[k]; for(var f in t) ANIMALS[k][f]=t[f]; });
-
-var FAMS={Puls:["puffin","penguin","dog"],Fundament:["duck","elephant"],
-  Harmonie:["cat","turtle"],Melodie:["monkey","crane"],Antrieb:["ostrich"]};
-
-var CHORDS=CFG.akkorde, ROOTS=CFG.grundtoene;
-
-/* Schritte im 16er-Raster (16 Achtel = 8 Schläge = zwei Takte) */
-var LAYERS={
-  penguin:{k:"kick", st:[0,2,4,6,8,10,12,14], v:0.42},
-  puffin:{k:"shake",st:[1,3,5,7,9,11,13,15], v:0.06},
-  dog:{k:"tom",     st:[5,7,13,15],          v:0.17},
-  duck:{k:"bass",   st:[0,3,8,11],           v:0.20},
-  elephant:{k:"sub",st:[0,8],                v:0.26},
-  cat:{k:"stab",    st:[2,6,10,14],          v:0.13},
-  turtle:{k:"pad",  st:[0,8],                v:0.09},
-  ostrich:{k:"hat", st:[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15], v:0.035},
-  monkey:{k:"arp",  st:[0,2,4,6,8,10,12,14], v:0.11},
-  crane:{k:"lead",  st:[0,3,6,10,14],        v:0.15}
-};
-
+var ANIMALS={};
+Object.keys(T.animals).forEach(function(k){ ANIMALS[k]={n:T.animals[k].n, line:T.animals[k].line}; });
 var ETAPPEN=[
   {list:["puffin","penguin","duck"]},
   {list:["cat","dog"]},
   {list:["elephant","ostrich","monkey","turtle","crane"]}
 ];
-ETAPPEN.forEach(function(e,i){ e.n=T.legs[i].n; e.s=T.legs[i].s; e.tip=T.legs[i].tip; });
+ETAPPEN.forEach(function(e,i){ e.n=T.legs[i].n; e.s=T.legs[i].s; });
 
-/* ---------------- Zustand ---------------- */
+/* ---------------- Elemente ---------------- */
 
 function $(n){ return root.querySelector('[data-g4="'+n+'"]'); }
 
-var cv=$("cv"), g=cv.getContext("2d");
+var cv=$("cv"), g=cv.getContext("2d",{alpha:false});
 var ov=$("ov"), ovBox=$("ovBox");
 var deck=$("deck"), crewEl=$("crew");
-var eBar=$("eBar"), scoreT=$("scoreT");
+var eBar=$("eBar"), scoreT=$("scoreT"), eLab=$("eLab");
 var mqT=$("mqT"), mqS=$("mqS");
-if($("eLab")) $("eLab").textContent=T.energy;
+if(eLab) eLab.textContent=T.song;
 if($("keys")) $("keys").innerHTML=T.keysLine;
 
+/* ---------------- Zustand ---------------- */
+
 var S={
-  phase:"title", et:0, energy:100, score:0,
-  crew:[], queue:[], cur:null,
-  phrase:[], noteT:[], callEnd:0, ansStart:0, answered:[],
-  freeMiss:true, shellUsed:false, resultT:0, lastRes:null,
-  beat:0, t0:0, running:false, best:0, runs:0,
-  hitT:{}, feverUntil:0, streak:0, famDone:{}, paused:false
+  phase:"title",          // title · loading · intro · call · answer · rest · finale · end
+  running:false, paused:false,
+  et:0, queue:[], tries:{}, cur:null,
+  notes:[],               // {lane, tc (gesungen), ta (landet), res:null|"p"|"g"|"m", dt}
+  bar:0, phaseBar:0,      // Takt, in dem die aktuelle Phase begann
+  crew:[], score:0, best:0, runs:0,
+  streak:0, feverLeft:0,
+  offset:0,               // gelerntes Timing des Geräts (Sekunden)
+  lastRes:null, resT:0, legT:0, flashes:[],
+  lastInput:"touch", endAt:0
 };
 
-var pads=[];
-for(var i=0;i<5;i++){
+/* ---------------- Felder (drei große Spuren) ---------------- */
+
+var pads=[], pressT=[0,0,0];
+for(var i=0;i<3;i++){
   (function(k){
     var b=document.createElement("button");
-    b.type="button";
-    b.className="g4-pad"; b.style.background=PADS[k].c;
-    b.setAttribute("aria-label",(k+1)+" · "+T.keyNames[k]);
-    b.innerHTML="<i>"+(k+1)+"<span class='g4-kh'> · "+T.keyNames[k]+"</span></i>";
+    b.type="button"; b.className="g4-pad";
+    b.style.setProperty("--g4lane",CFG.spuren[k]);
+    b.setAttribute("aria-label",T.lanes[k]);
+    b.innerHTML="<i><span class='g4-kh'>"+T.keyLanes[k]+"</span></i>";
     b.addEventListener("pointerdown",function(e){
       e.preventDefault();
-      S.lastInput = (e.pointerType==="mouse") ? "mouse" : "touch";
-      pressFlash(k);
-      hit(k);
+      S.lastInput=(e.pointerType==="mouse")?"mouse":"touch";
+      tap(k);
     });
     deck.appendChild(b); pads.push(b);
   })(i);
 }
+/* Auch das Bild selbst ist eine Taste: wer auf eine Spur im Bild tippt, trifft diese Spur. */
+cv.addEventListener("pointerdown",function(e){
+  if(!S.running||S.paused) return;
+  var r=cv.getBoundingClientRect(), x=(e.clientX-r.left)/r.width*cv.width, best=0, d=1e9;
+  for(var k=0;k<3;k++){ var dd=Math.abs(x-laneX[k]); if(dd<d){ d=dd; best=k; } }
+  e.preventDefault();
+  S.lastInput=(e.pointerType==="mouse")?"mouse":"touch";
+  tap(best);
+});
 
 /* ---------------- Tastatur ----------------
-   Auf der Website darf das Spiel nur dann Tasten nehmen, wenn es im Blick ist —
-   sonst würde die Leertaste beim Lesen der Seite nicht mehr scrollen.
-   opt.keysActive() entscheidet; ohne die Angabe (eigenständige Seite) immer. */
-
-var pressT=[0,0,0,0,0];
-function pressFlash(k){ pressT[k]=performance.now(); }
+   Auf der Website nimmt das Spiel nur dann Tasten, wenn es im Blick ist und gemeint ist
+   (opt.keysActive) — sonst scrollt die Leertaste die Seite wie immer. */
 function keysOn(){ return opt.keysActive ? !!opt.keysActive() : true; }
-
 document.addEventListener("keydown",function(e){
-  if(e.metaKey||e.ctrlKey||e.altKey) return;          // Browser-Kürzel nicht abfangen
+  if(e.metaKey||e.ctrlKey||e.altKey) return;
   var tg=e.target, tn=tg&&tg.tagName;
   if(tn==="INPUT"||tn==="TEXTAREA"||tn==="SELECT"||(tg&&tg.isContentEditable)) return;
   if(!keysOn()) return;
   var key=(e.key||"").toLowerCase();
-  // Liegt ein Fenster über dem Spiel, startet Enter oder Leertaste den nächsten Schritt
   if(!ov.classList.contains("hide")){
-    if(key==="enter"||key===" "){
-      var go=$("go");
-      if(go){ e.preventDefault(); go.click(); }
-    }
+    if(key==="enter"||key===" "){ var go=$("go"); if(go){ e.preventDefault(); go.click(); } }
     return;
   }
   if(!S.running||S.paused) return;
   var k=CFG.tasten.belegung[key];
   if(k===undefined) return;
-  e.preventDefault();                                  // Leertaste soll nicht scrollen
-  if(e.repeat) return;                                 // gehaltene Taste zählt nur einmal
+  e.preventDefault();
+  if(e.repeat) return;
   S.lastInput="key";
-  pressFlash(k);
-  hit(k);
+  tap(k);
 });
 
 /* ---------------- Audio ---------------- */
 
-var AC=window.AudioContext||window.webkitAudioContext, ac=null, master=null, bassG=null;
+var AC=window.AudioContext||window.webkitAudioContext, ac=null, master=null, songG=null, lp=null;
+var songBuf=null, songSrc=null, songLoading=null, beat0=0, songT0=0;
 
 function audioInit(){
   if(ac) return;
-  try{ ac=new AC(); }catch(e){ return; }
-  master=ac.createGain(); master.gain.value=0.9; master.connect(ac.destination);
-  bassG=ac.createGain(); bassG.gain.value=0.0; bassG.connect(master);
-  var b1=ac.createOscillator(); b1.type="sine"; b1.frequency.value=f(38);
-  var b2=ac.createOscillator(); b2.type="triangle"; b2.frequency.value=f(50); b2.detune.value=4;
-  var bg2=ac.createGain(); bg2.gain.value=0.25; b2.connect(bg2); bg2.connect(bassG);
-  b1.connect(bassG); b1.start(); b2.start();
-  loadStems();
+  try{ ac=new AC({latencyHint:"interactive"}); }catch(e){ try{ ac=new AC(); }catch(e2){ return; } }
+  master=ac.createGain(); master.gain.value=1; master.connect(ac.destination);
+  lp=ac.createBiquadFilter(); lp.type="lowpass"; lp.frequency.value=CFG.filter.leer; lp.Q.value=0.5;
+  songG=ac.createGain(); songG.gain.value=CFG.lautstaerke.song;
+  lp.connect(songG); songG.connect(master);
 }
-function f(m){ return 440*Math.pow(2,(m-69)/12); }
 function now(){ return ac?ac.currentTime:performance.now()/1000; }
+/* Was man gerade hört, liegt um die Ausgabeverzögerung hinter der Uhr. */
+function outLat(){ return ac ? ((ac.outputLatency||0)+(ac.baseLatency||0)) : 0; }
+function heard(){ return now()-outLat(); }
+function spb(){ return 60/CFG.song.bpm; }
+function bar(){ return 4*spb(); }
+function barStart(b){ return beat0+b*bar(); }
+function f(m){ return 440*Math.pow(2,(m-69)/12); }
 
-function note(m,when,dur,vol,type){
-  if(!ac) return;
-  var o=ac.createOscillator(), gn=ac.createGain(), lp=ac.createBiquadFilter();
-  o.type=type||"triangle"; o.frequency.value=f(m);
-  lp.type="lowpass"; lp.frequency.value=2600;
-  gn.gain.setValueAtTime(0.0001,when);
-  gn.gain.exponentialRampToValueAtTime(vol||0.26,when+0.012);
-  gn.gain.exponentialRampToValueAtTime(0.0001,when+(dur||0.45));
-  o.connect(lp); lp.connect(gn); gn.connect(master);
-  o.start(when); o.stop(when+(dur||0.45)+0.06);
-  var o2=ac.createOscillator(), g2=ac.createGain();
-  o2.type="sine"; o2.frequency.value=f(m+12);
-  g2.gain.setValueAtTime(0.0001,when);
-  g2.gain.exponentialRampToValueAtTime((vol||0.26)*0.3,when+0.01);
-  g2.gain.exponentialRampToValueAtTime(0.0001,when+(dur||0.45)*0.6);
-  o2.connect(g2); g2.connect(master); o2.start(when); o2.stop(when+(dur||0.45)+0.06);
+function loadSong(){
+  if(songBuf) return Promise.resolve(songBuf);
+  if(songLoading) return songLoading;
+  var src=opt.song&&opt.song.src;
+  if(!src||!ac) return Promise.reject("no song");
+  songLoading=fetch(src).then(function(r){ if(!r.ok) throw r.status; return r.arrayBuffer(); })
+    .then(function(ab){ return new Promise(function(res,rej){ ac.decodeAudioData(ab,res,rej); }); })
+    .then(function(buf){ songBuf=buf; CFG.toene.forEach(function(m){ pizzBuffer(ac,m); pizzBuffer(ac,m+12); pizzBuffer(ac,m+24); }); return buf; });
+  songLoading.catch(function(){ songLoading=null; });
+  return songLoading;
 }
-function tick(when,v){
-  if(!ac) return;
-  var b=ac.createBuffer(1,512,ac.sampleRate), d=b.getChannelData(0);
-  for(var i=0;i<512;i++) d[i]=(Math.random()*2-1)*(1-i/512);
-  var s=ac.createBufferSource(); s.buffer=b;
-  var hp=ac.createBiquadFilter(); hp.type="highpass"; hp.frequency.value=6000;
-  var gn=ac.createGain(); gn.gain.value=v||0.07;
-  s.connect(hp); hp.connect(gn); gn.connect(master); s.start(when);
+function startSong(when){
+  stopSong();
+  songSrc=ac.createBufferSource(); songSrc.buffer=songBuf; songSrc.connect(lp);
+  songSrc.start(when);
+  songT0=when; beat0=when+CFG.song.ersterSchlag;
+  songG.gain.cancelScheduledValues(when); songG.gain.setValueAtTime(CFG.lautstaerke.song,when);
 }
-function wrongSound(when){
-  if(!ac) return;
-  var o=ac.createOscillator(), gn=ac.createGain();
-  // über 300 Hz, damit ihn auch ein Handylautsprecher spielt (Brand Book, Kapitel 11)
-  o.type="sawtooth"; o.frequency.setValueAtTime(440,when);
-  o.frequency.exponentialRampToValueAtTime(310,when+0.25);
-  gn.gain.setValueAtTime(0.16,when); gn.gain.exponentialRampToValueAtTime(0.0001,when+0.3);
-  o.connect(gn); gn.connect(master); o.start(when); o.stop(when+0.34);
+function stopSong(){ if(songSrc){ try{ songSrc.stop(); }catch(e){} songSrc=null; } }
+function fadeSong(sec){
+  if(!ac||!songG) return; var t=ac.currentTime;
+  songG.gain.cancelScheduledValues(t); songG.gain.setValueAtTime(songG.gain.value,t);
+  songG.gain.linearRampToValueAtTime(0.0001,t+sec);
 }
-
-/* --- Das Arrangement: jede Spur gehört einem Tier --- */
-
-function drum(when,f0,f1,dec,vol,type){
-  if(!ac) return;
-  var o=ac.createOscillator(), gn=ac.createGain();
-  o.type=type||"sine"; o.frequency.setValueAtTime(f0,when);
-  o.frequency.exponentialRampToValueAtTime(f1,when+dec*0.7);
-  gn.gain.setValueAtTime(vol,when); gn.gain.exponentialRampToValueAtTime(0.0001,when+dec);
-  o.connect(gn); gn.connect(master); o.start(when); o.stop(when+dec+0.05);
+function openFilter(){
+  if(!lp) return;
+  var x=S.crew.length/10, hz=CFG.filter.leer*Math.pow(CFG.filter.voll/CFG.filter.leer,x);
+  if(S.feverLeft>0) hz=CFG.filter.voll;
+  lp.frequency.setTargetAtTime(hz,ac.currentTime,0.6);
 }
-function longNote(m,when,dur,vol,type,cut){
-  if(!ac) return;
-  var o=ac.createOscillator(), gn=ac.createGain(), lp=ac.createBiquadFilter();
-  o.type=type||"sawtooth"; o.frequency.value=f(m);
-  lp.type="lowpass"; lp.frequency.value=cut||900;
-  gn.gain.setValueAtTime(0.0001,when);
-  gn.gain.linearRampToValueAtTime(vol,when+dur*0.25);
-  gn.gain.linearRampToValueAtTime(0.0001,when+dur);
-  o.connect(lp); lp.connect(gn); gn.connect(master);
-  o.start(when); o.stop(when+dur+0.06);
-}
-
-/* ---------- Echte Stems ----------
-   Wie #arcadeArt bei den anderen Spielen: ist für ein Tier eine Datei eingetragen, spielt sie;
-   ist keine da, behält das Tier seine gebaute Schicht. Alle Stems sind gleich lang, starten
-   gemeinsam und laufen in Schleife — ein- und ausgeblendet wird nur die Lautstärke. Damit bleibt
-   alles sample-genau synchron, egal wer an Bord ist. */
-var STEMS=opt.stems||{bpm:0,bars:2,files:{}};
-var SB={}, stemsOn=false, stemBus=null;
-
-function stemsAvailable(k){ return !!(SB[k]&&SB[k].ok); }
-
-function loadStems(){
-  if(!ac) return;
-  var keys=Object.keys(STEMS.files||{});
-  if(!keys.length) return;
-  keys.forEach(function(k){
-    SB[k]={ok:false};
-    fetch(STEMS.files[k]).then(function(r){ return r.arrayBuffer(); })
-      .then(function(ab){ return ac.decodeAudioData(ab); })
-      .then(function(buf){ SB[k].buf=buf; SB[k].ok=true; stemsOn=true; })
-      .catch(function(){ SB[k].ok=false; });
-  });
-}
-function startStems(when){
-  if(!ac||!stemsOn) return;
-  if(!stemBus){ stemBus=ac.createGain(); stemBus.gain.value=1; stemBus.connect(master); }
-  Object.keys(SB).forEach(function(k){
-    var E=SB[k]; if(!E.ok) return;
-    try{ if(E.src) E.src.stop(); }catch(e){}
-    E.gain=ac.createGain(); E.gain.gain.value=0;
-    E.src=ac.createBufferSource(); E.src.buffer=E.buf; E.src.loop=true;
-    E.src.connect(E.gain); E.gain.connect(stemBus);
-    E.src.start(when);
-  });
-}
-function setStem(k,on){
-  var E=SB[k]; if(!E||!E.ok||!E.gain||!ac) return;
-  E.gain.gain.setTargetAtTime(on?1:0, ac.currentTime, 0.12);
-}
-
-var STEP16=CFG.takt.loopTakte*8;   // Achtelschritte je Schleife
-function playLayer(k,s,when,ci,boost){
-  if(stemsAvailable(k)){ if(LAYERS[k]&&LAYERS[k].st.indexOf(s)>=0) S.hitT[k]=when; return; }
-  var L=LAYERS[k]; if(!L) return;
-  if(L.st.indexOf(s)<0) return;
-  var v=L.v*(boost?1.35:1);
-  S.hitT[k]=when;
-  switch(L.k){
-    case "kick":  drum(when,135,44,0.21,v); break;
-    case "shake": tick(when,v); break;
-    case "hat":   tick(when,v*(s%2?1:0.5)); break;
-    case "tom":   drum(when,210,90,0.17,v,"triangle"); break;
-    case "bass":  longNote(ROOTS[ci]+12,when,spb()*0.7,v,"sawtooth",700); break;
-    case "sub":   longNote(ROOTS[ci],when,spb()*1.8,v,"sine",260); break;
-    case "stab":
-      for(var i=0;i<3;i++) note(CHORDS[ci][i],when,spb()*0.30,v*0.75,"triangle");
-      break;
-    case "pad":
-      for(var j=0;j<3;j++) longNote(CHORDS[ci][j]-12,when,spb()*4,v,"sawtooth",boost?1400:800);
-      break;
-    case "arp":   note(CHORDS[ci][(s/2|0)%3],when,spb()*0.5,v,"square"); break;
-    case "lead":
-      var LEADM=[0,2,1,2,0]; var idx=LAYERS.crane.st.indexOf(s);
-      note(CHORDS[ci][LEADM[idx<0?0:idx]%3]+12,when,spb()*0.85,v,"triangle");
-      break;
+/* Pizzicato der Geige (Martin, 19. Nov, 22:57 und 23:01: „mehr komplexer").
+   Jede Tonhöhe wird einmal berechnet und dann nur noch abgespielt:
+   - Saite: Karplus-Strong mit Bruchteil-Verzögerung (genau gestimmt), angeschlagen an einer Zupfstelle
+     (ein Siebtel der Saite: hohl-warmer Klang), mit frequenzabhängiger Dämpfung;
+   - zwei Schwingungsebenen, leicht gegeneinander verstimmt und verschieden schnell abklingend:
+     das Schweben und der zweistufige Ausklang einer echten Saite;
+   - ein kurzer Anschlag der Fingerkuppe;
+   - der Geigenkörper als Faltung mit zwölf Holzresonanzen (A0 um 275 Hz bis zum Steg-Bereich um 2–3 kHz);
+   - ein kurzer, leichter Raum.
+   Nichts darunter brummt: kein Dauerton, kein Klick — der Takt kommt aus dem Song. */
+var PIZZ={};
+function ksString(sr,hz,len,damp,bright,pickPos,seed){
+  var D=sr/hz-(1-bright), y=new Float32Array(len), N=Math.floor(D), fr=D-N;   // Dämpfungsfilter verzögert um (1-bright) Proben
+  // Anregung: weiches Rauschen, gefaltet mit der Zupfstelle (Kammfilter)
+  var exc=new Float32Array(N+2), lp=0, P=Math.max(1,Math.round(N*pickPos)), rnd=seed;
+  for(var i=0;i<N+2;i++){ rnd=(rnd*16807)%2147483647; var r=(rnd/2147483647)*2-1; lp+=0.5*(r-lp); exc[i]=lp; }
+  for(var k=0;k<N+2;k++){ y[k]=exc[k]-(k>=P?exc[k-P]:0); }
+  for(var n=N+2;n<len;n++){
+    var a=y[n-N]*(1-fr)+y[n-N-1]*fr, b=y[n-N-1]*(1-fr)+y[n-N-2]*fr;
+    y[n]=damp*(bright*a+(1-bright)*b);
   }
+  return y;
 }
-
-var nextStep=0, stepN=0;
-function schedule(){
-  if(!ac||!S.running||S.paused) return;
-  var t=ac.currentTime, half=spb()/2;
-  while(nextStep < t+0.3){
-    var s=stepN%STEP16, ci=Math.floor(s/4)%4;
-    var boost = nextStep < S.feverUntil;
-    // Führungsklick, damit der Takt auch ohne Crew da ist
-    if(s%2===0) tick(nextStep, S.crew.length?0.02:0.05);
-    for(var c=0;c<S.crew.length;c++) playLayer(S.crew[c],s,nextStep,ci,boost);
-    if(S.phase==="finale") playLayer("crane",s,nextStep,ci,true);
-    stepN++; nextStep+=half;
+function pizzBuffer(ctx,m){
+  var key=m+"@"+ctx.sampleRate; if(PIZZ[key]) return PIZZ[key];
+  var sr=ctx.sampleRate, hz=f(m), len=Math.floor(sr*1.1);
+  var hi=Math.min(1,(hz-200)/1200);                         // hohe Töne klingen schneller ab
+  var s1=ksString(sr,hz*Math.pow(2,-0.8/1200),len,0.9905-0.004*hi,0.62,1/7,m*7919+1);
+  var s2=ksString(sr,hz*Math.pow(2,1.6/1200),len,0.9950-0.003*hi,0.55,1/7.6,m*104729+3);
+  var buf=ctx.createBuffer(1,len,sr), d=buf.getChannelData(0), peak=0;
+  // Fingerkuppe: 6 ms gedämpftes Rauschen um 1,4 kHz
+  var nlen=Math.floor(sr*0.006), bp1=0, bp2=0, rnd=m*48271+11;
+  for(var n=0;n<len;n++){
+    var v=0.62*s1[n]+0.38*s2[n];
+    if(n<nlen){ rnd=(rnd*48271)%2147483647; var r=(rnd/2147483647)*2-1; bp1+=0.35*(r-bp1); bp2+=0.35*(bp1-bp2);
+      v+=(bp1-bp2)*0.9*(1-n/nlen); }
+    d[n]=v; if(Math.abs(v)>peak) peak=Math.abs(v);
   }
+  var fadeOut=Math.floor(sr*0.15);
+  for(var q=0;q<len;q++){ var e=q>len-fadeOut?(len-q)/fadeOut:1; d[q]=d[q]/(peak||1)*e; }
+  PIZZ[key]={buf:buf}; return PIZZ[key];
 }
-function spb(){
-  var base = STEMS.bpm? 60/STEMS.bpm : SPB;
-  // Mit echten Stems bleibt das Tempo fest, sonst liefe die Schleife auseinander.
-  // Der Strauß behält seinen Punktebonus, der Temposchub entfällt dann.
-  if(has("ostrich") && !stemsOn) base/=CFG.boni.straussTempo;
-  return base;
+/* Geigenkörper: Antwort aus zwölf abklingenden Resonanzen (Frequenz Hz, Stärke, Güte) */
+var BODY_MODES=[[275,1.0,18],[405,0.55,22],[460,0.9,25],[540,0.8,25],[700,0.35,28],[860,0.4,30],
+                [1050,0.3,30],[1350,0.3,32],[1800,0.28,34],[2400,0.42,30],[2900,0.38,28],[3600,0.18,30]];
+function bodyIR(ctx){
+  var sr=ctx.sampleRate, len=Math.floor(sr*0.18), b=ctx.createBuffer(1,len,sr), d=b.getChannelData(0), pk=0;
+  for(var n=0;n<len;n++){ var t=n/sr, v=0;
+    for(var k=0;k<BODY_MODES.length;k++){ var M=BODY_MODES[k], tau=M[2]/(Math.PI*M[0]);
+      v+=M[1]*Math.exp(-t/tau)*Math.sin(2*Math.PI*M[0]*t+k); }
+    d[n]=v; if(Math.abs(v)>pk) pk=Math.abs(v); }
+  d[0]+=pk*2.5;                      // direkter Anteil der Saite, damit der Anschlag klar bleibt
+  return b;
+}
+function roomIR(ctx){
+  var sr=ctx.sampleRate, len=Math.floor(sr*1.2), b=ctx.createBuffer(2,len,sr);
+  for(var c=0;c<2;c++){ var d=b.getChannelData(c), lp=0, rnd=c*7+5;
+    for(var n=0;n<len;n++){ rnd=(rnd*16807)%2147483647; var r=(rnd/2147483647)*2-1; lp+=0.3*(r-lp);
+      d[n]=lp*Math.exp(-n/(sr*0.28))*(n<sr*0.012?0:1); } }
+  return b;
+}
+var pizzIn=null;
+function pizzChain(ctx,dest){
+  var inp=ctx.createGain(), body=ctx.createConvolver(), room=ctx.createConvolver(), wet=ctx.createGain(), dry=ctx.createGain();
+  var hp=ctx.createBiquadFilter(); hp.type="highpass"; hp.frequency.value=170;
+  body.normalize=true; body.buffer=bodyIR(ctx); room.normalize=true; room.buffer=roomIR(ctx);
+  wet.gain.value=0.22; dry.gain.value=1;
+  inp.connect(hp); hp.connect(body); body.connect(dry); dry.connect(dest);
+  body.connect(room); room.connect(wet); wet.connect(dest);
+  return inp;
+}
+function pizz(ctx,dest,m,when,vol){
+  var P=pizzBuffer(ctx,m), src=ctx.createBufferSource(), gn=ctx.createGain();
+  src.buffer=P.buf; gn.gain.value=vol*20;
+  src.connect(gn); gn.connect(dest);
+  src.start(when); src.stop(when+1.1);
+}
+function pluck(m,when,vol){
+  if(!ac) return;
+  if(!pizzIn) pizzIn=pizzChain(ac,master);
+  pizz(ac,pizzIn,m,when,vol);
 }
 
-/* ---------------- Fähigkeiten ---------------- */
+/* ---------------- Ablauf ----------------
+   Alles hängt am Taktraster des Songs. Pro Tier drei Takte:
+     Ruf      — das Tier singt, jede Note erscheint oben in ihrer Spur und beginnt zu fallen
+     Antwort  — genau einen Takt später landet jede Note auf ihrem Ring: jetzt tippen
+     Pause    — Ergebnis, dann das nächste Tier
+   Zwischen den Etappen und am Anfang: zwei Takte Song, Etappenname im Bild. */
 
-function has(k){ return S.crew.indexOf(k)>=0; }
-function winSize(){
-  var w = has("cat")? CFG.antwort.fensterKatze : CFG.antwort.fenster;
-  if(S.lastInput==="mouse") w *= CFG.antwort.mausFaktor;
-  return w*spb();
-}
-function phraseLen(){
-  var r=CFG.phrasen.etappe[S.et], base=r[0]+Math.floor(Math.random()*(r[1]-r[0]+1));
-  if(has("elephant")) base+=CFG.phrasen.elefantPlus;
-  return Math.min(CFG.phrasen.max,base);
-}
-function mult(){ var m=1;
-  if(has("elephant")) m*=CFG.boni.elefant;
-  if(has("ostrich")) m*=CFG.boni.strauss;
-  if(now()<S.feverUntil) m*=CFG.boni.fieber;
-  return m; }
-function fever(){ return now()<S.feverUntil; }
-
-/* ---------------- Ablauf ---------------- */
-
-function load(){
-  try{
-    var raw=localStorage.getItem("ss-elves");
-    if(raw){ var o=JSON.parse(raw); S.best=o.best||0; S.runs=o.runs||0; }
-  }catch(e){}
-}
-function save(){
-  try{ localStorage.setItem("ss-elves",JSON.stringify({best:S.best,runs:S.runs})); }catch(e){}
-}
+function load(){ try{ var o=JSON.parse(localStorage.getItem("ss-elves")||"{}"); S.best=o.best||0; S.runs=o.runs||0;
+  if(typeof o.offset==="number") S.offset=Math.max(-CFG.zeit.lernenMax,Math.min(CFG.zeit.lernenMax,o.offset)); }catch(e){} }
+function save(){ try{ localStorage.setItem("ss-elves",JSON.stringify({best:S.best,runs:S.runs,offset:S.offset})); }catch(e){} }
 
 function startGame(){
   audioInit();
-  if(ac && ac.state==="suspended"){ try{ ac.resume(); }catch(e){} }
-  S.paused=false; playVideos();
+  if(!ac){ panel(T.noSong+btn(T.again)); $("go").onclick=function(){ hidePanel(); startGame(); }; return; }
+  if(ac.state==="suspended"){ try{ ac.resume(); }catch(e){} }
   if(opt.onStart){ try{ opt.onStart(); }catch(e){} }
-  S.et=0; S.energy=CFG.energie.start; S.score=0; S.crew=[]; S.freeMiss=true; S.shellUsed=false;
-  S.hitT={}; S.feverUntil=0; S.streak=0; S.famDone={};
-  S.runs++; save();
-  S.running=true; S.t0=now()+0.25; nextStep=S.t0; stepN=0;
-  startStems(S.t0);
-  renderCrew();
-  beginEtappe();
-}
-
-function beginEtappe(){
-  var e=ETAPPEN[S.et];
-  S.queue=e.list.slice();
-  S.freeMiss=true; S.shellUsed=false;
-  mqT.textContent=e.n;
-  mqS.textContent=T.leg(S.et+1);
-  panel("<p class='g4-lab'>"+T.leg(S.et+1)+"</p><h1>"+e.n+"</h1><p>"+e.s+"</p><p class='g4-sm'>"+e.tip+"</p>"+
-    "<button type='button' class='g4-btn' data-g4='go'>"+T.go+"</button>");
-  $("go").onclick=function(){ hidePanel(); nextRound(); };
-}
-
-function nextRound(){
-  if(S.queue.length===0){
-    if(S.et<2){ S.et++; beginEtappe(); return; }
-    finale(); return;
-  }
-  S.cur=S.queue[0];
-  var L=phraseLen(), ph=[];
-  for(var i=0;i<L;i++){
-    var k=Math.floor(Math.random()*5);
-    if(i>0 && k===ph[i-1].k && Math.random()<CFG.phrasen.keineWiederholung) k=(k+1+Math.floor(Math.random()*4))%5;
-    var dbl=null;
-    if(has("monkey") && S.et===2 && Math.random()<CFG.phrasen.affeChance){ dbl=(k+2)%5; }
-    ph.push({k:k,d:dbl});
-  }
-  S.phrase=ph; S.answered=[];
-  var reps = has("puffin")?2:1;
-  var t=now()+CFG.anzeige.vorlaufSekunden, vis=[], last=0;
-  for(var r=0;r<reps;r++){
-    for(var j=0;j<L;j++){
-      var tt=t+j*spb();
-      vis.push({t:tt,i:j}); last=tt;
-      note(PADS[ph[j].k].m,tt,spb()*0.9,0.3);
-      if(ph[j].d!==null) note(PADS[ph[j].d].m,tt,spb()*0.9,0.22);
-    }
-    t+=L*spb()+spb();
-  }
-  S.visT=vis;
-  S.callEnd=last+spb();
-  S.ansStart=S.callEnd+spb();
-  S.phase="call";
-  if(bassG&&ac) bassG.gain.setTargetAtTime(0.16,ac.currentTime,0.4);
-}
-
-function hit(k){
-  if(!S.running||S.paused) return;
-  if(S.phase!=="answer"){
-    if(ac) note(PADS[k].m,now(),0.3,0.12);
+  // ein stiller Ton im Tippen weckt den Ton auf Handys (iOS spielt sonst nichts)
+  pluck(60,ac.currentTime,0.0002);
+  if(!songBuf){
+    S.phase="loading"; panel("<h2>"+T.loading+"</h2>");
+    loadSong().then(function(){ hidePanel(); begin(); })
+      .catch(function(){ S.phase="title"; panel(T.noSong+btn(T.again)); $("go").onclick=function(){ hidePanel(); startGame(); }; });
     return;
   }
-  var idx=S.answered.length;
-  if(idx>=S.phrase.length) return;
-  var t=now(), exp=S.ansStart+idx*spb(), dt=t-exp;
-  var want=S.phrase[idx];
-  var ok=(k===want.k)||(want.d!==null&&k===want.d);
-  var onBeat=Math.abs(dt)<=winSize();
-  note(PADS[k].m,t,0.4,ok?0.32:0.18,ok?"triangle":"sawtooth");
-  if(!ok) wrongSound(t);
-  S.answered.push({k:k,ok:ok,on:onBeat});
-  if(ok) S.score+=Math.round((onBeat?CFG.punkte.tonImTakt:CFG.punkte.tonDaneben)*mult());
-  if(S.answered.length===S.phrase.length) evaluate();
+  begin();
 }
+function begin(){
+  S.paused=false; S.running=true; S.et=0; S.crew=[]; S.score=0; S.streak=0; S.feverLeft=0;
+  S.tries={}; S.notes=[]; S.lastRes=null; S.flashes=[]; S.cur=null;
+  S.runs++; save();
+  var t=ac.currentTime+0.15;
+  startSong(t);
+  // erste ganze Taktgrenze nach dem Start (der Song kann mit einem Auftakt beginnen)
+  S.bar=Math.max(0,Math.ceil((t+VORLAUF-beat0)/bar()-1e-6));
+  S.endAt=songT0+Math.min(CFG.song.laenge,songBuf.duration)-0.05;
+  lp.frequency.cancelScheduledValues(ac.currentTime); lp.frequency.value=CFG.filter.leer;
+  playVideos();
+  startLeg(0);
+  renderCrew();
+}
+function startLeg(i){
+  S.et=i; S.queue=ETAPPEN[i].list.slice();
+  S.phase="intro"; S.phaseBar=S.bar; S.legT=barStart(S.bar);
+  mqT.textContent=ETAPPEN[i].n; mqS.textContent=T.leg(i+1);
+}
+function pickPattern(){
+  var P=CFG.muster[S.et], pos=P[Math.floor(Math.random()*P.length)];
+  var lane=Math.floor(Math.random()*3), out=[];
+  for(var i=0;i<pos.length;i++){
+    if(i>0){ var r=Math.random(); lane = r<0.4 ? lane : (r<0.7 ? (lane+1)%3 : (lane+2)%3); }
+    out.push({pos:pos[i],lane:lane});
+  }
+  // Etappe 1: zwei Töne nie auf derselben Spur, damit man sofort sieht, dass es drei Spuren gibt
+  if(S.et===0 && out.length===2 && out[0].lane===out[1].lane) out[1].lane=(out[0].lane+1+Math.floor(Math.random()*2))%3;
+  return out;
+}
+function nextAnimal(){
+  // Ende des Songs erreicht oder alle an Bord?
+  if(S.crew.length===10){ finale(); return; }
+  if(barStart(S.bar+3) > S.endAt){ finale(); return; }
+  if(!S.queue.length){
+    if(S.et<2){ startLeg(S.et+1); return; }
+    finale(); return;
+  }
+  S.cur=S.queue.shift();
+  S.tries[S.cur]=(S.tries[S.cur]||0)+1;
+  var tc0=barStart(S.bar), tb=bar(), e8=tb/8, pat=pickPattern();
+  S.notes=pat.map(function(p){ var tc=tc0+p.pos*e8; return {lane:p.lane, tc:tc, ta:tc+tb, res:null, dt:0, sung:false}; });
+  S.phase="call"; S.phaseBar=S.bar;
+}
+/* Der Spieler tippt auf Spur k */
+function tap(k){
+  pressT[k]=performance.now();
+  if(!S.running||S.paused) return;
+  var t=now(), tj=t-outLat()-S.offset;
+  var win=CFG.zeit.gut*(S.lastInput==="mouse"?CFG.zeit.mausFaktor:1), pw=CFG.zeit.perfekt*(S.lastInput==="mouse"?CFG.zeit.mausFaktor:1);
+  // nächste offene Note in der Nähe, egal welche Spur
+  var best=null, bd=1e9;
+  for(var i=0;i<S.notes.length;i++){ var n=S.notes[i]; if(n.res) continue;
+    var d=Math.abs(tj-n.ta); if(d<bd){ bd=d; best=n; } }
+  if(!best || bd>win){ pluck(CFG.toene[k],t,CFG.lautstaerke.antwort*0.5); return; }   // nichts in Reichweite: nur ein leiser Ton, keine Strafe
+  if(best.lane!==k){
+    // falsche Spur: nur zählen, wenn auf der richtigen Spur nichts Näheres wartet
+    best.res="m"; best.dt=tj-best.ta; flash(best.lane,"m",0);
+    pluck(CFG.toene[k],t,CFG.lautstaerke.antwort*0.5); return;
+  }
+  best.dt=tj-best.ta;
+  best.res = bd<=pw ? "p" : "g";
+  S.score+=Math.round((best.res==="p"?CFG.punkte.perfekt:CFG.punkte.gut)*(S.feverLeft>0?CFG.punkte.fieberMal:1));
+  pluck(CFG.toene[k],t,CFG.lautstaerke.antwort);
+  flash(k,best.res,best.dt);
+}
+function flash(k,res,dt){ S.flashes.push({k:k,res:res,dt:dt,t:performance.now()}); if(S.flashes.length>8) S.flashes.shift(); }
 
 function evaluate(){
-  var errs=0, offs=0;
-  for(var i=0;i<S.answered.length;i++){
-    if(!S.answered[i].ok) errs++;
-    else if(!S.answered[i].on) offs++;
+  var miss=0, errs=[];
+  S.notes.forEach(function(n){ if(n.res==="m"||!n.res) miss++; else errs.push(n.dt); });
+  var n=S.notes.length, allowed = n<=2 ? 0 : 1, ok = miss<=allowed;
+  // Timing des Geräts lernen: liegt jemand stets zu spät oder zu früh, rückt das Raster nach
+  if(errs.length>=2 && CFG.zeit.lernen>0){
+    var m=errs.reduce(function(a,b){return a+b;},0)/errs.length;
+    if(Math.abs(m)>0.02){ S.offset=Math.max(-CFG.zeit.lernenMax,Math.min(CFG.zeit.lernenMax,S.offset+m*CFG.zeit.lernen)); save(); }
   }
-  if(errs>0 && has("duck") && S.freeMiss){ errs--; S.freeMiss=false; }
-
-  var won=(errs===0);
-  if(won){
+  var A=ANIMALS[S.cur];
+  if(ok){
     S.crew.push(S.cur);
-    S.queue.shift();
-    S.score+=Math.round(CFG.punkte.tierAnBord*mult());
-    S.energy=Math.min(CFG.energie.start,S.energy+CFG.energie.zurueckProTier);
-    setStem(S.cur,true);
-    var A=ANIMALS[S.cur];
-    S.lastRes={ok:true,name:A.n,ab:A.ab,abT:A.abT,role:A.role,line:A.line,offs:offs,chorus:null};
-    if(ac){ var t=now();
-      note(PADS[0].m+12,t,0.5,0.26); note(PADS[2].m+12,t+0.09,0.5,0.24); note(PADS[4].m+12,t+0.18,0.7,0.24); }
-    // Gruppe vollzählig? Dann ein kurzer Chorus, wie in Incredibox
-    var fam=A.fam, mem=FAMS[fam], full=true;
-    for(var fi=0;fi<mem.length;fi++) if(!has(mem[fi])) full=false;
-    if(full && !S.famDone[fam]){
-      S.famDone[fam]=true; S.score+=Math.round(CFG.punkte.chorus*mult());
-      S.lastRes.chorus=T.fams[fam];
-      if(ac){ var ct=now()+0.35, cm=[62,65,69,72,69,65];
-        for(var k2=0;k2<cm.length;k2++) note(cm[k2],ct+k2*spb()*0.33,spb()*0.7,0.2,"triangle"); }
-    }
-    // Drei saubere Phrasen am Stück: Fieber
-    S.streak++;
-    if(S.streak>=CFG.fieber.serie){
-      S.streak=0; S.feverUntil=now()+CFG.fieber.dauerSchlaege*spb(); S.lastRes.fever=true;
-    }
+    S.score+=Math.round(CFG.punkte.anBord*(S.feverLeft>0?CFG.punkte.fieberMal:1));
+    if(S.feverLeft>0) S.feverLeft--;
+    if(miss===0){ S.streak++; if(S.streak>=CFG.fieber.serie){ S.streak=0; S.feverLeft=CFG.fieber.tiere; } } else S.streak=0;
+    S.lastRes={ok:true,title:T.aboard(A.n),line:A.line};
+    // Freudentöne aus der Tonart, leise über dem Song
+    var t=now(); pluck(CFG.toene[0]+12,t,0.10); pluck(CFG.toene[1]+12,t+0.08,0.10); pluck(CFG.toene[2]+12,t+0.16,0.12);
   } else {
-    S.streak=0;
-    var absorbed=false;
-    if(has("turtle") && !S.shellUsed){ S.shellUsed=true; absorbed=true; }
-    if(!absorbed) S.energy-=Math.min(CFG.energie.hoechstensProPhrase, errs*CFG.energie.proFehler);
-    if(!has("dog")){ S.queue.push(S.queue.shift()); }
-    S.lastRes={ok:false,name:ANIMALS[S.cur].n,errs:errs,absorbed:absorbed};
+    S.streak=0; if(S.feverLeft>0) S.feverLeft--;
+    var more = S.tries[S.cur] < CFG.ablauf.versuche;
+    if(more) S.queue.push(S.cur);
+    S.lastRes={ok:false,title:more?T.again1(A.n):T.gone(A.n),line:""};
   }
-  S.phase="result"; S.resultT=now()+CFG.anzeige.ergebnisSekunden;
-  renderCrew();
-  if(S.energy<=0){ S.energy=0; gameOver(); }
-}
-
-function gameOver(){
-  S.running=false; S.phase="over";
-  if(S.score>S.best){ S.best=S.score; }
-  save();
-  panel(T.over(S.crew.length,S.score,S.best)+
-    "<button type='button' class='g4-btn' data-g4='go'>"+T.again+"</button>");
-  $("go").onclick=function(){ hidePanel(); startGame(); };
+  S.resT=performance.now();
+  openFilter(); renderCrew();
 }
 
 function finale(){
-  S.phase="finale"; S.running=false;
-  if(S.score>S.best) S.best=S.score;
-  save();
-  if(ac){
-    var t=now()+0.2, mel=[62,65,67,69,72,69,67,74];
-    for(var i=0;i<mel.length;i++) note(mel[i],t+i*spb()*0.75,spb()*1.4,0.26);
+  if(S.phase==="finale"||S.phase==="end") return;
+  S.bar=Math.floor((now()+VORLAUF-beat0)/bar()+1e-6); S.phase="finale"; S.phaseBar=S.bar; S.cur=null; S.notes=[];
+  mqT.textContent=NAMES.fairy; mqS.textContent=ETAPPEN[2].n;
+  if(S.crew.length===10 && lp) lp.frequency.setTargetAtTime(CFG.filter.voll,ac.currentTime,0.3);
+  var t=now(), mel=CFG.toene.concat([CFG.toene[0]+12]);
+  for(var i=0;i<mel.length;i++) pluck(mel[i]+12,t+0.2+i*spb()*0.5,0.12);
+}
+function endRun(){
+  S.phase="end"; S.running=false;
+  fadeSong(2.5);
+  if(S.score>S.best) S.best=S.score; save();
+  panel(T.end(S.crew.length,S.score,S.best)+btn(T.again));
+  $("go").onclick=function(){ hidePanel(); startGame(); };
+}
+
+/* Fortschreiben im Takt. Zwei Uhren: Neues wird ein Stück im Voraus geplant (damit der Ruf
+   genau auf dem Schlag erklingt), Antworten werden nach dem gemessen, was man hört. */
+var VORLAUF=0.12;
+function step(){
+  if(!S.running||S.paused) return;
+  var th=heard()-S.offset;
+  if(S.phase==="call"){
+    S.notes.forEach(function(n){ if(!n.sung && n.tc-0.2<now()){ n.sung=true; pluck(CFG.toene[n.lane]+12,Math.max(now(),n.tc),CFG.lautstaerke.ruf); } });
   }
-  mqT.textContent=NAMES.fairy;
-  mqS.textContent=T.arrived;
-  setTimeout(function(){
-    panel(T.finale(S.score,S.best)+
-      "<button type='button' class='g4-btn' data-g4='go'>"+T.again+"</button>");
-    $("go").onclick=function(){ hidePanel(); startGame(); };
-  },2400);
+  var win=CFG.zeit.gut*(S.lastInput==="mouse"?CFG.zeit.mausFaktor:1);
+  S.notes.forEach(function(n){ if(!n.res && th > n.ta+win){ n.res="m"; flash(n.lane,"m",0); } });
+
+  var bA=Math.floor((now()+VORLAUF-beat0)/bar()+1e-6);
+  if(S.phase==="intro" && bA>=S.phaseBar+CFG.ablauf.introTakte){ S.bar=bA; nextAnimal(); return; }
+  if(S.phase==="call" && th>=barStart(S.phaseBar+1)){ S.phase="answer"; return; }
+  if(S.phase==="answer" && th>=barStart(S.phaseBar+2)){
+    S.notes.forEach(function(n){ if(!n.res) n.res="m"; });
+    evaluate(); S.phase="rest"; return;
+  }
+  if(S.phase==="rest" && bA>=S.phaseBar+3){ S.bar=bA; nextAnimal(); return; }
+  if(S.phase==="finale" && (bA>=S.phaseBar+CFG.ablauf.finaleTakte || now()>S.endAt)){ endRun(); return; }
 }
 
 /* ---------------- Pause ----------------
-   Die Spieluhr ist die Uhr des AudioContext. Wird er angehalten, steht das ganze
-   Spiel genau dort, wo es war — Phrasen, Antwortfenster, Spuren, Videoloops. */
-
+   Die Spieluhr ist die Uhr des AudioContext. Wird er angehalten, steht alles —
+   Song, fallende Noten, Videoloops — genau dort, wo es war. */
 var pausePanel=false;
 function pause(){
   if(S.paused) return;
@@ -7255,9 +7139,7 @@ function pause(){
   if(ac && ac.state==="running"){ try{ ac.suspend(); }catch(e){} }
   pauseVideos();
   if(S.running && ov.classList.contains("hide")){
-    pausePanel=true;
-    panel(T.paused+"<button type='button' class='g4-btn' data-g4='go'>"+T.cont+"</button>");
-    $("go").onclick=function(){ resume(); };
+    pausePanel=true; panel(T.paused+btn(T.cont)); $("go").onclick=function(){ resume(); };
   }
 }
 function resume(){
@@ -7271,86 +7153,70 @@ function resume(){
 }
 
 /* ---------------- Schleife ----------------
-   Läuft nur, solange das Spiel zu sehen ist (opt.visible); sonst schläft sie,
-   bis wake() sie wieder anstößt — die Website verlangt das für jede Zeichenfläche. */
-
+   Läuft nur, solange das Spiel zu sehen ist (opt.visible). */
 var raf=0;
-function wake(){
-  if(!raf) raf=requestAnimationFrame(loop);
-}
+function wake(){ if(!raf) raf=requestAnimationFrame(loop); }
 function loop(){
   raf=0;
   if(opt.visible && !opt.visible()) return;
   raf=requestAnimationFrame(loop);
-  if(!artDone) artInit();      // Videoloops erst laden, wenn das Spiel zum ersten Mal zu sehen ist
-  schedule(); artSync();
-  var t=now();
-
-  if(!S.paused){
-    if(S.phase==="call" && t>=S.ansStart-0.02){ S.phase="answer"; }
-    if(S.phase==="answer"){
-      while(S.answered.length<S.phrase.length &&
-            t > S.ansStart+S.answered.length*spb()+CFG.antwort.verfallen*spb()){
-        S.answered.push({k:-1,ok:false,on:false});
-        if(ac) wrongSound(t);
-      }
-      if(S.answered.length===S.phrase.length) evaluate();
-    }
-    if(S.phase==="result" && t>=S.resultT){
-      if(S.running){ S.phase="idle"; nextRound(); }
-    }
-  }
-
-  draw(t);
-  eBar.style.width=Math.max(0,S.energy)+"%";
-  eBar.style.background = S.energy>50? "#7AFFC8" : S.energy>=25? "#FFFFFF" : "#FF3B3B";   // Grün über die Hälfte, Rot unter einem Viertel
-  scoreT.textContent=S.score;
-  padVisual(t);
+  if(!artDone) artInit();
+  fitCanvas();
+  step();
+  artSync();
+  draw();
+  hud();
 }
 
-function padVisual(t){
-  var litIdx=-1;
-  if(S.phase==="call" && S.visT){
-    for(var i=0;i<S.visT.length;i++){
-      if(t>=S.visT[i].t-0.04 && t<S.visT[i].t+spb()*0.55) litIdx=S.visT[i].i;
+/* Anzeige unter dem Bild — nur anfassen, was sich geändert hat */
+var hudLast={};
+function setIf(k,v,fn){ if(hudLast[k]!==v){ hudLast[k]=v; fn(v); } }
+function hud(){
+  var prog=0;
+  if(S.running && songBuf){ prog=Math.max(0,Math.min(1,(heard()-songT0)/Math.max(1,(S.endAt-songT0)))); }
+  setIf("bar",Math.round(prog*200)/2,function(v){ eBar.style.width=v+"%"; });
+  setIf("score",S.score,function(v){ scoreT.textContent=v; });
+  var pn=performance.now();
+  for(var k=0;k<3;k++){
+    var on=false;
+    if(S.phase==="answer"||S.phase==="call"){
+      var th=heard()-S.offset;
+      for(var i=0;i<S.notes.length;i++){ var n=S.notes[i]; if(!n.res && n.lane===k && Math.abs(th-n.ta)<0.12){ on=true; break; } }
     }
+    var cls="g4-pad"+(on?" lit":"")+(pn-pressT[k]<120?" press":"");
+    setIf("p"+k,cls,(function(p){ return function(v){ p.className=v; }; })(pads[k]));
   }
-  var storm = (S.et===1 && !has("penguin") && (S.phase==="call"||S.phase==="answer"));
-  for(var k=0;k<5;k++){
-    var p=pads[k], on=false;
-    if(litIdx>=0){ var ph=S.phrase[litIdx]; on=(ph.k===k)||(ph.d===k); }
-    // Kranich: nur der erste Ton der Antwort wird als Starthilfe gezeigt
-    if(S.phase==="answer" && has("crane") && S.answered.length===0 && S.phrase[0].k===k) on=true;
-    var pressed = performance.now()-pressT[k] < 130;
-    p.className="g4-pad"+(on?" lit":"")+(pressed?" press":"")+(storm&&!on&&!pressed?" dim":"");
-  }
-  // Taktpuls auf der Leiste, solange geantwortet wird
-  var beating=false;
-  if(S.phase==="answer"){
-    var idx2=S.answered.length;
-    if(idx2<S.phrase.length){
-      var d=Math.abs(t-(S.ansStart+idx2*spb()));
-      beating = d<0.07;
-    }
-  }
-  deck.classList.toggle("beat",beating);
 }
 
 /* ---------------- Zeichnen ---------------- */
 
-var SKY=[["#f7f0c8","#7fd8e8"],["#2a1b4d","#123049"],["#cdeec0","#8fd94a"]];
-/* Schriften nach dem Games-Kapitel: Inter für Text, Chivo 600 für Überschriften,
-   IBM Plex Mono für Etiketten. Die Zeichenfläche nennt nur Schriften, die die Website lädt;
-   ohne sie (eigenständige Seite) greift die Systemschrift. */
 var FONT='"Inter",ui-sans-serif,system-ui,sans-serif';
 var FONT_H='"Chivo","Helvetica Neue",Arial,sans-serif';
 var FONT_M='"IBM Plex Mono",ui-monospace,Menlo,monospace';
-var PINK="#E4007C", TINT="#F7C6DD", GOLD="#FFD36B";
-/* Weniger Bewegung, wenn das Gerät darum bittet: kein Pulsieren, kein Hüpfen, kein Schaukeln */
+var FONT_B='"Ballet Mecanique","Chivo","Helvetica Neue",sans-serif';
+var PINK="#E4007C", TINT="#F7C6DD", GOLD="#FFD36B", RED="#FF3B3B";
 var RM=false; try{ RM=window.matchMedia("(prefers-reduced-motion: reduce)").matches; }catch(e){}
 
-/* Liegt ein Loop der Originalanimation vor, füllt er die ganze Fläche —
-   er bringt Himmel, Wasser und Boot selbst mit. */
+/* Auf schmalen Bildschirmen wird die Bühne quadratisch, damit die Noten Platz zum Fallen haben.
+   Die Spuren liegen genau über den drei Knöpfen darunter. */
+var laneX=[0,0,0], hitY=0, topY=0, fitKey="";
+function fitCanvas(){
+  var w=root.clientWidth||720, sq=w<560, key=sq+"|"+w;
+  if(key===fitKey) return; fitKey=key;
+  root.classList.toggle("g4-sq",sq);
+  var W=sq?720:960, H=sq?720:540;
+  if(cv.width!==W||cv.height!==H){ cv.width=W; cv.height=H; }
+  var sr=cv.getBoundingClientRect();
+  for(var k=0;k<3;k++){
+    var pr=pads[k].getBoundingClientRect();
+    laneX[k] = sr.width ? ((pr.left+pr.width/2)-sr.left)/sr.width*W : W*(0.3+0.2*k);
+    if(!(laneX[k]>0&&laneX[k]<W)) laneX[k]=W*(0.3+0.2*k);
+  }
+  hitY=H*0.84; topY=H*0.16;
+}
+window.addEventListener("resize",function(){ fitKey=""; });
+
+function fever(){ return S.feverLeft>0; }
 function sceneSlot(){
   if(fever()&&artOk("boat.violin")) return "boat.violin";
   return S.crew.length? "boat.full" : "boat.start";
@@ -7361,136 +7227,109 @@ function drawCover(k,W,H){
   if(!w||!h) return false;
   var sc=Math.max(W/w,H/h), dw=w*sc, dh=h*sc;
   try{ g.drawImage(E.el,(W-dw)/2,(H-dh)/2,dw,dh); }catch(e){ return false; }
-  // Etappe färbt das Original leicht ein: Nacht und Dschungel
   if(S.et===1){ g.fillStyle="rgba(26,16,60,.42)"; g.fillRect(0,0,W,H); }
   if(S.et===2){ g.fillStyle="rgba(60,150,50,.16)"; g.fillRect(0,0,W,H); }
   return true;
 }
+function textScale(){ var w=cv.clientWidth||cv.width; return Math.max(1,Math.min(1.75,cv.width/w*0.62)); }
 
-function draw(t){
-  var W=cv.width,H=cv.height;
-  var covered=drawCover(sceneSlot(),W,H);
-  if(covered){ drawOver(t,W,H); return; }
-
-  var sky=SKY[S.et][0], sea=SKY[S.et][1];
-  g.fillStyle=sky; g.fillRect(0,0,W,H*0.62);
-  g.fillStyle=sea; g.fillRect(0,H*0.62,W,H*0.38);
-
-  if(S.et===1){
-    g.fillStyle="#fff";
-    for(var i=0;i<60;i++){
-      var sx=(i*137)%W, sy=((i*89)%Math.floor(H*0.55));
-      var a=0.25+0.55*Math.abs(Math.sin(t*1.2+i));
-      g.globalAlpha=a; g.fillRect(sx,sy,2,2);
-    }
-    g.globalAlpha=1;
+function draw(){
+  var W=cv.width,H=cv.height,t=heard();
+  if(!drawCover(sceneSlot(),W,H)){
+    g.fillStyle=["#7fd8e8","#123049","#8fd94a"][S.et]; g.fillRect(0,0,W,H);
+    drawBoat(W*0.5,H*0.62+(RM?0:Math.sin(t*1.5)*6));
   }
-  if(S.et===2){
-    for(var j=0;j<7;j++){
-      var tx=60+j*140, th=H*0.30+((j*53)%70);
-      g.fillStyle="#5fb032"; g.beginPath(); g.ellipse(tx,H*0.46,58,36,0,0,7); g.fill();
-      g.fillStyle="#a8703f"; g.fillRect(tx-7,H*0.46,14,th*0.5);
-    }
-  }
-  if(S.et===0){
-    g.fillStyle="rgba(255,255,255,.55)";
-    for(var c=0;c<5;c++){
-      var cx=((c*211+t*8)%(W+160))-80;
-      rr(cx,60+(c%3)*34,84,16,8); g.fill();
-    }
-  }
-
-  // Wellen
-  g.strokeStyle = S.et===2? "rgba(60,140,45,.55)" : "rgba(255,255,255,.5)";
-  g.lineWidth=3;
-  for(var w=0;w<4;w++){
-    var yy=H*0.70+w*34;
-    g.beginPath();
-    for(var x=0;x<=W;x+=16){
-      var y=yy+Math.sin((x*0.018)+t*1.6+w)*5;
-      if(x===0) g.moveTo(x,y); else g.lineTo(x,y);
-    }
-    g.stroke();
-  }
-
-  var bob=RM?0:Math.sin(t*1.5)*7;
-  drawBoat(W*0.5,H*0.70+bob);
-  drawOver(t,W,H);
-}
-
-/* Schrift auf der Szene wächst, wenn die Fläche klein angezeigt wird (Handy):
-   960 Punkte Breite auf 350 Pixel ergäben sonst Text von kaum 6 Pixeln. */
-function textScale(){
-  var w=cv.clientWidth||cv.width;
-  return Math.max(1,Math.min(1.75,cv.width/w*0.62));
-}
-/* Alles, was über der Szene liegt — egal ob gezeichnet oder Originalanimation */
-function drawOver(t,W,H){
   var K=textScale();
-  if(fever()){
-    g.fillStyle="rgba(228,0,124,.10)"; g.fillRect(0,0,W,H);
-    g.textAlign="center"; g.fillStyle=PINK;
-    g.font="500 "+Math.round(20*K)+"px "+FONT_M;
-    g.fillText(T.fever, W*0.5, 24+20*K);
+  if(fever()){ g.fillStyle="rgba(228,0,124,.10)"; g.fillRect(0,0,W,H); }
+
+  // Etappenname, während der Song die Takte davor spielt
+  if(S.phase==="intro"){
+    var e=ETAPPEN[S.et];
+    g.fillStyle="rgba(0,0,0,.55)"; g.fillRect(0,H*0.34,W,H*0.30);
+    g.textAlign="center"; g.fillStyle="#fff";
+    g.font="500 "+Math.round(13*K)+"px "+FONT_M; g.fillText(T.leg(S.et+1).toUpperCase(),W/2,H*0.42);
+    g.font="600 "+Math.round(34*K)+"px "+FONT_B; g.fillText(e.n,W/2,H*0.51);
+    g.font="400 "+Math.round(15*K)+"px "+FONT; g.fillStyle="rgba(255,255,255,.8)"; g.fillText(e.s,W/2,H*0.58);
     g.textAlign="left";
   }
 
-  // Rufendes Tier
-  if(S.cur && (S.phase==="call"||S.phase==="answer"||S.phase==="result")){
-    var ax=W*0.17, ay=H*0.70+(RM?0:Math.sin(t*1.9)*8);
-    var pulse=(S.phase==="call"&&!RM)?1+0.08*Math.sin(t*9):1;
-    g.save(); g.translate(ax,ay); g.scale(pulse,pulse);
-    drawAnimal(S.cur,0,0,1.25); g.restore();
-    if(S.phase!=="result") label(ANIMALS[S.cur].n, ax, ay-96, K);   // im Ergebnis steht der Name schon groß
+  // Spuren und Ringe, solange ein Tier singt oder du antwortest
+  if(S.phase==="call"||S.phase==="answer"||S.phase==="rest"){
+    var a=(S.phase==="rest")?0.35:1;
+    for(var k=0;k<3;k++){
+      var x=laneX[k];
+      g.fillStyle="rgba(0,0,0,"+(0.22*a)+")"; rr(x-38*K,topY-20,76*K,hitY-topY+60,38*K); g.fill();
+      g.lineWidth=4*K; g.strokeStyle=CFG.spuren[k]; g.globalAlpha=0.85*a;
+      g.beginPath(); g.arc(x,hitY,30*K,0,7); g.stroke(); g.globalAlpha=1;
+    }
+    // der Takt: ein pinker Punkt auf jedem Schlag am Ring der Mitte
+    var ph=((t-beat0)/spb())%1; if(ph<0) ph+=1;
+    if(!RM && S.phase!=="rest"){ g.fillStyle=PINK; g.globalAlpha=Math.max(0,1-ph*2.2); g.beginPath(); g.arc(laneX[1],hitY,8*K,0,7); g.fill(); g.globalAlpha=1; }
+    // fallende Noten
+    var th=t-S.offset;
+    for(var i=0;i<S.notes.length;i++){
+      var n=S.notes[i]; if(n.res==="p"||n.res==="g") continue;
+      if(th<n.tc-0.02) continue;
+      var p=(th-n.tc)/(n.ta-n.tc); if(p>1.25) continue;
+      var y=topY+(hitY-topY)*p, x2=laneX[n.lane];
+      g.globalAlpha = n.res==="m" ? 0.3 : 1;
+      g.fillStyle=CFG.spuren[n.lane]; g.beginPath(); g.arc(x2,y,22*K,0,7); g.fill();
+      g.lineWidth=3*K; g.strokeStyle="#000"; g.stroke();
+      g.globalAlpha=1;
+    }
   }
 
-  // Taktpunkt
-  if(S.running && ac){
-    var ph=((t-S.t0)/spb())%1, r=7+6*(1-ph);
-    g.fillStyle=PINK;                       // der Takt ist pink
-    g.beginPath(); g.arc(W-40,40,RM?10:r,0,7); g.fill();
+  // Treffer und Fehler, kurz über dem Ring
+  var pn=performance.now();
+  S.flashes.forEach(function(fl){
+    var age=(pn-fl.t)/600; if(age>1) return;
+    var x=laneX[fl.k], y=hitY-60*K-age*30*K;
+    g.globalAlpha=1-age; g.textAlign="center";
+    g.font="500 "+Math.round(15*K)+"px "+FONT_M;
+    var s = fl.res==="p" ? T.judge.p : fl.res==="g" ? (T.judge.g+(Math.abs(fl.dt)>0.06?" · "+(fl.dt<0?T.judge.early:T.judge.late):"")) : T.judge.m;
+    g.lineJoin="round"; g.lineWidth=5*K; g.strokeStyle="rgba(0,0,0,.85)"; g.strokeText(s,x,y);   // dunkler Rand: lesbar auf hellem Bild
+    g.fillStyle = fl.res==="p" ? GOLD : fl.res==="g" ? "#fff" : RED;
+    g.fillText(s,x,y);
+    if(fl.res!=="m" && !RM){ g.strokeStyle=fl.res==="p"?GOLD:"#fff"; g.lineWidth=4*K; g.beginPath(); g.arc(x,hitY,(30+age*30)*K,0,7); g.stroke(); }
+    g.globalAlpha=1; g.textAlign="left";
+  });
+
+  // das singende Tier oben links, mit Namen
+  if(S.cur && (S.phase==="call"||S.phase==="answer")){
+    var ax=W*0.12, ay=topY+70*K, pulse=(S.phase==="call"&&!RM)?1+0.08*Math.sin(t*9):1;
+    g.save(); g.translate(ax,ay); g.scale(pulse,pulse); drawAnimal(S.cur,0,0,1.1*K); g.restore();
+    label(S.phase==="call"?T.sing(ANIMALS[S.cur].n):T.yourTurn, Math.min(W*0.5,ax+70*K), topY-24*K, K);
   }
 
-  if(S.phase==="result" && S.lastRes){
-    var L=S.lastRes;
-    var l2 = L.ok? L.line : (L.absorbed? T.shell : T.off(L.errs));
-    var l3 = L.ok? (L.ab+" · "+L.abT) : "";
-    if(L.chorus) l3 = T.chorus(L.chorus);
-    var fs=Math.round(17*K), f3=Math.round(15*K), maxW=W-80;
-    function widest(){
-      g.font="400 "+fs+"px "+FONT;
-      var a=g.measureText(l2).width;
-      g.font="400 "+f3+"px "+FONT;
-      return Math.max(a,g.measureText(l3).width);
-    }
-    var wide=widest();
-    while(wide>Math.min(maxW,620*K) && fs>12){ fs--; f3=Math.max(12,f3-1); wide=widest(); }
-    var pw=Math.max(440,Math.min(W-40,wide+60));
-    var ph2=(l3?128:100)*K, y0=H*(K>1.2?0.12:0.22);
-    g.fillStyle="rgba(0,0,0,.80)"; rr(W*0.5-pw/2,y0,pw,ph2,16); g.fill();
-    g.textAlign="center"; g.fillStyle="#fff"; g.font="600 "+Math.round(26*K)+"px "+FONT_H;
-    g.fillText(L.ok? T.aboard(L.name) : T.swims(L.name), W*0.5, y0+40*K);
-    if(L.ok){
-      g.font="500 "+Math.round(14*K)+"px "+FONT_M; g.fillStyle=GOLD;      // Gold: was man fängt
-      g.fillText(T.newTrack(L.role).toUpperCase(), W*0.5, y0+64*K);
-      g.font="400 "+fs+"px "+FONT; g.fillStyle="rgba(255,255,255,.88)";
-      g.fillText(l2, W*0.5, y0+92*K);
-      g.fillStyle=L.chorus?TINT:"rgba(255,255,255,.62)";
-      g.font="400 "+f3+"px "+FONT;
-      g.fillText(l3, W*0.5, y0+116*K);
-    } else {
-      g.font="400 "+fs+"px "+FONT; g.fillStyle="rgba(255,255,255,.88)";
-      g.fillText(l2, W*0.5, y0+76*K);
-    }
+  // Ergebnis nach jedem Tier
+  if(S.phase==="rest" && S.lastRes){
+    var L=S.lastRes, fs=Math.round(24*K), y0=H*0.30;
+    g.font="600 "+fs+"px "+FONT_H; var w1=g.measureText(L.title).width;
+    g.font="400 "+Math.round(15*K)+"px "+FONT; var w2=L.line?g.measureText(L.line).width:0;
+    var pw=Math.min(W-30,Math.max(w1,w2)+50*K);
+    g.fillStyle="rgba(0,0,0,.80)"; rr(W/2-pw/2,y0,pw,(L.line?84:56)*K,14*K); g.fill();
+    g.textAlign="center"; g.fillStyle=L.ok?GOLD:"#fff"; g.font="600 "+fs+"px "+FONT_H;
+    g.fillText(L.title,W/2,y0+36*K);
+    if(L.line){ g.fillStyle="rgba(255,255,255,.85)"; g.font="400 "+Math.round(15*K)+"px "+FONT; g.fillText(L.line,W/2,y0+64*K); }
     g.textAlign="left";
   }
 
-  if(S.phase==="finale"){
-    g.fillStyle="rgba(20,10,40,.55)"; g.fillRect(0,0,W,H);
-    drawFairy(W*0.5,H*0.52,t);
+  if(fever() && S.running){
+    g.textAlign="center"; g.fillStyle=PINK; g.font="500 "+Math.round(16*K)+"px "+FONT_M;
+    g.fillText(T.fever,W/2,30*K); g.textAlign="left";
+  }
+
+  if(S.phase==="finale"||S.phase==="end"){
+    g.fillStyle="rgba(20,10,40,.45)"; g.fillRect(0,0,W,H);
+    drawFairy(W*0.5,H*0.62,t);
   }
 }
 
+function crewBob(k){
+  if(RM||!S.running) return 0;
+  var ph=((heard()-beat0)/spb())%1; if(ph<0) ph+=1;
+  return ph<0.25 ? -7*(1-ph/0.25) : 0;
+}
 function rr(x,y,w,h,r){
   g.beginPath();
   g.moveTo(x+r,y); g.arcTo(x+w,y,x+w,y+h,r); g.arcTo(x+w,y+h,x,y+h,r);
@@ -7542,11 +7381,10 @@ function drawBoat(x,y){
 }
 
 /* ---------- Bildquellen aus der Originalanimation ----------
-   Gleiche Idee wie #arcadeArt in den anderen Spielen: gefüllter Slot gewinnt,
-   leerer Slot behält die gezeichnete Form. Videoloops sind zwei Takte lang und
-   werden laufend sanft auf den Takt gezogen. Auf der Website erst geladen, wenn
-   das Spiel zum ersten Mal in den Blick kommt (opt.lazyArt). */
-var ART=(opt.art&&opt.art.files)||{}, VID={}, artDone=false;
+   Gefüllter Slot gewinnt, leerer Slot behält die gezeichnete Form. Die Loops sind zwei Takte
+   lang und laufen auf dem Taktraster des Songs. Es läuft immer nur der Loop, der gerade zu
+   sehen ist (vorher liefen alle drei gleichzeitig — dreifache Arbeit fürs Handy). */
+var ART=(opt.art&&opt.art.files)||{}, VID={}, artDone=false, activeVid=null;
 
 function artInit(){
   artDone=true;
@@ -7556,10 +7394,10 @@ function artInit(){
       var v=document.createElement("video");
       v.muted=true; v.loop=true; v.playsInline=true; v.setAttribute("playsinline","");
       v.preload="auto";
-      v.addEventListener("canplay",function(){ VID[k]={el:v,ok:true,w:v.videoWidth,h:v.videoHeight}; });
-      v.addEventListener("error",function(){ VID[k]={ok:false}; });
-      v.src=f.src; try{ var pr=v.play(); if(pr&&pr.catch) pr.catch(function(){}); }catch(e){}
-      VID[k]={el:v,ok:false};
+      v.addEventListener("canplay",function(){ VID[k].ok=true; VID[k].w=v.videoWidth; VID[k].h=v.videoHeight; });
+      v.addEventListener("error",function(){ VID[k].ok=false; });
+      v.src=f.src; VID[k]={el:v,ok:false};
+      try{ v.load(); }catch(e){}
     } else {
       var im=new Image();
       im.onload=function(){ VID[k]={el:im,ok:true,w:im.naturalWidth,h:im.naturalHeight,img:true}; };
@@ -7567,21 +7405,27 @@ function artInit(){
     }
   });
 }
-function eachVideo(fn){ Object.keys(VID).forEach(function(k){ var E=VID[k]; if(E&&E.el&&!E.img&&E.el.tagName==="VIDEO") fn(E.el); }); }
-function pauseVideos(){ eachVideo(function(v){ try{ v.pause(); }catch(e){} }); }
-function playVideos(){ eachVideo(function(v){ try{ var pr=v.play(); if(pr&&pr.catch) pr.catch(function(){}); }catch(e){} }); }
+function vidEl(k){ var E=VID[k]; return (E&&E.el&&!E.img&&E.el.tagName==="VIDEO")?E.el:null; }
+function pauseVideos(){ Object.keys(VID).forEach(function(k){ var v=vidEl(k); if(v) try{ v.pause(); }catch(e){} }); }
+function playVideos(){ activeVid=null; }   // artSync startet den richtigen Loop beim nächsten Bild
 function artOk(k){ return !!(VID[k]&&VID[k].ok); }
-/* Loop sanft auf den Takt ziehen: Position im Zweitakter mit der Spieluhr vergleichen */
 function artSync(){
-  if(!ac||S.paused) return;
-  var loopLen=spb()*4*CFG.takt.loopTakte, pos=((now()-S.t0)%loopLen+loopLen)%loopLen;
-  Object.keys(VID).forEach(function(k){
-    var E=VID[k]; if(!E||!E.ok||E.img||!E.el) return;
-    var d=E.el.duration; if(!d||!isFinite(d)) return;
-    var want=(pos/loopLen)*d, have=E.el.currentTime%d, diff=want-have;
-    if(Math.abs(diff)>0.12) { try{ E.el.currentTime=want; }catch(e){} }
-    else { try{ E.el.playbackRate=1+Math.max(-0.05,Math.min(0.05,diff*0.4)); }catch(e){} }
-  });
+  if(S.paused) return;
+  var k=sceneSlot();
+  if(k!==activeVid){
+    if(activeVid){ var old=vidEl(activeVid); if(old) try{ old.pause(); }catch(e){} }
+    activeVid=k;
+    var v=vidEl(k); if(v){ try{ var pr=v.play(); if(pr&&pr.catch) pr.catch(function(){}); }catch(e){} }
+  }
+  var E=VID[k], el=vidEl(k);
+  if(!E||!E.ok||!el||!ac||!S.running) return;
+  var d=el.duration; if(!d||!isFinite(d)) return;
+  var loopLen=bar()*2, pos=((heard()-beat0)%loopLen+loopLen)%loopLen;
+  var want=(pos/loopLen)*d, have=el.currentTime%d, diff=want-have;
+  if(diff>d/2) diff-=d; if(diff<-d/2) diff+=d;
+  var base=d/loopLen;      // Loop auf die Länge von zwei Takten des Songs strecken
+  if(Math.abs(diff)>0.3){ try{ el.currentTime=want; }catch(e){} }
+  else { try{ el.playbackRate=Math.max(0.5,Math.min(2,base*(1+Math.max(-0.04,Math.min(0.04,diff*0.5))))); }catch(e){} }
 }
 function drawArt(k,cx,cy,targetW){
   var E=VID[k]; if(!E||!E.ok) return false;
@@ -7590,13 +7434,6 @@ function drawArt(k,cx,cy,targetW){
   var sc=targetW/w;
   try{ g.drawImage(E.el, cx-targetW/2, cy-h*sc*0.82, targetW, h*sc); }catch(e){ return false; }
   return true;
-}
-
-/* Wer gerade seine Spur spielt, hüpft mit */
-function crewBob(k){
-  var h=S.hitT[k]; if(!h||RM) return 0;
-  var d=now()-h;
-  return (d>=0 && d<0.22) ? -9*(1-d/0.22) : 0;
 }
 
 function body(x,y,s,w,h,col){
@@ -7749,20 +7586,19 @@ function renderCrew(){
   crewEl.innerHTML="";
   var head=document.createElement("div");
   head.className="g4-arr";
-  head.innerHTML=T.arr(S.crew.length);
+  head.innerHTML="<b>"+T.crewLab(S.crew.length)+"</b>";
   crewEl.appendChild(head);
   for(var i=0;i<S.crew.length;i++){
-    var a=ANIMALS[S.crew[i]], d=document.createElement("span");
-    d.className="g4-chip";
-    d.innerHTML="<b>"+a.role+"</b> · "+a.n;
-    d.title=a.ab+" · "+a.abT;
+    var d=document.createElement("span");
+    d.className="g4-chip"; d.textContent=ANIMALS[S.crew[i]].n;
     crewEl.appendChild(d);
   }
 }
 
+function btn(label){ return "<button type='button' class='g4-btn' data-g4='go'>"+label+"</button>"; }
 function panel(html){ ovBox.innerHTML=html; ov.classList.remove("hide"); }
-/* Steht das Spiel in der Pause und ein Fenster ist offen (etwa zwischen zwei Etappen),
-   setzt jeder Knopf darin das Spiel zuerst fort — vor seiner eigenen Aufgabe. */
+/* Steht das Spiel in der Pause und ein Fenster ist offen, setzt jeder Knopf darin
+   das Spiel zuerst fort — vor seiner eigenen Aufgabe. */
 ov.addEventListener("click",function(e){
   var b=e.target&&e.target.closest&&e.target.closest('[data-g4="go"]');
   if(b && S.paused) resume();
@@ -7771,15 +7607,17 @@ function hidePanel(){ ov.classList.add("hide"); }
 
 /* ---------------- Start ---------------- */
 
-var api={S:S,CFG:CFG,PADS:PADS,ANIMALS:ANIMALS,LAYERS:LAYERS,ETAPPEN:ETAPPEN,
-  spb:spb,has:has,now:now,hit:hit,ART:ART,VID:VID,SB:SB,
-  pause:pause,resume:resume,wake:wake,start:startGame};
+var api={S:S,CFG:CFG,ANIMALS:ANIMALS,ETAPPEN:ETAPPEN,
+  spb:spb,bar:bar,now:now,heard:heard,tap:tap,VID:VID,
+  pause:pause,resume:resume,wake:wake,start:startGame,
+  song:function(){ return {loaded:!!songBuf, t0:songT0, beat0:beat0, lat:outLat()}; },
+  pizzDemo:function(ctx,dest,m,when,vol){ if(!ctx.__pz) ctx.__pz=pizzChain(ctx,dest); pizz(ctx,ctx.__pz,m,when,vol); }};
 try{ if(opt.debugName) window[opt.debugName]=api; }catch(e){}
 
 load();
 if(!opt.lazyArt) artInit();
 renderCrew();
-panel(T.title()+"<button type='button' class='g4-btn' data-g4='go'>"+T.start+"</button>");
+panel(T.title()+btn(T.start));
 $("go").onclick=function(){ hidePanel(); startGame(); };
 wake();
 return api;
@@ -7797,7 +7635,7 @@ return api;
   var inView=false, engaged=false, api=null;
   function running(){ return !!(api && api.S.running && !api.S.paused); }
   api=window.ElvesOfKaroo(root,{
-    lang:"en", names:NAMES, art:json("g4Art",{files:{}}), stems:json("g4Stems",{files:{}}), lazyArt:true,
+    lang:"en", names:NAMES, art:json("g4Art",{files:{}}), song:json("g4Song",{}), lazyArt:true,
     visible:function(){ return inView && !document.hidden; },
     // keys only while the game is in view and in use, so Space still scrolls the page everywhere else
     keysActive:function(){ return inView && !document.hidden && (engaged || running()); },
