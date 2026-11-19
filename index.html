@@ -1036,6 +1036,29 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
 .subnav button.has-dot:not([aria-current="true"])::after{content:"";position:absolute;right:4px;top:11px;width:5px;height:5px;border-radius:50%;background:#E4007C;box-shadow:0 0 8px #E4007C}
 </style>
 <!-- polish css: end -->
+<style id="sitenotes-css">
+/* site notes, 19 Nov 2026: source/sitenotes/apply.py */
+#day .hook{font-family:var(--display);font-weight:500;font-size:clamp(19px,2.2vw,25px);line-height:1.25;letter-spacing:-.01em;margin-top:16px;max-width:30ch;color:#fff;animation:ssRise .72s cubic-bezier(.2,.7,.2,1) .2s backwards}
+#day .medsnd{margin-top:clamp(22px,3vw,32px);background:var(--well);border-left:3px solid var(--accent);padding:clamp(18px,2.6vw,26px) clamp(18px,2.8vw,28px)}
+#day .medsnd h3{font-family:var(--display);font-weight:500;font-size:clamp(22px,2.4vw,28px);line-height:1.12;letter-spacing:-.01em;margin:0}
+#day .medsnd p{margin-top:10px;color:var(--muted);font-size:15px;max-width:62ch}
+#day .pains span.ans{color:#806316;font-weight:500;font-size:16.5px}
+#day .pains-close{margin-top:clamp(30px,4vw,46px);padding-top:20px;border-top:2px solid var(--fg)}
+#day .pains-close a{font-family:var(--display);font-weight:500;font-size:clamp(24px,3.2vw,38px);line-height:1.12;letter-spacing:-.015em;color:var(--fg);text-decoration:none}
+#day .pains-close a::after{content:"\2192";display:inline-block;margin-left:.35em;color:#806316;transition:transform .2s ease}
+#day .pains-close a:hover::after,#day .pains-close a:focus-visible::after{transform:translateX(4px)}
+#day .pains-close a:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+.crossover.xo-night,.crossover.xo-day{border-top:0}
+.crossover.xo-night .col,.crossover.xo-day .col{padding-block:clamp(40px,6vw,72px)}
+.crossover.xo-night{background:var(--n-bg);color:var(--n-fg)}
+.crossover.xo-night p{color:var(--n-fg);max-width:30ch}
+.crossover.xo-night button{background:var(--n-accent);color:#fff}
+.crossover.xo-day{background:var(--d-bg);color:var(--d-fg)}
+.crossover.xo-day p{color:var(--d-fg);max-width:30ch}
+.crossover.xo-day button{background:var(--d-hot);color:#0A0918}
+.crossover.xo-day button:focus-visible{outline-color:var(--d-accent)}
+.crossover.xo-mid{margin-bottom:clamp(40px,6vw,80px)}
+</style>
 <!-- kits:css:start -->
 <style>
 /* The kit downloads. Written by source/kits/apply.py; take the three kits blocks out and the page is as before. */
@@ -1079,7 +1102,8 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
       <p class="wordmark">Dr. Martin<br>Zschornak</p>
       <div class="rule"></div>
       <h1 class="claim">What sound does to people.</h1>
-      <p class="lede">A radiation oncologist who has played to crowds on six continents. He talks about what happens in a body when it listens, and he plays the violin on stage while he does it.</p>
+      <p class="hook">Sound can now destroy a liver tumour. No cut. No heat.</p>
+      <p class="lede">A radiation oncologist who has played to crowds on six continents explains how. He talks about what happens in a body when it listens, and he plays the violin on stage while he does it.</p>
       <div class="ctas"><button type="button" class="btn pri" data-go="dAsk">Invite him to speak</button><button type="button" class="btn sec" data-go="dTalks">See the talks</button></div>
     </div>
   </div>
@@ -1090,7 +1114,7 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
   </div></div>
 
   <section class="blk col">
-    <div class="ben"><span class="n">01</span><div><h2>Evidence from the clinic.</h2><p class="sub">He treats patients, teaches, and is designing a clinical trial on whether sound can lower the fear of lying still in a radiotherapy machine. He is clear about what is known, and where it ends.</p></div></div>
+    <div class="ben"><span class="n">01</span><div><h2>Evidence from the clinic.</h2><p class="sub">He treats patients, teaches, and is designing two clinical trials on whether sound can lower the fear of lying still in a radiotherapy machine. He is clear about what is known, and where it ends.</p></div></div>
     <div class="duo" style="margin-top:clamp(30px,4vw,48px)">
       <div class="txt">
         <p>Most people who talk about sound have stood in one of two rooms. He has spent fifteen years in both. In the clinic he is a specialist in radiation oncology at the university hospital in Halle.</p>
@@ -1099,7 +1123,7 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
       </div>
       <figure><img src="img/d-keynote.webp" srcset="img/d-keynote-900.webp 900w, img/d-keynote.webp 1200w" sizes="(max-width:760px) 100vw, 50vw" alt="On stage with open arms during the keynote, a sine wave on the screen behind him" loading="lazy" decoding="async"><figcaption>Keynote, Singularity Summit South Africa, October 2026. Courtesy of Singularity Summit.</figcaption></figure>
     </div>
-    <div class="creds"><div class="cr"><b>Radiation oncology</b><span>Specialist physician, Universitätsklinikum Halle. He teaches there.</span></div><div class="cr"><b>Doctorate</b><span>On glioblastoma brain tumours.</span></div><div class="cr"><b>Clinical trial</b><span>He is designing a clinical trial on sound and anxiety during radiotherapy.</span></div><div class="cr"><b>Cusanuswerk</b><span>Merit scholar throughout his medical studies. Research poster prize at OncoRay.</span></div><div class="cr"><b>Trained in four countries</b><span>Radiation oncology at AKH Vienna with Prof. Pötter and at Acıbadem, Istanbul. Surgery and obstetrics at Hospital Alemán Nicaragüense, 2012/13.</span></div><div class="cr"><b>Recording artist</b><span>As Seth Schwarz: All Day I Dream, Katermukke, 3000 Grad. The night side of this page.</span></div></div>
+    <div class="creds"><div class="cr"><b>Radiation oncology</b><span>Specialist physician, Universitätsklinikum Halle. He teaches there.</span></div><div class="cr"><b>Doctorate</b><span>On glioblastoma brain tumours.</span></div><div class="cr"><b>Clinical trials</b><span>He is designing two clinical trials on sound and anxiety during radiotherapy.</span></div><div class="cr"><b>Cusanuswerk</b><span>Merit scholar throughout his medical studies. Research poster prize at OncoRay.</span></div><div class="cr"><b>Trained in four countries</b><span>Radiation oncology at AKH Vienna with Prof. Pötter and at Acıbadem, Istanbul. Surgery and obstetrics at Hospital Alemán Nicaragüense, 2012/13.</span></div><div class="cr"><b>Recording artist</b><span>As Seth Schwarz: All Day I Dream, Katermukke, 3000 Grad. The night side of this page.</span></div></div>
   </section>
 
   <div class="band">
@@ -1109,17 +1133,19 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
 
   <section class="blk col" id="dTalks">
     <div class="ben"><span class="n">02</span><div><h2>Live music inside the talk.</h2><p class="sub">Where another speaker shows a slide, he plays. The room hears the point instead of reading it. In English or German.</p></div></div>
-    <div class="grid2 talks"><article class="tk"><div class="k">45 min · keynote</div><h3>What sound does to fear</h3><p>The clinical one. What is known about sound, attention and anxiety, what is still only promising, and what he plans to test with patients who have to lie still inside a machine. Careful about the evidence and clear about where it ends. Focused ultrasound (histotripsy) is now approved in the US to destroy liver tumours without incisions. It works mechanically, not by heating.</p></article><article class="tk"><div class="k">30 to 45 min</div><h3>Improvisation as a discipline</h3><p>What twenty years of playing without a plan teaches about judgement under pressure. A delayed flight that became a back-to-back set, a sunrise that could not be rehearsed.</p></article><article class="tk"><div class="k">30 min</div><h3>The instrument and the machine</h3><p>A classically trained violinist who builds tracks from seventy hand-played parts, on what is gained and lost when a craft meets a machine.</p></article><article class="tk"><div class="k">Talk + 60 to 90 min</div><h3>Talk and closing set</h3><p>He speaks in the programme and closes the evening on violin and decks. One traveller, two slots. Done at the Singularity Summit.</p></article></div>
+    <div class="medsnd"><h3>Sound is already a medical instrument.</h3><p>Focused ultrasound, called histotripsy, destroys liver tumours without a cut. Authorised in the US since 2023. It works mechanically, not by heat.</p></div>
+    <div class="grid2 talks"><article class="tk"><div class="k">45 min · keynote</div><h3>What sound does to fear</h3><p>The clinical one. What is known about sound, attention and anxiety, what is still only promising, and what he plans to test with patients who have to lie still inside a machine. Careful about the evidence and clear about where it ends.</p></article><article class="tk"><div class="k">30 to 45 min</div><h3>Improvisation as a discipline</h3><p>What twenty years of playing without a plan teaches about judgement under pressure. A delayed flight that became a back-to-back set, a sunrise that could not be rehearsed.</p></article><article class="tk"><div class="k">30 min</div><h3>The instrument and the machine</h3><p>A classically trained violinist who builds tracks from seventy hand-played parts, on what is gained and lost when a craft meets a machine.</p></article><article class="tk"><div class="k">Talk + 60 to 90 min</div><h3>Talk and closing set</h3><p>He speaks in the programme and closes the evening on violin and decks. One traveller, two slots. Done at the Singularity Summit.</p></article></div>
   </section>
 
   <section class="pain"><div class="col">
     <div class="eyebrow">The problem</div>
     <h2>Most talks are gone by the coffee break.</h2>
     <ol class="pains">
-      <li><b>They sound alike.</b><span>By lunch, people can't say who said what.</span></li>
-      <li><b>Slides don't move a room.</b><span>By minute ten, the phones are out.</span></li>
-      <li><b>The evening needs a second booking.</b><span>A speaker for the day, a DJ for the night, and nobody connecting the two.</span></li>
+      <li><b>They sound alike.</b><span class="ans">He doesn't. A cancer doctor with a violin.</span></li>
+      <li><b>Slides don't move a room.</b><span class="ans">He plays the point instead.</span></li>
+      <li><b>The evening needs a second booking.</b><span class="ans">He is the second booking.</span></li>
     </ol>
+    <p class="pains-close"><a href="mailto:hello@schwarzbooking.com?subject=Talk%20and%20closing%20set">Martin speaks. Seth plays. One booking.</a></p>
   </div></section>
 
 
@@ -1191,7 +1217,7 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
   <section class="blk col">
     <div class="eyebrow">Questions</div>
     <h2>Before you ask.</h2>
-    <div class="faq"><details><summary>What does a talk cost?<span class="pm" aria-hidden="true"></span></summary><p>It depends on the format, the length and the travel. A talk with a closing set is booked together, and costs less than a speaker and a DJ booked separately.</p></details><details><summary>What does he need on stage?<span class="pm" aria-hidden="true"></span></summary><p>Very little: a headset microphone, a screen, and one more line into the sound system for the violin. He brings the violin. The exact list comes with the confirmation.</p></details><details><summary>Is the science solid?<span class="pm" aria-hidden="true"></span></summary><p>He separates what is proven from what is only promising, and says so on stage. No healing claims, and the trial is described, never oversold.</p></details><details><summary>What will our audience take home?<span class="pm" aria-hidden="true"></span></summary><p>One clear idea about sound and the body that they can retell, and a live moment with the violin they will remember.</p></details></div>
+    <div class="faq"><details><summary>What does a talk cost?<span class="pm" aria-hidden="true"></span></summary><p>It depends on the format, the length and the travel. A talk with a closing set is booked together, and costs less than a speaker and a DJ booked separately.</p></details><details><summary>What does he need on stage?<span class="pm" aria-hidden="true"></span></summary><p>Very little: a headset microphone, a screen, and one more line into the sound system for the violin. He brings the violin. The exact list comes with the confirmation.</p></details><details><summary>Is the science solid?<span class="pm" aria-hidden="true"></span></summary><p>He separates what is proven from what is only promising, and says so on stage. No healing claims, and the trials are described, never oversold.</p></details><details><summary>What will our audience take home?<span class="pm" aria-hidden="true"></span></summary><p>One clear idea about sound and the body that they can retell, and a live moment with the violin they will remember.</p></details></div>
   </section>
 
   <section class="blk col" id="dRecord">
@@ -1217,7 +1243,7 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
     <div class="col">
       <div class="t">
         <div class="eyebrow">Enquiries</div>
-        <h2>He takes a few talks a year. Ask early.</h2>
+        <h2>He gives only a few talks a year. Ask early.</h2>
         <p class="sub">He is a working doctor. Talks are planned around the clinic, so the calendar fills from the front. Write with the event, the date, the audience and the format. He replies within 48 hours.</p>
         <div class="mail"><span class="addr" id="dMail">doctor.martin@icloud.com</span><button type="button" class="copy" data-copy="dMail">Copy address</button></div>
         <p class="fine">Shows are booked separately, as Seth Schwarz, through Schwarzbooking: hello@schwarzbooking.com</p>
@@ -1226,9 +1252,9 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
     </div>
   </div>
 
-  <div class="crossover"><div class="col">
-    <p>After six in the evening, this page becomes someone else's.</p>
-    <button type="button" class="goNight">See the night side</button>
+  <div class="crossover xo-night"><div class="col">
+    <p>By day he treats cancer. By night, 46 countries know him by another name.</p>
+    <button type="button" class="goNight">Meet Seth Schwarz</button>
   </div></div>
 </main>
 
@@ -1389,6 +1415,11 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
     <div class="kits"><ul><li><a href="kits/Seth_Schwarz_Press_Kit_2026.pdf" download><b>Press Kit</b><span>PDF · 10 MB</span></a></li><li><a href="kits/Seth_Schwarz_Booking_Kit_2026.pdf" download><b>Booking Kit</b><span>PDF · 2.3 MB</span></a></li><li><a href="kits/Seth_Schwarz_Private_Events_2026.pdf" download><b>Private Events Kit</b><span>PDF · 1.0 MB</span></a></li><li><a href="kits/Seth_Schwarz_Press_Pictures_2026.pdf" download><b>Press Pictures</b><span>PDF · 4.6 MB</span></a></li></ul></div>
   </section>
   <!-- kits:n:end -->
+
+  <div class="crossover xo-day xo-mid"><div class="col">
+    <p>At night his sound moves a crowd. By day, sound is his research.</p>
+    <button type="button" class="goDay">See who he is by day</button>
+  </div></div>
 
   <section class="curious"><div class="col">
     <div class="eyebrow">For the curious</div>
@@ -1647,7 +1678,7 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
 
   <section class="blk col" id="nStory">
     <div class="eyebrow">The story</div>
-    <h2>A violinist who became a DJ, and a doctor.</h2>
+    <h2>A violinist who became a DJ, and a radiation oncologist.</h2>
     <div class="story">
       <div class="bio">
         <p>Seth Schwarz plays the violin into the heart of electronic music. Classically trained from the age of seven, he played for years in the symphony orchestra in Hoyerswerda, where he was born, and learned to improvise in a jazz band. A night on the dance floor at Fusion Festival in 2009 changed his direction; the following summer he was on its stage.</p>
@@ -1692,9 +1723,9 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
     </div>
   </section>
 
-  <div class="crossover"><div class="col">
-    <p>Before six, this page belongs to a doctor.</p>
-    <button type="button" class="goDay">See the day side</button>
+  <div class="crossover xo-day"><div class="col">
+    <p>At night his sound moves a crowd. By day, sound is his research.</p>
+    <button type="button" class="goDay">See who he is by day</button>
   </div></div>
 </main>
 
@@ -2935,7 +2966,7 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
         "role ........ specialist physician, radiation oncology",
         "where ....... Universitaetsklinikum Halle (Saale), Germany",
         "doctorate ... on glioblastoma",
-        "study ....... designing a clinical trial on sound and anxiety",
+        "study ....... designing two clinical trials on sound and anxiety",
         "              during radiotherapy",
         "data ........ [ embargoed until the study is published ]",
         "trained in .. Germany . Austria (AKH Vienna) . Turkey . Nicaragua",
@@ -4967,7 +4998,7 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
         + '<div class="bio-acts">' + tog("run", "Start the ring") + tog("play", "Hear it") + btn("reset", "Reset", "quiet") + '</div>'
         + '<p class="bio-status" role="status" aria-live="polite"></p></div></div>');
       o.push('<div class="bio-panel" data-k="still" role="tabpanel" hidden><div class="bio-vis"><canvas class="bio-cv" role="img" aria-label="A target with a dot that shows how much you move"></canvas></div><div class="bio-ctl">'
-        + '<p class="bio-how">His clinical trial asks whether sound can lower the fear of lying still in a radiotherapy machine. This device does something simpler: for thirty seconds it lets you see, and hear, how still you are.</p>'
+        + '<p class="bio-how">His two clinical trials ask whether sound can lower the fear of lying still in a radiotherapy machine. This device does something simpler: for thirty seconds it lets you see, and hear, how still you are.</p>'
         + '<p class="bio-big"><b data-r="big">0.0</b><span>seconds without moving</span></p><p class="bio-line" data-r="l1"></p><p class="bio-line" data-r="l2"></p>'
         + '<div class="bio-acts">' + btn("go", "Start thirty seconds") + tog("play", "Hear it") + '</div>'
         + '<p class="bio-status" role="status" aria-live="polite"></p></div></div>');
