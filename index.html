@@ -670,6 +670,13 @@ footer.ft .col{padding-block:26px 34px}
 .ac-lv b{font-family:var(--mono);font-size:18px;color:#E4007C;text-shadow:0 0 8px rgba(228,0,124,.8);min-width:16px}
 .ac-lv span{font-size:14px;line-height:1.2}
 .ac-lv i{display:block;font-style:normal;font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.6);margin-top:3px}
+/* Game 03: the hole's mass (19 Nov 2026). Pink = what it pays (Brand Book, games chapter); labels Plex Mono, the tip Inter 11px */
+.ac-mass{width:100%;box-sizing:border-box;text-align:left;border:1px solid rgba(228,0,124,.35);padding:7px 10px 7px;background:rgba(228,0,124,.06);margin-top:6px}
+.ac-mass-l{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.62)}
+.ac-mass-l output{font-size:15px;letter-spacing:.04em;color:#E4007C;text-shadow:0 0 8px rgba(228,0,124,.8);text-transform:none}
+.ac-mass-r{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.45)}
+.ac-mass input{flex:1;min-width:0;height:28px;margin:0;accent-color:#E4007C;cursor:pointer}
+.ac-mass-i{margin:2px 0 0;font-size:11px;line-height:1.35;color:rgba(255,255,255,.72)}
 .ac-btn{font-family:var(--mono);font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:#fff;background:#E4007C;border:0;padding:12px 20px;cursor:pointer;box-shadow:0 0 0 1px #F7C6DD,0 0 22px rgba(228,0,124,.6)}
 .ac-btn:hover{background:#ff1a8c}
 .ac-btn:focus-visible,.ac-key:focus-visible,.ac-start:focus-visible,.ac-snd:focus-visible{outline:2px solid #fff;outline-offset:3px}
@@ -1619,6 +1626,11 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
                   <li><b>3</b><span>Golden Hour<i>Night · 124 BPM · 30 rings</i></span></li>
                   <li><b>4</b><span>Singularity<i>Horizon · 132 BPM</i></span></li>
                 </ol>
+                <div class="ac-mass">
+                  <label class="ac-mass-l" for="acMass">Mass of the hole <output id="acMassV" for="acMass">×2.0</output></label>
+                  <div class="ac-mass-r"><span aria-hidden="true">Light</span><input type="range" id="acMass" min="0" max="100" step="5" value="50"><span aria-hidden="true">Heavy</span></div>
+                  <p class="ac-mass-i">Heavier bends the light harder and slows time at the horizon. Zone 4 pays up to three times.</p>
+                </div>
               </div>
               <div class="ac-board-v" hidden><p class="ac-bh">High scores · this cabinet</p><ol class="ac-board"></ol></div>
               <button type="button" class="ac-btn" data-act="start">Press start</button>
@@ -3340,7 +3352,7 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
       MUS.src=src; MUS.f=f; MUS.g=g; MUS.lfo=lfo; MUS.lg=lg; MUS.an=an; MUS.fb=new Uint8Array(an.frequencyBinCount); MUS.t0=t+L.b.lead/rate; MUS.el=null; }
     else { var el=L.el; try{ el.currentTime=0; el.volume=0.34; el.playbackRate=rate; if("preservesPitch" in el) el.preservesPitch=false; else if("webkitPreservesPitch" in el) el.webkitPreservesPitch=false; var pr=el.play(); if(pr&&pr.catch) pr.catch(function(){ L.fail=true; L.ready=false; if(MUS.el===el){ MUS.hold=performance.now()+6000; musStop(0.01); if(st==="play") bedStart(); } }); }catch(e){ return false; }
       MUS.el=el; MUS.src=null; MUS.f=null; MUS.an=null; MUS.ph=MB[k][0]; }
-    MUS.on=true; MUS.ect=-1; MUS.etm=performance.now(); MUS.key=k; MUS.rate=rate; MUS.spb=60/bpm; MUS.lat=(a.outputLatency||a.baseLatency||0.015)-0.02; CK.spb=MUS.spb; seq.spb=MUS.spb/4; lastSpawnB=-1;   // sound reaches the ear late, the picture reaches the eye about a frame late (19 Nov: this clock line had slipped into the comment)
+    MUS.on=true; MUS.ect=-1; MUS.etm=performance.now(); MUS.key=k; MUS.rate=rate; MUS.spb=60/bpm; MUS.lat=(a.outputLatency||a.baseLatency||0.015)-0.02; CK.spb=MUS.spb; seq.spb=MUS.spb/4; lastSpawnB=-1; MS.S=1; MS.ap=1; MS.spb0=MUS.spb;   // sound reaches the ear late, the picture reaches the eye about a frame late (19 Nov: this clock line had slipped into the comment)
     master.gain.setTargetAtTime(0.24,a.currentTime,0.05); musTone(); return true; }
   function musStop(fade){ if(!MUS.on) return; MUS.on=false; var a=ac, t=a?a.currentTime:0, f=fade||0.2;
     if(MUS.src){ var s=MUS.src, g=MUS.g, l=MUS.lfo; try{ g.gain.cancelScheduledValues(t); g.gain.setTargetAtTime(0.0001,t,f/4); }catch(e){} setTimeout(function(){ try{ s.stop(); l.stop(); g.disconnect(); }catch(e){} },f*1000+150); MUS.src=null; }
@@ -3712,7 +3724,7 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
   function vProj(x,y,z){ var k=VK/z, px=GW/2+x*k, py=GH*0.6+y*k;
     if(lvl===3&&V&&V.bh&&!V.fs){ var cx=GW/2, cy=GH*0.6, dx=px-cx, dy=py-cy, b=Math.hypot(dx,dy), Rs=Math.min(V.bh.R,GH*0.30);   // the picture may fill the screen; what the hand steers stays readable
       if(b<0.001) return [px,py,k];
-      var nb=b*(1+2.2*Rs*Rs/(b*b+Rs*Rs*0.6)*V.bh.amt);   // the image is pushed away from the mass, falling off like the real deflection
+      var nb=b*(1+2.2*Rs*Rs/(b*b+Rs*Rs*0.6)*V.bh.amt*(0.6+0.8*MS.k));   // the image is pushed away from the mass, falling off like the real deflection
       return [cx+dx/b*nb, cy+dy/b*nb, k]; }
     return [px,py,k]; }
   function toV(ev){ var r=cv.getBoundingClientRect(); return {x:(ev.clientX-r.left)/r.width*GW, y:(ev.clientY-r.top)/r.height*GH}; }
@@ -3730,6 +3742,7 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
     try{ document.dispatchEvent(new CustomEvent("ss:audio",{detail:"arcade"})); }catch(e){}
     clkSet(gbpm()); st="play"; show("play"); say("The Quest for the Golden Violin. The Tuning Room. Fly with the arrow keys, or drag."+(T().t?" Track: "+T().t+".":"")); sLevel(0); bedStart(); wake(); }
   function updateV(dt,t){ if(banner>0) banner-=dt; if(shake>0) shake-=dt; if(flash>0) flash-=dt; if(V.inv>0) V.inv-=dt;
+    if(MS.ap!==1&&(lvl!==3||V.fs)){ MS.S=Math.min(1,MS.S+dt*2.5); msRate(MS.S); }   // past the horizon the platter picks up speed again (mass block)
     if(V.fs){ fsStep(dt,t); return; }   // zone 5, the far side: its own flight (zone5 block)
     if(lvl===3){ bhStep(dt); energy-=dt*1.4*AD; }   // the hole takes a little energy all the time
     var Z=VZ[lvl], dx=(keys.r?1:0)-(keys.l?1:0)+hold, dy=vk.d-vk.u;
@@ -3742,7 +3755,7 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
     var sp=1.18/(vTB()*CK.spb)*(1+Math.min(0.12,V.got/300)), i, r, d;
     for(i=0;i<V.ring.length;i++){ r=V.ring[i]; r.z-=sp*dt;
       if(!r.done&&r.z<=VZC){ r.done=1;
-        if(Math.hypot(r.x-V.px,r.y-V.py)<(r.gv?0.4:AD<1?0.34:0.3)){ var p=vProj(r.x,r.y,VZC), pts=r.gv?1500:(r.gold?30:10)*mult(); score+=pts; streak++; best=Math.max(best,streak); TL.c++; caught++; V.got++; V.zc++; energy=Math.min(100,energy+3); sCatch(r.gold?"sub":"vinyl"); burst(p[0],p[1],r.gold?"#ffe27a":"#ffd36b","+"+pts);
+        if(Math.hypot(r.x-V.px,r.y-V.py)<(r.gv?0.4:AD<1?0.34:0.3)){ var p=vProj(r.x,r.y,VZC), pts=r.gv?1500:Math.round((r.gold?30:10)*mult()*(lvl===3?msPay():1)); score+=pts; streak++; best=Math.max(best,streak); TL.c++; caught++; V.got++; V.zc++; energy=Math.min(100,energy+3); sCatch(r.gold?"sub":"vinyl"); burst(p[0],p[1],r.gold?"#ffe27a":"#ffd36b","+"+pts);
           if(r.gv){ V.gv=3; if(!calm) shake=0.5; burst(p[0],p[1],"#ffe27a","THE GOLDEN VIOLIN"); burst(GW/2,GH*0.5,"#fff8e0"); sBoard(); emit("gv",{}); vNextZone(); }
           else if(VZ[lvl].goal&&V.zc>=VZ[lvl].goal&&lvl<3){ if(lvl===2){ if(!V.gv) V.gv=1; } else vNextZone(); } }
         else if(r.gv){ V.gv=1; }                                                    // missed it: it comes round again, at no cost
@@ -3762,6 +3775,25 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
   // the shader costs what the device can give: it steps down, and on a slow one the 2D picture takes over for good
   var BH_T=[{f:0.70,min:288,steps:100,iv:33},{f:0.50,min:200,steps:70,iv:55},{f:0.34,min:140,steps:48,iv:85}];
   var BH_UP=[0,2.1,1.5]; BH.tier=2; BH.up=1; BH.f=0;   // start at the cheapest step and earn the sharper ones: a slow device never draws a dear frame
+  // ---------- zone 4: the hole's mass (19 Nov 2026, Martin: "One slider: mass") ----------
+  // k 0..1 from the slider on Game 03's start screen; 0.5 is the hole as it was. Heavier: bigger on the same flight, the rings' paths
+  // bend harder, time slows near the horizon (rings, dust, disk and the track itself, pitched down like a braking turntable, at most
+  // one octave), and zone 4 pays x1 .. x3. The cymatics in the disk rise from pass to pass and towards each horizon.
+  var MS={k:0.5,S:1,ap:1,spb0:0.5,cs:1,ui:null,KEY:"ss-bhmass"}; BH.wt=0;
+  function msPay(){ return 1+2*MS.k; }
+  function msFmt(x){ return Math.abs(x-Math.round(x))<0.05?String(Math.round(x)):x.toFixed(1); }
+  function msSet(v){ MS.k=Math.max(0,Math.min(1,+v||0)); if(MS.ui) MS.ui(); }
+  function msRate(s){ if(!MUS.on||!MUS.src||!ac){ if(MS.ap!==1){ CK.spb=MS.spb0; MS.ap=1; } MS.S=1; return; }   // no slow motion without a loaded track
+    if(Math.abs(s-MS.ap)<0.0005) return;
+    var now=ac.currentTime, bp=(now-MUS.lat-MUS.t0)/MUS.spb; if(bp<0.5) return;                 // not before the track's first beat
+    try{ MUS.src.playbackRate.setValueAtTime(MUS.rate*s,now); }catch(e){ return; }
+    MUS.spb=MS.spb0/s; MUS.t0=now-MUS.lat-bp*MUS.spb; CK.spb=MUS.spb; seq.spb=MUS.spb/4; MS.ap=s; }   // the beat runs on without a jump
+  function msStep(dt,B){ var tg=1;
+    if(MUS.on&&MUS.src&&st==="play") tg=Math.max(0.5,Math.min(1,1/(1+1.6*MS.k*Math.max(0,B.tau-1.05))));   // the real dilation, weighed by the mass; out where it is under 5 % the track keeps its tempo
+    MS.S+=(tg-MS.S)*Math.min(1,dt*3); if(Math.abs(tg-MS.S)<0.002) MS.S=tg;
+    msRate(MS.S); BH.wt+=dt*MS.S;
+    var lo=[0.08,0.25,0.55], hi=[0.25,0.55,1], j=Math.max(0,Math.min(2,B.tier-1)), p=Math.max(0,Math.min(1,(22-B.d)/21));
+    BH.cym=(lo[j]+(hi[j]-lo[j])*p*p*(3-2*p))*MS.cs; }                                              // the cymatics rise pass by pass
   function bhSize(){ var T4=BH_T[Math.min(BH.tier,BH_T.length-1)];
     var bw=(cv&&cv.width)||GW, bh2=(cv&&cv.height)||GH;                       // the canvas's real pixels, so a retina screen gets a sharper hole
     BH.w=Math.max(T4.min,Math.min(512,Math.round(bw*T4.f)));
@@ -3851,15 +3883,16 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
     bhSize(); }
   function bhStep(dt){ var B=V.bh;
     if(BH.cv&&cv&&cv.width&&Math.abs(BH.cv.width-Math.max(BH_T[Math.min(BH.tier,BH_T.length-1)].min,Math.min(512,Math.round(cv.width*BH_T[Math.min(BH.tier,BH_T.length-1)].f))))>8) bhSize();
-    if(!B){ B=V.bh={d:22,tier:1,amt:0,R:GH*0.1,cross:0,tau:1}; }
-    B.d-=dt*(0.60+0.14*B.tier);                                   // the journey inward
-    if(B.d<=1.06){ B.tier++; score+=250*mult(); energy=Math.min(100,energy+12); B.d=22; B.cross=1.1;
+    if(!B){ B=V.bh={d:22,v:22,tier:1,amt:0,R:GH*0.1,cross:0,tau:1}; }
+    B.d-=dt*MS.S*(0.60+0.14*B.tier);                              // the journey inward, in the hole's slowed time
+    if(B.d<=1.06){ B.tier++; score+=Math.round(250*mult()*msPay()); energy=Math.min(100,energy+12); B.d=22; B.cross=1.1;
       if(!calm) shake=0.3; burst(GW/2,GH*0.6,"#fff8e0","HORIZON"); sLevel(3); if(B.tier>FS.pass) fsStart(); }   // after the third pass: zone 5 (zone5 block)
     if(B.cross>0) B.cross-=dt;
-    B.tau=1/Math.sqrt(Math.max(0.0125,1-1/Math.max(B.d,1.0126)));      // clocks near the hole run slow
-    B.R=Math.max(8,Math.min(GH*0.75,GH*Math.tan(Math.asin(Math.min(0.999,2.598/Math.max(B.d,2.6))))/1.6));   // 3*sqrt(3)/2 r_s, through the same lens the shader uses
-    B.amt=Math.max(0,Math.min(1,(22-B.d)/14)); }
-  function bhScene(t){ var B=V&&V.bh?V.bh:{d:15,R:GH*0.1,tier:1,cross:0,amt:0};
+    B.v=1+(B.d-1)/(0.8+0.4*MS.k);                                    // a heavier hole is bigger: the same flight comes closer, counted in r_s
+    B.tau=1/Math.sqrt(Math.max(0.0125,1-1/Math.max(B.v,1.0126)));      // clocks near the hole run slow
+    B.R=Math.max(8,Math.min(GH*0.75,GH*Math.tan(Math.asin(Math.min(0.999,2.598/Math.max(B.v,2.6))))/1.6));   // 3*sqrt(3)/2 r_s, through the same lens the shader uses
+    B.amt=Math.max(0,Math.min(1,(22-B.v)/14)); msStep(dt,B); }
+  function bhScene(t){ var B=V&&V.bh?V.bh:{d:15,R:GH*0.1,tier:1,cross:0,amt:0}; if(V&&V.bh) t=BH.wt;   // the disk turns in the hole's slowed time
     var bt=Math.pow(1-(((beatPos()%1)+1)%1),3);
     var bp=beatPos(), f4=Math.floor(bp/16), p4=(((bp/16)%1)+1)%1;                   // four bars carry one figure
     BH.cn=3+(((f4%5)+5)%5); BH.ck=2+((((f4>>1)%2)+2)%2);                             // 3- to 7-fold, two or three rings
@@ -3867,7 +3900,7 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
     if(bhInit()&&!calm){ var now=performance.now(), g=BH.gl, t0=now;
       if(g&&now-BH.last>BH.iv){ BH.last=now;
         g.viewport(0,0,BH.w,BH.h); g.uniform2f(BH.u.uRes,BH.w,BH.h);
-        g.uniform1f(BH.u.uD,Math.max(1.02,B.d)); g.uniform1f(BH.u.uEl,0.20+0.05*Math.sin(t*0.1));
+        g.uniform1f(BH.u.uD,Math.max(1.02,B.v||B.d)); g.uniform1f(BH.u.uEl,0.20+0.05*Math.sin(t*0.1));
         g.uniform1f(BH.u.uTime,t); g.uniform1f(BH.u.uBeat,bt); g.uniform1f(BH.u.uSteps,BH.steps);
         g.uniform1f(BH.u.uCn,BH.cn); g.uniform1f(BH.u.uCk,BH.ck); g.uniform1f(BH.u.uCw,BH.cw);
         g.uniform1f(BH.u.uCrot,BH.crot); g.uniform1f(BH.u.uCym,BH.cym);
@@ -3992,12 +4025,12 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
     c.strokeStyle="#7a4a20"; c.lineWidth=2; c.beginPath(); c.moveTo(-24,-8+Math.sin(t*6)*2); c.lineTo(20,2+Math.sin(t*6)*2); c.stroke();
     c.restore(); c.globalAlpha=1; }
   function hudV(){ var Z=VZ[lvl]; c.fillStyle="rgba(0,0,0,.55)"; c.fillRect(0,0,GW,30); c.textAlign="left"; c.font="500 11px 'IBM Plex Mono',monospace"; c.fillStyle="#fff";
-    c.fillText(String(score).padStart(6,"0"),10,19); c.fillStyle="#E4007C"; c.fillText("x"+mult(),70,19);
+    c.fillText(String(score).padStart(6,"0"),10,19); c.fillStyle="#E4007C"; c.fillText("x"+(lvl===3&&!V.fs?msFmt(mult()*msPay()):mult()),70,19);
     c.textAlign="center"; c.fillStyle="rgba(255,255,255,.7)"; c.font="500 9px 'IBM Plex Mono',monospace"; c.fillText(("Z"+(lvl+1)+" · "+Z.n+" · "+V.got+" rings").toUpperCase(),GW/2,19);
     var ew=74, ex=GW-ew-10; c.strokeStyle="rgba(255,255,255,.35)"; c.lineWidth=1; c.strokeRect(ex,11,ew,9); c.fillStyle=energy>50?"#7affc8":energy>25?"#ffd36b":"#ff3b3b"; c.fillRect(ex+1.5,12.5,(ew-3)*energy/100,6);
     if(Z.goal){ var p=Math.min(1,V.zc/Z.goal); c.fillStyle="rgba(255,255,255,.12)"; c.fillRect(0,30,GW,2); c.fillStyle="#ffd36b"; c.fillRect(0,30,GW*p,2); }
     if(lvl===3&&V.bh){ c.textAlign="right"; c.font="500 9px 'IBM Plex Mono',monospace"; c.fillStyle="rgba(255,211,107,.85)";
-      c.fillText("R "+V.bh.d.toFixed(1)+" rs · TIME x"+V.bh.tau.toFixed(1)+" · PASS "+Math.min(V.bh.tier,FS.pass)+"/"+FS.pass,GW-10,54); } }
+      c.fillText("R "+(V.bh.v||V.bh.d).toFixed(1)+" rs · TIME x"+V.bh.tau.toFixed(1)+" · PASS "+Math.min(V.bh.tier,FS.pass)+"/"+FS.pass+" · MASS x"+msPay().toFixed(1),GW-10,54); } }
   function renderV(t,dt){ view(); if(shake>0&&!calm) c.translate((Math.random()-0.5)*5,(Math.random()-0.5)*5);
     if(!V||st==="attract"){ vScene(t,0); for(var i=0;i<3;i++) vRing({x:-0.3+i*0.3,y:0.05*i-0.05,z:0.45+i*0.25,gold:i===1?1:0,done:0},t); vViolin(Math.sin(t*0.8)*0.4,0.1,0,t); return; }
     if(V.fs){ fsDraw(t,dt); return; }   // zone 5 draws itself (zone5 block)
@@ -4204,7 +4237,7 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
   function tlAll(){ var a=[]; try{ a=JSON.parse(localStorage.getItem(TLKEY)||"[]"); }catch(e){} return a&&a.length?a:[]; }
   function tlShow(){ var box=document.getElementById("acTest"); if(!box) return;
     var nm={touch:"Finger",mouse:"Maus",pen:"Stift",key:"Tasten",deck:"Pfeilknöpfe"}, inp=Object.keys(TL.inp).map(function(k){ return nm[k]||k; }).join("+")||"keine", d=new Date();
-    var line="SS-TEST | Game 0"+game+" | "+d.toLocaleDateString("de-DE")+" "+d.toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit"})+" | Dauer "+Math.round(TL.pt||0)+" s | "+document.getElementById("acReached").textContent+" | Punkte "+score+" | gefangen "+TL.c+" | verpasst "+TL.m+" | Treffer "+TL.h+" | längste Serie "+TL.bs+(game===2?" | Sakhalin "+TL.sup:"")+" | Eingabe "+inp+" | Bild "+window.innerWidth+"x"+window.innerHeight+" | Ton "+(sndOn?"an":"aus")+" | Stufe "+AD.toFixed(2); adSave();
+    var line="SS-TEST | Game 0"+game+" | "+d.toLocaleDateString("de-DE")+" "+d.toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit"})+" | Dauer "+Math.round(TL.pt||0)+" s | "+document.getElementById("acReached").textContent+" | Punkte "+score+" | gefangen "+TL.c+" | verpasst "+TL.m+" | Treffer "+TL.h+" | längste Serie "+TL.bs+(game===2?" | Sakhalin "+TL.sup:"")+(game===3?" | Masse "+Math.round(MS.k*100)+" %":"")+" | Eingabe "+inp+" | Bild "+window.innerWidth+"x"+window.innerHeight+" | Ton "+(sndOn?"an":"aus")+" | Stufe "+AD.toFixed(2); adSave();
     var a=tlAll(); a.push(line); a=a.slice(-20); try{ localStorage.setItem(TLKEY,JSON.stringify(a)); }catch(e){}
     box.textContent=line; document.getElementById("acTestOk").textContent=a.length>1?" · "+a.length+" Läufe gespeichert":""; }
   (function(){ var b=document.getElementById("acTestCopy"); if(!b) return; b.addEventListener("click",function(){ var a=tlAll(), txt=(a.length?a:[document.getElementById("acTest").textContent]).join("\n"), ok=document.getElementById("acTestOk");
@@ -4294,6 +4327,11 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
   Array.prototype.forEach.call(sec.querySelectorAll("[data-act]"),function(b){ b.addEventListener("click",function(){ var a=b.getAttribute("data-act");
       if(a==="menu"){ menu(); return; } if(a==="resume") resume(); else if(st==="paused") resume(); else if(st!=="play") startGame(); }); });
   sndBtn.addEventListener("click",function(){ setSnd(!sndOn); });
+  (function(){ var mi=document.getElementById("acMass"), mo=document.getElementById("acMassV"); if(!mi) return;   // the hole's mass, set before the flight
+    try{ var v=localStorage.getItem(MS.KEY); if(v!==null&&v!==""&&isFinite(+v)) mi.value=String(Math.max(0,Math.min(100,Math.round(+v)))); }catch(e){}
+    MS.ui=function(){ var x="×"+msPay().toFixed(1); if(String(Math.round(MS.k*100))!==mi.value) mi.value=String(Math.round(MS.k*100)); if(mo) mo.textContent=x; mi.setAttribute("aria-valuetext",x); };
+    msSet(+mi.value/100);
+    mi.addEventListener("input",function(){ msSet(+mi.value/100); try{ localStorage.setItem(MS.KEY,String(Math.round(MS.k*100))); }catch(e){} }); })();
   // ---------- high-score entry ----------
   var ini=document.getElementById("acIni"); ini.addEventListener("input",function(){ var v=ini.value.toUpperCase().replace(/[^A-Z0-9]/g,"").slice(0,3); if(v!==ini.value) ini.value=v; });
   document.getElementById("acEntry").addEventListener("submit",function(ev){ ev.preventDefault();
@@ -4333,7 +4371,7 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
   drawBoards(-1); size(); show("attract"); wake();
   window.__ssArcade={start:startGame,menu:menu,target:function(n){ TG=Math.max(0,+n||0); return TG; },game:function(g){ if(g) setGame(g); return game; },
     state:function(){ return {st:st,game:game,lvl:lvl,fs:(game===3&&V&&V.fs)?fsState():null,zone:R?R.zone:0,m:R?Math.floor(R.dist/10):0,score:score,energy:energy,streak:streak,items:items.length,
-      bh:(game===3&&V&&V.bh)?{d:Math.round(V.bh.d*10)/10,tier:V.bh.tier,tau:Math.round(V.bh.tau*100)/100,gl:!!BH.gl,q:BH.tier,w:BH.w}:null}; },
+      ms:{k:MS.k,pay:msPay(),slow:Math.round(MS.S*1000)/1000,cym:Math.round(BH.cym*100)/100},bh:(game===3&&V&&V.bh)?{d:Math.round(V.bh.d*10)/10,v:Math.round((V.bh.v||V.bh.d)*10)/10,tier:V.bh.tier,tau:Math.round(V.bh.tau*100)/100,gl:!!BH.gl,q:BH.tier,w:BH.w}:null}; },
     tracks:function(){ return (game===2?curR:cur).map(function(t){ return t&&t.t; }); },
     peek:function(){ return game===3&&V?{px:V.px,py:V.py,gv:V.gv||0,zc:V.zc,rings:V.ring.map(function(r){ return [Math.round(r.x*100)/100,Math.round(r.y*100)/100,Math.round(r.z*100)/100,r.gv?2:r.gold?1:0]; })}:game===2&&R?{y:R.y,on:R.on,obs:R.obs.map(function(o){ return [o.k,Math.round(o.x),o.w,o.h]; }),vin:R.vin.map(function(v){ return [Math.round(v.x),Math.round(v.y)]; }),cars:R.cars.map(function(q){ return [Math.round(q.x),q.w,q.h]; })}
       :{bx:bx,items:items.map(function(i){ return [i.k,Math.round(i.x),Math.round(i.y)]; })}; },
@@ -4343,7 +4381,8 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
       else if(game===3&&V.fs){ fsCheat(); } else if(game===3&&lvl===3&&V.bh){ V.bh.d=Math.min(V.bh.d,1.3); }   // zone 5 steps on; zone 4 goes to the horizon (zone5 block)
       else if(game===3){ if(lvl===2&&!V.gv){ V.zc=VZ[2].goal; V.gv=1; } else if(lvl<3){ V.zc=VZ[lvl].goal||0; vNextZone(); } }   // game 03 has its own zone counter; LV is game 01's
       else { caught=LV[lvl].goal||0; if(lvl<2) nextLevel(); } }, end:function(){ energy=0; },
-    cym:function(v){ if(v!==undefined) BH.cym=Math.max(0,Math.min(1,+v)||0); return BH.cym; }};   // the cymatics in the hole's disk: 0 off .. 1 full
+    cym:function(v){ if(v!==undefined) MS.cs=Math.max(0,Math.min(1,+v)||0); return MS.cs; },   // the cymatics in the hole's disk: a scale on their rise, 0 off .. 1 as designed
+    mass:function(v){ if(v!==undefined) msSet(v); return {k:MS.k,pay:msPay(),slow:MS.S}; }};   // the hole's mass, 0 light .. 1 heavy
 })();
 
 (function(){
