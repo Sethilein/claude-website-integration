@@ -3340,7 +3340,7 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
       MUS.src=src; MUS.f=f; MUS.g=g; MUS.lfo=lfo; MUS.lg=lg; MUS.an=an; MUS.fb=new Uint8Array(an.frequencyBinCount); MUS.t0=t+L.b.lead/rate; MUS.el=null; }
     else { var el=L.el; try{ el.currentTime=0; el.volume=0.34; el.playbackRate=rate; if("preservesPitch" in el) el.preservesPitch=false; else if("webkitPreservesPitch" in el) el.webkitPreservesPitch=false; var pr=el.play(); if(pr&&pr.catch) pr.catch(function(){ L.fail=true; L.ready=false; if(MUS.el===el){ MUS.hold=performance.now()+6000; musStop(0.01); if(st==="play") bedStart(); } }); }catch(e){ return false; }
       MUS.el=el; MUS.src=null; MUS.f=null; MUS.an=null; MUS.ph=MB[k][0]; }
-    MUS.on=true; MUS.ect=-1; MUS.etm=performance.now(); MUS.key=k; MUS.rate=rate; MUS.spb=60/bpm; MUS.lat=(a.outputLatency||a.baseLatency||0.015)-0.02;   // sound reaches the ear late, the picture reaches the eye about a frame late CK.spb=MUS.spb; seq.spb=MUS.spb/4; lastSpawnB=-1;
+    MUS.on=true; MUS.ect=-1; MUS.etm=performance.now(); MUS.key=k; MUS.rate=rate; MUS.spb=60/bpm; MUS.lat=(a.outputLatency||a.baseLatency||0.015)-0.02; CK.spb=MUS.spb; seq.spb=MUS.spb/4; lastSpawnB=-1;   // sound reaches the ear late, the picture reaches the eye about a frame late (19 Nov: this clock line had slipped into the comment)
     master.gain.setTargetAtTime(0.24,a.currentTime,0.05); musTone(); return true; }
   function musStop(fade){ if(!MUS.on) return; MUS.on=false; var a=ac, t=a?a.currentTime:0, f=fade||0.2;
     if(MUS.src){ var s=MUS.src, g=MUS.g, l=MUS.lfo; try{ g.gain.cancelScheduledValues(t); g.gain.setTargetAtTime(0.0001,t,f/4); }catch(e){} setTimeout(function(){ try{ s.stop(); l.stop(); g.disconnect(); }catch(e){} },f*1000+150); MUS.src=null; }
@@ -4155,7 +4155,8 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
   // AD scales how much a mistake costs (0.6 gentle … 1.25 strict). It is learned from the last runs on this device only; the tempo always stays with the track.
   var AD=1, ADKEY="ss-adapt";
   function adRuns(){ var o={}; try{ o=JSON.parse(localStorage.getItem(ADKEY)||"{}")||{}; }catch(e){} return o; }
-  function adCalc(){ var r=(adRuns()[game]||[]).slice(-5); if(r.length<2){ AD=0.8; return; }   // the first two runs on a device cost less: nobody should be out after twenty seconds var d=r.map(function(x){ return x.d; }).sort(function(a,b){ return a-b; }), med=d[Math.floor(d.length/2)];
+  function adCalc(){ var r=(adRuns()[game]||[]).slice(-5); if(r.length<2){ AD=0.8; return; }   // the first two runs on a device cost less: nobody should be out after twenty seconds
+    var d=r.map(function(x){ return x.d; }).sort(function(a,b){ return a-b; }), med=d[Math.floor(d.length/2)];
     AD=med<25?0.6:med<45?0.75:med<75?0.9:med<150?1:med<240?1.12:1.25; }
   function adSave(){ var o=adRuns(), a=o[game]||[]; a.push({d:Math.round(TL.pt||0),c:TL.c,m:TL.m,h:TL.h}); o[game]=a.slice(-10); try{ localStorage.setItem(ADKEY,JSON.stringify(o)); }catch(e){} }
   function tlStart(){ TL={g:game,t0:performance.now(),pt:0,c:0,m:0,h:0,sup:0,bs:0,inp:{}}; adCalc(); SK.beat=false; SK.tgb=false; skStart(); emit("start",{run:SK.n}); }
