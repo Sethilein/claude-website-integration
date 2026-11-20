@@ -70,6 +70,18 @@
       [
         "2025",
         "https://www.youtube.com/watch?v=tZ0Ta_j4jpo"
+      ],
+      [
+        "2022 Playground, Waking Dreams",
+        "https://www.youtube.com/watch?v=8AJiGoGYKbw"
+      ],
+      [
+        "2019 Fluffy Cloud, with MANDi, video",
+        "https://www.youtube.com/watch?v=j7DiWrBE3MQ"
+      ],
+      [
+        "2024 Fluffy Cloud, second video",
+        "https://www.youtube.com/watch?v=ucB6HpoARro"
       ]
     ],
     "reels": [
@@ -325,11 +337,19 @@
     "region": "Americas",
     "lat": 20.63,
     "lon": -87.08,
-    "venues": "The BPM Festival: All Day I Dream at Martina, with Lee Burridge (9 Jan 2016)",
+    "venues": "The BPM Festival: All Day I Dream at Martina, with Lee Burridge (8 and 9 Jan 2016)",
     "links": [
       [
         "2016",
         "https://soundcloud.com/seth-schwarz/seth-schwarz-the-bpm-festival-2016-martina-beach-mexico"
+      ],
+      [
+        "All Day I Dream, 9 Jan 2016, video",
+        "https://www.youtube.com/watch?v=_yYxG6Xq0sw"
+      ],
+      [
+        "All Day I Dream, 8 Jan 2016, with Be Svendsen, video",
+        "https://www.youtube.com/watch?v=3HD7pz3EYdA"
       ]
     ],
     "rec": "https://soundcloud.com/seth-schwarz/seth-schwarz-the-bpm-festival-2016-martina-beach-mexico"
@@ -411,7 +431,7 @@
     "region": "Europe",
     "lat": 52.52,
     "lon": 13.4,
-    "venues": "Ritter Butzke (3000° Wanderzirkus with Kokü, Jan 2012; 3000 Grad nights 2014–18, Surreal Club Festival; Oct 2021) · re:publica (May 2012) · con.vent Adlershof (2012) · Johnny Knüppel, EP release (Jun 2015) · Edelweiss (2013) · Kosmonaut (Apr 2016) · Magdalena (Jul 2016) · Polygon (2016, 2018) · Admiralspalast (9 Sep 2017) · KitKatClub (HEDONÉ Anniversary, 5 Apr 2026) · Suicide Circus · Kater Holzig · Kater Blau (Grr mit Brr, Sasomo, 24 Sep 2017) · Sisyphos, with BEC (c. 2018/19) · Zug der Liebe (2016–) · Klunkerkranich · Stereo Express album release night · AfrikaBurn fundraiser (Apr 2016) · Birgit & Bier (21 Oct 2017) · PREMIUM night, Praegewerk (Jul 2015) · Michalsky’s 50th (2017) · Burning Castle 2020 (Venue, 28 Aug 2020) · Music&art, Suicide Circus (2 Dec 2017) · 3000grad on Tour, Ritter Butzke (22 Oct 2016; 18 Nov 2017) · Into the Desert, Ritter Butzke (16 Apr 2017) · Surreal Club Festival 3017, Ritter Butzke (13–14 Jan 2017) · Marco Remus B-day, Magdalena (12 Nov 2016) · Kellergedeck, Kultstätte Keller (11 Jun 2016) · m ist Offen Opening, Magdalena (26–28 Feb 2016) · Soundsurfer Open Air, Lichtpark (18 Jul 2014) · Bebetta / Spada, Ritter Butzke (17 Jun 2022) · Niconé & Dirty Doering, Ritter Butzke (13 May 2023)",
+    "venues": "Ritter Butzke (3000° Wanderzirkus with Kokü, Jan 2012; 3000 Grad nights 2014–18, Surreal Club Festival; Oct 2021) · re:publica (May 2012) · con.vent Adlershof (2012) · Johnny Knüppel, EP release (Jun 2015) · Edelweiss (2013) · Kosmonaut (Apr 2016) · Magdalena (Jul 2016) · Polygon (2016, 2018) · Admiralspalast (9 Sep 2017) · KitKatClub (HEDONÉ Anniversary, 5 Apr 2026) · Suicide Circus · Kater Holzig · Kater Blau (Grr mit Brr, Sasomo, 24 Sep 2017) · Sisyphos, with BEC (c. 2018/19) · Zug der Liebe (2016–) · Klunkerkranich · Stereo Express album release night · AfrikaBurn fundraiser (Apr 2016) · Birgit & Bier (21 Oct 2017) · PREMIUM night, Praegewerk (Jul 2015) · Michalsky’s 50th (2017) · Burning Castle 2020 (Venue, 28 Aug 2020) · Music&art, Suicide Circus (2 Dec 2017) · 3000grad on Tour, Ritter Butzke (22 Oct 2016; 18 Nov 2017) · Into the Desert, Ritter Butzke (16 Apr 2017) · Surreal Club Festival 3017, Ritter Butzke (13–14 Jan 2017) · Marco Remus B-day, Magdalena (12 Nov 2016) · Kellergedeck, Kultstätte Keller (11 Jun 2016) · m ist Offen Opening, Magdalena (26–28 Feb 2016) · Soundsurfer Open Air, Lichtpark (18 Jul 2014) · Bebetta / Spada, Ritter Butzke (17 Jun 2022) · Niconé & Dirty Doering, Ritter Butzke (13 May 2023) · E:PUBLISH congress (2011)",
     "label": "Berlin",
     "lx": 1,
     "ly": -1,
@@ -422,7 +442,13 @@
         "https://www.instagram.com/reel/BbyvylyDTJP/"
       ]
     ],
-    "rec": "https://www.instagram.com/reel/BbyvylyDTJP/"
+    "rec": "https://www.instagram.com/reel/BbyvylyDTJP/",
+    "links": [
+      [
+        "E:PUBLISH 2011, video",
+        "https://www.youtube.com/watch?v=wJLUgX76c_U"
+      ]
+    ]
   },
   {
     "city": "Hamburg",
@@ -465,6 +491,10 @@
       [
         "Harry Klein",
         "https://www.youtube.com/watch?v=f7IqtN9SPTQ"
+      ],
+      [
+        "Wannda Circus closing, 10 Aug 2019, video",
+        "https://www.youtube.com/watch?v=UFCu0rovx44"
       ]
     ],
     "reels": [
@@ -545,6 +575,10 @@
       [
         "Kickass violin, GrooveStation",
         "https://www.youtube.com/watch?v=3L6J5vMaCKU"
+      ],
+      [
+        "Ich und Du, 4 Jun 2017, video",
+        "https://www.youtube.com/watch?v=Nko86OwZ30I"
       ]
     ]
   },
@@ -668,6 +702,10 @@
       [
         "Road to The Monastery, mix",
         "https://soundcloud.com/thegardensofbabylon/the-road-to-the-monastery-seth-schwarz"
+      ],
+      [
+        "The Monastery, video",
+        "https://www.youtube.com/watch?v=OsHS9VEu__g"
       ]
     ]
   },
@@ -692,7 +730,13 @@
     "region": "Europe",
     "lat": 52.27,
     "lon": 10.52,
-    "venues": "Eulenglück (Dec 2014, Dec 2015, Jan 2018)"
+    "venues": "Eulenglück (Dec 2014, Dec 2015, Jan 2018) · Kulturschaufenster, with Druminc (2010)",
+    "links": [
+      [
+        "Kulturschaufenster, with Druminc, video",
+        "https://www.youtube.com/watch?v=yQyqMva7XLw"
+      ]
+    ]
   },
   {
     "city": "Bremen",
@@ -787,7 +831,13 @@
     "region": "Europe",
     "lat": 51.44,
     "lon": 14.24,
-    "venues": "Hoy ist bunt Open Air · Coming Home, Block D (21 Dec 2024)"
+    "venues": "Hoy ist bunt Open Air · Coming Home, Block D (21 Dec 2024)",
+    "links": [
+      [
+        "Hoyerswerda ist bunt, Lausitzwelle",
+        "https://www.youtube.com/watch?v=QxyNMZgXNSc"
+      ]
+    ]
   },
   {
     "city": "Cologne",
@@ -868,6 +918,14 @@
       [
         "Festival Flashback",
         "https://www.youtube.com/watch?v=NgjaTAqtFCI"
+      ],
+      [
+        "Festival season 2015, teaser (video: Duasen Films)",
+        "https://www.youtube.com/watch?v=4JA9zSF1hFY"
+      ],
+      [
+        "3000 Grad artist portrait (2014)",
+        "https://www.youtube.com/watch?v=KLnA39hdPP4"
       ]
     ],
     "rec": "https://soundcloud.com/seth-schwarz/seth-schwarz-3000-grad-festival-2015-waldbuhne"
@@ -1523,7 +1581,13 @@
     "region": "Europe",
     "lat": 56.33,
     "lon": 44.0,
-    "venues": "Alfa Future People (2019)"
+    "venues": "Alfa Future People (17 Aug 2019)",
+    "links": [
+      [
+        "Alfa Future People 2019, video",
+        "https://www.youtube.com/shorts/fdGf6ZWPODo"
+      ]
+    ]
   },
   {
     "city": "Krasnodar",
@@ -1614,7 +1678,13 @@
         "https://www.facebook.com/eleveneventscompany/videos/1261746034549194/"
       ]
     ],
-    "rec": "https://www.instagram.com/reel/CsJKeo6MFUx/"
+    "rec": "https://www.instagram.com/reel/CsJKeo6MFUx/",
+    "links": [
+      [
+        "Tbilisi, video",
+        "https://www.youtube.com/shorts/dsMMzmSIdgQ"
+      ]
+    ]
   },
   {
     "city": "Tuscany",
@@ -1938,6 +2008,10 @@
       [
         "2023",
         "https://soundcloud.com/seth-schwarz/afrika-burn-2023"
+      ],
+      [
+        "2017 Spirit Train, video",
+        "https://www.youtube.com/watch?v=9AE-zsBMdoQ"
       ]
     ],
     "reels": [
