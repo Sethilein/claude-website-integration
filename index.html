@@ -3234,6 +3234,76 @@ html[lang="hsb"] .kits ul.kits-en{display:none}
 })();
 
 (function(){
+  var rows=document.querySelectorAll(".ry li.rp"); if(!rows.length) return;
+  var root=document.documentElement, audio=null, cur=null, raf=0, mp=null, el={}, pitch=0;
+  function fmt(v){ return (v>0?"+":v<0?"−":"±")+Math.abs(v).toFixed(1)+"%"; }
+  function ui(){ if(!cur) return; var bpm=+cur.getAttribute("data-bpm"), now=bpm*(1+pitch/100);
+    el.bpm.innerHTML=(pitch===0?bpm+" BPM":bpm+" → <em>"+now.toFixed(1)+" BPM</em>")+" · "+fmt(pitch);
+    el.b124.hidden=Math.abs(now-124)<0.05; }
+  function setPitch(p){ pitch=Math.max(-8,Math.min(8,Math.round(p*10)/10)); el.in.value=pitch; if(audio) audio.playbackRate=1+pitch/100; ui(); }
+  function make(){
+    mp=document.createElement("div"); mp.className="mp"; mp.id="relPlayer"; mp.hidden=true; mp.setAttribute("role","region"); mp.setAttribute("aria-label","Excerpt player");
+    mp.innerHTML='<button type="button" class="mp-pp" aria-label="Pause"><i></i></button>'+
+      '<div class="mp-meta"><b></b><span></span></div>'+
+      '<label class="mp-pitch"><span>Pitch</span><input type="range" min="-8" max="8" step="0.1" value="0" aria-label="Pitch fader, minus 8 to plus 8 percent. Tempo and pitch move together, as on a turntable."></label>'+
+      '<span class="mp-bpm" aria-live="polite"></span>'+
+      '<button type="button" class="mp-124" title="Pitch this track to 124 BPM">→ 124 BPM</button>'+
+      '<button type="button" class="mp-x" aria-label="Close the player">✕</button>'+
+      '<div class="mp-bar" aria-hidden="true"><i></i></div>';
+    document.body.appendChild(mp);
+    el.pp=mp.querySelector(".mp-pp"); el.t=mp.querySelector(".mp-meta b"); el.a=mp.querySelector(".mp-meta span"); el.in=mp.querySelector("input");
+    el.bpm=mp.querySelector(".mp-bpm"); el.b124=mp.querySelector(".mp-124"); el.bar=mp.querySelector(".mp-bar");
+    el.pp.addEventListener("click",function(){ if(!audio) return; if(audio.paused){ announce(); audio.play(); } else audio.pause(); });
+    el.in.addEventListener("input",function(){ setPitch(+el.in.value); });
+    el.in.addEventListener("dblclick",function(){ setPitch(0); });
+    el.b124.addEventListener("click",function(){ if(cur) setPitch((124/(+cur.getAttribute("data-bpm"))-1)*100); try{ if(navigator.vibrate) navigator.vibrate(10); }catch(e){} });
+    mp.querySelector(".mp-x").addEventListener("click",stop);
+    audio=new Audio(); audio.preload="none";
+    try{ audio.preservesPitch=false; audio.mozPreservesPitch=false; audio.webkitPreservesPitch=false; }catch(e){}
+    audio.addEventListener("ended",stop);
+    audio.addEventListener("play",function(){ el.pp.classList.remove("paused"); el.pp.setAttribute("aria-label","Pause"); if(cur){ cur.classList.add("on"); cur.querySelector(".rel-play").setAttribute("aria-pressed","true"); } tick(); });
+    audio.addEventListener("pause",function(){ el.pp.classList.add("paused"); el.pp.setAttribute("aria-label","Play"); if(cur){ cur.querySelector(".rel-play").setAttribute("aria-pressed","false"); } });
+    audio.addEventListener("error",function(){ if(cur){ el.a.textContent="This excerpt could not be loaded."; } });
+  }
+  function announce(){ try{ document.dispatchEvent(new CustomEvent("ss:audio",{detail:"releases"})); }catch(e){} }
+  function tick(){ cancelAnimationFrame(raf); if(!cur||!audio||audio.paused) return; var d=audio.duration||28, p=Math.min(1,audio.currentTime/d).toFixed(4);
+    cur.style.setProperty("--p",p); el.bar.style.setProperty("--p",p); raf=requestAnimationFrame(tick); }
+  function stop(){ cancelAnimationFrame(raf); if(audio&&!audio.paused) audio.pause();
+    if(cur){ cur.classList.remove("on"); cur.style.removeProperty("--p"); cur.querySelector(".rel-play").setAttribute("aria-pressed","false"); cur=null; }
+    if(mp) mp.hidden=true; }
+  function start(row){
+    if(!mp) make();
+    if(cur===row){ if(audio.paused){ announce(); audio.play(); } else audio.pause(); return; }
+    if(cur){ cur.classList.remove("on"); cur.style.removeProperty("--p"); cur.querySelector(".rel-play").setAttribute("aria-pressed","false"); }
+    cur=row; announce();
+    el.t.textContent=row.getAttribute("data-t"); el.a.textContent=row.getAttribute("data-a")+" · 28-second excerpt";
+    audio.src="audio/"+row.getAttribute("data-k")+".mp3"; setPitch(0); mp.hidden=false;
+    var pr=audio.play(); if(pr&&pr.catch) pr.catch(function(){ el.pp.classList.add("paused"); });
+  }
+  Array.prototype.forEach.call(rows,function(row){ row.querySelector(".rel-play").addEventListener("click",function(){ start(row); try{ if(navigator.vibrate) navigator.vibrate(12); }catch(e){} }); });
+  document.addEventListener("ss:audio",function(e){ if(e.detail!=="releases"&&mp&&!mp.hidden) stop(); });   // another sound source took over: close the player
+  new MutationObserver(function(){ if(root.getAttribute("data-side")!=="night") stop(); }).observe(root,{attributes:true,attributeFilter:["data-side"]});
+  document.addEventListener("keydown",function(e){ if(e.key==="Escape"&&mp&&!mp.hidden) stop(); });
+})();
+
+  var form=document.getElementById("nightForm");
+  var note=document.getElementById("formNote");
+  form.addEventListener("submit",function(ev){
+    ev.preventDefault();
+    var v=document.getElementById("nightEmail").value.trim();
+    note.hidden=false;
+    if(!v||v.indexOf("@")<0){ note.textContent="Enter an email address first."; return; }
+    var ep=window.SS_LIST_ENDPOINT, sorry="The list could not be reached just now. Please try again later.";
+    if(!ep){ note.textContent="The night list opens soon. Until then: Instagram, @seth_schwarz."; return; }
+    note.textContent="Sending…";
+    try{ fetch(ep,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email:v,source:"night-list"})})
+      .then(function(r){ note.textContent=r.ok?"Almost there: check your inbox to confirm.":sorry; if(r.ok) form.reset(); })
+      .catch(function(){ note.textContent=sorry; }); }catch(e){ note.textContent=sorry; }
+  });
+})();
+</script>
+<script type="text/plain" id="lazy-arcade">
+(function(){
   var sec=document.getElementById("nArcade"); if(!sec) return;
   var scr=document.getElementById("acScreen"), cv=document.getElementById("acCv"), c=cv.getContext("2d"), ov=document.getElementById("acOv");
   var live=document.getElementById("acLive"), sndBtn=document.getElementById("acSnd");
@@ -4425,75 +4495,6 @@ html[lang="hsb"] .kits ul.kits-en{display:none}
       else { caught=LV[lvl].goal||0; if(lvl<2) nextLevel(); } }, end:function(){ energy=0; },
     cym:function(v){ if(v!==undefined) MS.cs=Math.max(0,Math.min(1,+v)||0); return MS.cs; },   // the cymatics in the hole's disk: a scale on their rise, 0 off .. 1 as designed
     mass:function(v){ if(v!==undefined) msSet(v); return {k:MS.k,pay:msPay(),slow:MS.S}; }};   // the hole's mass, 0 light .. 1 heavy
-})();
-
-(function(){
-  var rows=document.querySelectorAll(".ry li.rp"); if(!rows.length) return;
-  var root=document.documentElement, audio=null, cur=null, raf=0, mp=null, el={}, pitch=0;
-  function fmt(v){ return (v>0?"+":v<0?"−":"±")+Math.abs(v).toFixed(1)+"%"; }
-  function ui(){ if(!cur) return; var bpm=+cur.getAttribute("data-bpm"), now=bpm*(1+pitch/100);
-    el.bpm.innerHTML=(pitch===0?bpm+" BPM":bpm+" → <em>"+now.toFixed(1)+" BPM</em>")+" · "+fmt(pitch);
-    el.b124.hidden=Math.abs(now-124)<0.05; }
-  function setPitch(p){ pitch=Math.max(-8,Math.min(8,Math.round(p*10)/10)); el.in.value=pitch; if(audio) audio.playbackRate=1+pitch/100; ui(); }
-  function make(){
-    mp=document.createElement("div"); mp.className="mp"; mp.id="relPlayer"; mp.hidden=true; mp.setAttribute("role","region"); mp.setAttribute("aria-label","Excerpt player");
-    mp.innerHTML='<button type="button" class="mp-pp" aria-label="Pause"><i></i></button>'+
-      '<div class="mp-meta"><b></b><span></span></div>'+
-      '<label class="mp-pitch"><span>Pitch</span><input type="range" min="-8" max="8" step="0.1" value="0" aria-label="Pitch fader, minus 8 to plus 8 percent. Tempo and pitch move together, as on a turntable."></label>'+
-      '<span class="mp-bpm" aria-live="polite"></span>'+
-      '<button type="button" class="mp-124" title="Pitch this track to 124 BPM">→ 124 BPM</button>'+
-      '<button type="button" class="mp-x" aria-label="Close the player">✕</button>'+
-      '<div class="mp-bar" aria-hidden="true"><i></i></div>';
-    document.body.appendChild(mp);
-    el.pp=mp.querySelector(".mp-pp"); el.t=mp.querySelector(".mp-meta b"); el.a=mp.querySelector(".mp-meta span"); el.in=mp.querySelector("input");
-    el.bpm=mp.querySelector(".mp-bpm"); el.b124=mp.querySelector(".mp-124"); el.bar=mp.querySelector(".mp-bar");
-    el.pp.addEventListener("click",function(){ if(!audio) return; if(audio.paused){ announce(); audio.play(); } else audio.pause(); });
-    el.in.addEventListener("input",function(){ setPitch(+el.in.value); });
-    el.in.addEventListener("dblclick",function(){ setPitch(0); });
-    el.b124.addEventListener("click",function(){ if(cur) setPitch((124/(+cur.getAttribute("data-bpm"))-1)*100); try{ if(navigator.vibrate) navigator.vibrate(10); }catch(e){} });
-    mp.querySelector(".mp-x").addEventListener("click",stop);
-    audio=new Audio(); audio.preload="none";
-    try{ audio.preservesPitch=false; audio.mozPreservesPitch=false; audio.webkitPreservesPitch=false; }catch(e){}
-    audio.addEventListener("ended",stop);
-    audio.addEventListener("play",function(){ el.pp.classList.remove("paused"); el.pp.setAttribute("aria-label","Pause"); if(cur){ cur.classList.add("on"); cur.querySelector(".rel-play").setAttribute("aria-pressed","true"); } tick(); });
-    audio.addEventListener("pause",function(){ el.pp.classList.add("paused"); el.pp.setAttribute("aria-label","Play"); if(cur){ cur.querySelector(".rel-play").setAttribute("aria-pressed","false"); } });
-    audio.addEventListener("error",function(){ if(cur){ el.a.textContent="This excerpt could not be loaded."; } });
-  }
-  function announce(){ try{ document.dispatchEvent(new CustomEvent("ss:audio",{detail:"releases"})); }catch(e){} }
-  function tick(){ cancelAnimationFrame(raf); if(!cur||!audio||audio.paused) return; var d=audio.duration||28, p=Math.min(1,audio.currentTime/d).toFixed(4);
-    cur.style.setProperty("--p",p); el.bar.style.setProperty("--p",p); raf=requestAnimationFrame(tick); }
-  function stop(){ cancelAnimationFrame(raf); if(audio&&!audio.paused) audio.pause();
-    if(cur){ cur.classList.remove("on"); cur.style.removeProperty("--p"); cur.querySelector(".rel-play").setAttribute("aria-pressed","false"); cur=null; }
-    if(mp) mp.hidden=true; }
-  function start(row){
-    if(!mp) make();
-    if(cur===row){ if(audio.paused){ announce(); audio.play(); } else audio.pause(); return; }
-    if(cur){ cur.classList.remove("on"); cur.style.removeProperty("--p"); cur.querySelector(".rel-play").setAttribute("aria-pressed","false"); }
-    cur=row; announce();
-    el.t.textContent=row.getAttribute("data-t"); el.a.textContent=row.getAttribute("data-a")+" · 28-second excerpt";
-    audio.src="audio/"+row.getAttribute("data-k")+".mp3"; setPitch(0); mp.hidden=false;
-    var pr=audio.play(); if(pr&&pr.catch) pr.catch(function(){ el.pp.classList.add("paused"); });
-  }
-  Array.prototype.forEach.call(rows,function(row){ row.querySelector(".rel-play").addEventListener("click",function(){ start(row); try{ if(navigator.vibrate) navigator.vibrate(12); }catch(e){} }); });
-  document.addEventListener("ss:audio",function(e){ if(e.detail!=="releases"&&mp&&!mp.hidden) stop(); });   // another sound source took over: close the player
-  new MutationObserver(function(){ if(root.getAttribute("data-side")!=="night") stop(); }).observe(root,{attributes:true,attributeFilter:["data-side"]});
-  document.addEventListener("keydown",function(e){ if(e.key==="Escape"&&mp&&!mp.hidden) stop(); });
-})();
-
-  var form=document.getElementById("nightForm");
-  var note=document.getElementById("formNote");
-  form.addEventListener("submit",function(ev){
-    ev.preventDefault();
-    var v=document.getElementById("nightEmail").value.trim();
-    note.hidden=false;
-    if(!v||v.indexOf("@")<0){ note.textContent="Enter an email address first."; return; }
-    var ep=window.SS_LIST_ENDPOINT, sorry="The list could not be reached just now. Please try again later.";
-    if(!ep){ note.textContent="The night list opens soon. Until then: Instagram, @seth_schwarz."; return; }
-    note.textContent="Sending…";
-    try{ fetch(ep,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email:v,source:"night-list"})})
-      .then(function(r){ note.textContent=r.ok?"Almost there: check your inbox to confirm.":sorry; if(r.ok) form.reset(); })
-      .catch(function(){ note.textContent=sorry; }); }catch(e){ note.textContent=sorry; }
-  });
 })();
 </script>
 
@@ -6228,7 +6229,7 @@ html[lang="hsb"] .kits ul.kits-en{display:none}
   if(ph&&small&&window.matchMedia("(max-width: 560px)").matches){ var hint=document.createElement("p"); hint.className="photos-hint"; hint.setAttribute("aria-hidden","true"); hint.textContent="Swipe · "+ph.children.length+" pictures"; ph.parentNode.insertBefore(hint,ph.nextSibling); }
 })();
 </script>
-<script>
+<script type="text/plain" id="lazy-arcadeplus">
 /* ===== arcadeplus.js (16 Nov 2026) =====
    The cabinet keeps a record, so a second run has a reason: a rank that grows with play time, a set list of the eight
    tracks the games play, twelve badges, the nearest goal on the game-over panel, and a challenge link for a friend.
@@ -6621,7 +6622,7 @@ html[lang="hsb"] .kits ul.kits-en{display:none}
   </div></section></template>
 <script type="application/json" id="g4Art">{"v":2,"files":{"lp_alone":{"src":"img/game4/lp_alone.mp4","video":true,"loop":true},"lp_puffin":{"src":"img/game4/lp_puffin.mp4","video":true,"loop":true},"lp_ocean":{"src":"img/game4/lp_ocean.mp4","video":true,"loop":true},"lp_elves":{"src":"img/game4/lp_elves.mp4","video":true,"loop":true},"lp_africa":{"src":"img/game4/lp_africa.mp4","video":true,"loop":true},"lp_all":{"src":"img/game4/lp_all.mp4","video":true,"loop":true},"lp_violin":{"src":"img/game4/lp_violin.mp4","video":true,"loop":true},"ev_intro":{"src":"img/game4/ev_intro.mp4","video":true,"loop":false},"ev_puffin":{"src":"img/game4/ev_puffin.mp4","video":true,"loop":false},"ev_penguin":{"src":"img/game4/ev_penguin.mp4","video":true,"loop":false},"ev_forest":{"src":"img/game4/ev_forest.mp4","video":true,"loop":false},"ev_ocean":{"src":"img/game4/ev_ocean.mp4","video":true,"loop":false},"ev_elves":{"src":"img/game4/ev_elves.mp4","video":true,"loop":false},"ev_dog":{"src":"img/game4/ev_dog.mp4","video":true,"loop":false},"ev_coast":{"src":"img/game4/ev_coast.mp4","video":true,"loop":false},"ev_herd":{"src":"img/game4/ev_herd.mp4","video":true,"loop":false},"ev_mice":{"src":"img/game4/ev_mice.mp4","video":true,"loop":false},"ev_violin":{"src":"img/game4/ev_violin.mp4","video":true,"loop":false},"ev_zoomout":{"src":"img/game4/ev_zoomout.mp4","video":true,"loop":false},"ev_night":{"src":"img/game4/ev_night.mp4","video":true,"loop":false}}}</script>
 <script type="application/json" id="g4Song">{"bpm":123.0,"firstBeat":0.2105,"length":140.6,"notes":[64,67,71],"source":"Gnomes 2018_V5:4FINAL_Videoclip_endwater_Soundfile.wav (Dropbox, Elves of Karoo_ANIMATION part1)","cut":"bars 1-32 (0:00-1:02.65) + bars 137-176 (4:25.59-5:43.64), 4 s fade at the end; 128 kbps","src":"audio/elvesofkaroo.mp3"}</script>
-<script>
+<script type="text/plain" id="lazy-game4">
 /* ==========================================================================
    Elves of Karoo — Game 04 · das Spiel (Fassung 8)
    Ein Skript für beide Hüllen: die eigenständige Seite (elves-of-karoo.html)
@@ -8303,7 +8304,7 @@ window.__ssPhoenixGame={S:S, CFG:CFG, open:open, close:close, start:start, flap:
     </div>
   </div>
 </div>
-<script>
+<script type="text/plain" id="lazy-sweatheart">
 (function(){
 "use strict";
 if(window.__ssSweatheart) return;
@@ -8736,6 +8737,64 @@ window.__ssSweatheartGame={S:S,press:press,now:now,start:startSet,open:open,clos
 })();
 </script>
 <!-- sweatheart: end -->
+<!-- lazygames: loader -->
+<script>
+/* Item 84 (20 Nov 2026): the games run only when they are needed. Their code is in the page as type="text/plain"
+   (#lazy-arcade, #lazy-arcadeplus, #lazy-game4, #lazy-sweatheart); this runs the arcade, its record and Game 04 when
+   the arcade comes near the screen or is touched (Game 04 builds its own section under it), and Sweat Heartz when its
+   asterisk is clicked or the address ends in #sweatheart. Source: source/lazygames/apply.py. */
+(function(){
+  function run(id){
+    var b=document.getElementById(id); if(!b||b.getAttribute("data-ran")) return false;
+    b.setAttribute("data-ran","1");
+    var s=document.createElement("script"); s.text=b.textContent; b.parentNode.insertBefore(s,b.nextSibling);
+    return true;
+  }
+  function after(id){
+    // item 83: the title inside the Elves of Karoo card is a level-3 heading; the card is built only now
+    if(id==="lazy-game4"){ var h=document.querySelectorAll("#nElves h1"); for(var i=0;i<h.length;i++) h[i].setAttribute("aria-level","3"); }
+  }
+  function runAll(ids){ for(var i=0;i<ids.length;i++) if(run(ids[i])) after(ids[i]); }
+  function idle(f){ if(window.requestIdleCallback) requestIdleCallback(f,{timeout:1200}); else setTimeout(f,60); }
+  var ARC=["lazy-arcade","lazy-arcadeplus","lazy-game4"];
+  // the golden record on the globe picks Game 03 before it scrolls to the arcade: until the arcade runs, this stands in
+  if(document.getElementById("lazy-arcade")&&!window.__ssArcade){
+    window.__ssArcade={lazy:true,game:function(g){ runAll(ARC); var A=window.__ssArcade; return (A&&!A.lazy&&A.game)?A.game(g):0; }};
+  }
+  (function(){
+    if(!document.getElementById("lazy-arcade")&&!document.getElementById("lazy-game4")) return;
+    var sec=document.getElementById("nArcade");
+    if(!sec||!("IntersectionObserver" in window)){ runAll(ARC); return; }
+    var io=new IntersectionObserver(function(es){
+      for(var i=0;i<es.length;i++) if(es[i].isIntersecting){ io.disconnect(); idle(function(){ runAll(ARC); }); return; }
+    },{rootMargin:"1600px 0px"});
+    io.observe(sec);
+    function now(){ io.disconnect(); runAll(ARC); }
+    sec.addEventListener("pointerdown",now,true); sec.addEventListener("focusin",now,true);
+    if(location.hash==="#nArcade") now();
+    if(location.hash==="#nElves"){ now(); var t=document.getElementById("nElves"); if(t) setTimeout(function(){ t.scrollIntoView(); },0); }
+  })();
+  // Sweat Heartz: the asterisk behind the night wordmark stands from the start; the game runs on the first click
+  if(document.getElementById("lazy-sweatheart")){
+    var wm=document.querySelector("#night .hero .wordmark");
+    var go=function(open){
+      var a=document.getElementById("shgAst"); if(a&&a.getAttribute("data-lazy")) a.parentNode.removeChild(a);
+      if(run("lazy-sweatheart")&&open&&window.__ssSweatheart) window.__ssSweatheart();
+    };
+    if(wm&&!document.getElementById("shgAst")){
+      var a=document.createElement("button"); a.type="button"; a.id="shgAst"; a.className="shg-ast"; a.setAttribute("data-lazy","1"); a.textContent="*";
+      a.setAttribute("aria-label","Footnote: on other planets also known as Sweatheart. Opens the hidden game Sweat Heartz.");
+      a.title="on other planets also known as Sweatheart";
+      a.addEventListener("click",function(ev){ ev.preventDefault(); ev.stopPropagation(); go(true); });
+      wm.appendChild(a);
+    }
+    var byHash=function(){ if(/^#sweatheart/.test(location.hash)) go(false); };
+    window.addEventListener("hashchange",byHash); byHash();
+    window.__ssSweatheartLoad=function(){ go(false); return !!window.__ssSweatheartGame; };   // for tests and the console
+  }
+})();
+</script>
+
 <!-- sitetest:js:start -->
 <script>
 /* Site test of 20 Nov 2026, item 83 (source/seitentest_2026-11-20/apply.py). Nothing a sighted visitor sees changes. */
