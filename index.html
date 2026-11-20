@@ -8817,7 +8817,7 @@ html[lang="ar"] :is(p,h1,h2,h3,h4,h5,li,blockquote,figcaption,dd,dt,label){unico
    placeholder), and texts with one changing part: an English text with {x} in it matches any wording with something
    in that place ("Cover of {x}", "{x} your time"), and the {x} of the translation takes that part. */
 (function(){
-  var LANGS=[["en","English"],["de","Deutsch"],["es","Español"],["fr","Français"],["zh","中文"],["hi","हिन्दी"],["tr","Türkçe"],["ar","العربية"],["pt","Português"],["it","Italiano"],["af","Afrikaans"],["ru","Русский"]];
+  var LANGS=[["en","English"],["de","Deutsch"],["es","Español"],["fr","Français"],["zh","中文"],["hi","हिन्दी"],["tr","Türkçe"],["ar","العربية"],["pt","Português"],["it","Italiano"],["af","Afrikaans"],["ru","Русский"],["hsb","Hornjoserbsce"]];
   var KEY="ss_lang", cur="en", EN=null, IDX=null, PATS=[], packs={}, asked={}, obs=null, box, btn, list;
   var ATTRS=["alt","aria-label","title","placeholder"], ASEL="[alt],[aria-label],[title],[placeholder]";
   function known(c){ for(var i=0;i<LANGS.length;i++) if(LANGS[i][0]===c) return true; return false; }
@@ -8940,7 +8940,7 @@ html[lang="ar"] :is(p,h1,h2,h3,h4,h5,li,blockquote,figcaption,dd,dt,label){unico
 
   function start(){
     build();
-    var want="en", m=/[?&]lang=([a-z]{2})\b/.exec(location.search);
+    var want="en", m=/[?&]lang=([a-z]{2,3})\b/.exec(location.search);
     if(m&&known(m[1])) want=m[1];
     else { try{ var s=localStorage.getItem(KEY); if(s&&known(s)) want=s; }catch(e){} }
     if(want!=="en") set(want,false); else paint();
