@@ -7659,7 +7659,7 @@ return api;
 <!-- game4: end -->
 <!-- sweatheart: start -->
 <style>
-/* hidden game "Another Game · based on a true Sweatheart story" (18 Nov 2026). Source: source/sweatheart/sweatheart.html.
+/* hidden game "Sweat Heartz", another game based on a true Sweatheart story (18 Nov 2026; named Sweat Heartz by Martin on 20 Nov). Source: source/sweatheart/sweatheart.html.
    Opens from the small asterisk behind the night wordmark, from #sweatheart, or from __ssSweatheart() in the console. */
 .shg-ast{position:relative;top:-.55em;margin-left:.06em;padding:0 .12em;border:0;background:none;color:var(--n-accent,#E4007C);font:inherit;font-size:.5em;line-height:1;cursor:pointer;opacity:.9;transition:opacity .2s,transform .2s;-webkit-tap-highlight-color:transparent}
 .shg-ast:hover,.shg-ast:focus-visible{opacity:1;transform:scale(1.35) rotate(20deg)}
@@ -7720,7 +7720,7 @@ return api;
 .shg-big .shg-coin{width:38px;height:38px;font-size:20px}
 .shg-tiny{font:400 10.5px/1.4 var(--mono,monospace);opacity:.65;margin-top:14px;letter-spacing:.04em}
 </style>
-<div id="shg" hidden role="dialog" aria-modal="true" aria-label="Another Game: based on a true Sweatheart story">
+<div id="shg" hidden role="dialog" aria-modal="true" aria-label="Sweat Heartz: another game, based on a true Sweatheart story">
   <div id="shgApp">
     <div id="shgStage">
       <canvas id="shgCv"></canvas>
@@ -7962,18 +7962,18 @@ function xmasDone(acc){var b=beatPct(),l=LV[S.li];
  '<button class="shg-go" id="shgGo" type="button">Play Christmas again</button><button class="shg-go2" id="shgGo2" type="button">Back to the week</button>',function(){card(XM1)},function(){title()})}
 function iniNow(){var f=$("shgIni");if(f){var v=(f.value||"").toUpperCase().replace(/[^A-Z0-9]/g,"").slice(0,3);if(v!==myIni){myIni=v;wr("ss-sweatheart-ini",v)}}return myIni}
 function shareWeek(){var d=S.lastWeek;if(!d)return;var ini=iniNow(),url=location.origin+location.pathname+"?sh="+d.b+"."+d.c+(ini?"."+ini:"")+"#sweatheart";
- var txt="I played Sweatheart\u2019s whole week on sethschwarz.com: "+d.b+"% on the beat, "+d.c+" Sweat Heartz. Beat it:";
+ var txt="Sweat Heartz on sethschwarz.com: I played the whole week "+d.b+"% on the beat ("+d.c+" coins). Beat it:";
  var box=$("shgShareBox"),btn=$("shgGo");
  function shown(msg){if(btn)btn.textContent=msg;if(box&&!box.firstChild){var i=document.createElement("input");i.className="shg-link";i.readOnly=true;i.value=txt+" "+url;box.appendChild(i);try{i.select()}catch(e){}}}
  function copy(){try{navigator.clipboard.writeText(txt+" "+url).then(function(){shown("Link copied")},function(){shown("Copy the link below")})}catch(e){shown("Copy the link below")}}
- if(navigator.share){try{navigator.share({title:"Sweatheart",text:txt,url:url}).catch(function(){})}catch(e){copy()}}else copy();
+ if(navigator.share){try{navigator.share({title:"Sweat Heartz",text:txt,url:url}).catch(function(){})}catch(e){copy()}}else copy();
  goFn=shareWeek;}
 function card(i){var l=LV[i];S.mode="card";S.li=i;$("shgHud").className="";$("shgCtrl").className="";
  if(l.xmas){show('<div class="shg-kick shg-xm">The secret Christmas set · level '+l.xlv+' of 3 · '+l.slot+'</div><h2>'+l.name+'</h2><p>'+l.bpm+' bpm · '+(l.xlv===1?'the chorus of Jingle Bells: snow on the playa, a Santa hat, every heart rings one note.':l.xlv===2?'the verse, Dashing through the snow, a little faster. Every heart rings one note.':'the chorus again, super fast. Every heart you hit puts an elf hat on someone in the crowd, and the crowd sings along.')+' Catch an ice flake to cool down. Every Sweat Heartz counts double.</p><button class="shg-go" id="shgGo" type="button">Start the set</button>',function(){startSet(i)});return}
  show('<div class="shg-kick">Set '+(i+1)+' of 8 · '+l.day+' '+l.slot+'</div><h2>'+l.name+'</h2><p>'+l.bpm+' bpm'+(l.hard?" · the sunrise set, the hard one":l.last?" · the last set of the week":"")+'</p><button class="shg-go" id="shgGo" type="button">Start the set</button>',function(){startSet(i)})}
 function title(){S.mode="title";S.bank=0;S.ga=0;S.gn=0;$("shgHud").className="";$("shgCtrl").className="";
  var fine=window.matchMedia&&matchMedia("(pointer:fine)").matches;
- show('<div class="shg-kick">Another Game</div><h1>SWEATHEART*</h1><div class="shg-sub">based on a true Sweatheart story</div>'+
+ show('<div class="shg-kick">Another Game</div><h1>SWEAT HEARTZ*</h1><div class="shg-sub">based on a true Sweatheart story</div>'+
  '<p>At a burn in the desert you do not play under your own name. So Seth Schwarz became Sweatheart: he loves the music so much that he sweats hearts.</p>'+
  '<div class="shg-how"><div><span class="shg-dot" style="background:#E4007C"></span><span><b>PLAY</b> when a heart reaches the ring. Every note makes you sweat, and every drop becomes a heart for the crowd: one Sweat Heartz coin each. The third bar, On the beat, shows how close to the beat you play; the little arrow tells you if your last note came early \u25C2 or late \u25B8.</span></div>'+
  '<div><span class="shg-dot" style="background:#6fd3ff"></span><span><b>DRINK</b> when the blue drop reaches the ring, or you overheat.</span></div>'+
@@ -8136,7 +8136,7 @@ if(window.matchMedia&&matchMedia("(pointer:fine)").matches){$("shgKD").textConte
 function plant(){
  var wm=document.querySelector("#night .hero .wordmark");if(!wm||document.getElementById("shgAst"))return;
  var a=document.createElement("button");a.type="button";a.id="shgAst";a.className="shg-ast";a.textContent="*";
- a.setAttribute("aria-label","Footnote: on other planets also known as Sweatheart. Opens a hidden game.");
+ a.setAttribute("aria-label","Footnote: on other planets also known as Sweatheart. Opens the hidden game Sweat Heartz.");
  a.title="on other planets also known as Sweatheart";
  a.addEventListener("click",function(ev){ev.preventDefault();ev.stopPropagation();open()});
  wm.appendChild(a);
