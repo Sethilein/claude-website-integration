@@ -7677,10 +7677,11 @@ return api;
 #shgSetName{font-size:17px;font-weight:700;letter-spacing:.03em;margin-top:2px}
 #shgCoins{display:flex;align-items:center;gap:7px;font-weight:700;font-size:18px;white-space:nowrap}
 #shgCoins small{font:400 10px/1 var(--mono,monospace);letter-spacing:.1em;text-transform:uppercase;opacity:.85}
-#shgBeat{font:400 10px/1 var(--mono,monospace);letter-spacing:.1em;text-transform:uppercase;text-align:right;margin-top:6px;opacity:.9;white-space:nowrap}
-#shgBeat b{font-weight:600;color:#ffe08a}
+.shg-meter span b{font-weight:600;color:#ffe08a;letter-spacing:.06em}
+#shgBeatB{background:linear-gradient(90deg,#b46a10,#f0a92c 55%,#ffe9a6);transition:width .25s}
 .shg-coin{width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ffe9a6,#f0a92c 60%,#b46a10);display:inline-grid;place-items:center;color:#a3243f;font-size:12px;line-height:1;box-shadow:0 0 0 1.5px #7a4708;flex:none}
-.shg-meters{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+.shg-meters{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:8px}
+.shg-meter span{white-space:nowrap}
 .shg-meter span{font:400 10px/1 var(--mono,monospace);letter-spacing:.16em;text-transform:uppercase;opacity:.9}
 .shg-bar{height:9px;border-radius:5px;background:rgba(0,0,0,.45);overflow:hidden;margin-top:3px;border:1px solid rgba(255,243,226,.25)}
 .shg-bar i{display:block;height:100%;width:0;border-radius:5px}
@@ -7693,6 +7694,7 @@ return api;
 #shgCtrl button{height:76px;border-radius:16px;border:0;font:600 19px/1.1 var(--display,sans-serif);letter-spacing:.12em;color:#12071a;touch-action:none;cursor:pointer}
 #shgCtrl button small{display:block;font:400 10px/1 var(--mono,monospace);letter-spacing:.14em;opacity:.75;margin-top:5px;text-transform:uppercase}
 #shgDrink{background:#6fd3ff}
+#shgCtrl #shgDrink.shg-ice{background:#e9f6ff}
 #shgCtrl #shgPlay{background:#E4007C;color:#fff}
 #shgCtrl button.shg-hit{transform:scale(.96);filter:brightness(1.25)}
 #shgOv{position:absolute;inset:0;z-index:2;display:grid;place-items:center;padding:52px 18px 18px;background:rgba(18,7,26,.74);text-align:center;overflow:auto}
@@ -7708,6 +7710,12 @@ return api;
 .shg-how div{display:grid;grid-template-columns:26px 1fr;gap:8px;align-items:start}
 .shg-dot{width:20px;height:20px;border-radius:50%;margin-top:1px}
 .shg-go{margin-top:10px;background:#E4007C;color:#fff;border:0;border-radius:28px;font:600 16px/1 var(--display,sans-serif);letter-spacing:.14em;padding:16px 34px;text-transform:uppercase;cursor:pointer}
+.shg-go2{margin:10px 6px 0;background:transparent;color:#fff3e2;border:1px solid rgba(255,243,226,.55);border-radius:28px;font:600 13px/1 var(--display,sans-serif);letter-spacing:.12em;padding:13px 22px;text-transform:uppercase;cursor:pointer}
+.shg-xm{color:#bfe3ff}
+.shg-chal{margin:12px auto 0;padding:10px 12px;border:1px dashed rgba(255,224,138,.6);border-radius:12px;font-size:14px;line-height:1.4;color:#ffe08a;max-width:400px}
+.shg-ini{display:flex;gap:8px;justify-content:center;align-items:center;margin:12px 0 0;font:400 11px/1 var(--mono,monospace);letter-spacing:.12em;text-transform:uppercase;color:#f6e3d0}
+.shg-ini input{width:74px;height:36px;border-radius:10px;border:1px solid rgba(255,243,226,.45);background:rgba(0,0,0,.35);color:#fff3e2;font:600 18px/1 var(--mono,monospace);letter-spacing:.2em;text-align:center;text-transform:uppercase}
+.shg-link{display:block;width:100%;margin-top:8px;padding:8px;border-radius:8px;border:1px solid rgba(255,243,226,.3);background:rgba(0,0,0,.4);color:#fff3e2;font:400 12px/1.3 var(--mono,monospace)}
 .shg-big{font-size:44px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:10px;margin:6px 0}
 .shg-big .shg-coin{width:38px;height:38px;font-size:20px}
 .shg-tiny{font:400 10.5px/1.4 var(--mono,monospace);opacity:.65;margin-top:14px;letter-spacing:.04em}
@@ -7719,11 +7727,12 @@ return api;
       <div id="shgHud">
         <div class="shg-row">
           <div><div id="shgSetLbl"></div><div id="shgSetName"></div></div>
-          <div><div id="shgCoins"><span class="shg-coin">&#9829;</span><span id="shgCoinN">0</span><small>Sweat Heartz</small></div><div id="shgBeat">On the beat <b id="shgBeatN">&ndash;</b></div></div>
+          <div id="shgCoins"><span class="shg-coin">&#9829;</span><span id="shgCoinN">0</span><small>Sweat Heartz</small></div>
         </div>
         <div class="shg-meters">
           <div class="shg-meter"><span>Sweat</span><div class="shg-bar"><i id="shgHeat"></i></div></div>
           <div class="shg-meter"><span>Crowd love</span><div class="shg-bar"><i id="shgLove"></i></div></div>
+          <div class="shg-meter"><span>On the beat <b id="shgBeatN">&ndash;</b></span><div class="shg-bar"><i id="shgBeatB"></i></div></div>
         </div>
       </div>
       <button id="shgMute" type="button">Sound on</button>
@@ -7750,13 +7759,21 @@ var LV=[
  {day:"Fri",slot:"6 to 8 pm",name:"The Comet Barge",bpm:118,ph:6,pat:"BD",f:.92,sky:"sunset"},
  {day:"Sat",slot:"4 to 6 am",name:"The Night Freight",bpm:126,ph:8,pat:"DECD",f:1,sky:"sunrise",hard:1},
  {day:"Sat",slot:"6 to 8 pm, sunset",name:"The Ember Lizard",bpm:120,ph:7,pat:"CDE",f:.95,sky:"sunset"},
- {day:"Sun",slot:"2 to 4 am",name:"The Last Morning",bpm:124,ph:8,pat:"DEDC",f:1,sky:"night",last:1}
+ {day:"Sun",slot:"2 to 4 am",name:"The Last Morning",bpm:124,ph:8,pat:"DEDC",f:1,sky:"night",last:1},
+ // the secret Christmas set: shows only from 20 to 31 December (visitor's own clock); coins count double. Invented name (rule 4).
+ {day:"Xmas",slot:"20 to 31 Dec",name:"The Snow Playa",bpm:122,ph:8,pat:"DECD",f:.95,sky:"xmas",xmas:1,xlv:1},
+ // Christmas level 2: the verse of the same song, a little faster. Invented name (rule 4).
+ {day:"Xmas",slot:"20 to 31 Dec",name:"The Sleigh Lanterns",bpm:128,ph:8,pat:"DECD",f:1,sky:"xmas",xmas:1,xlv:2},
+ // Christmas level 3: the chorus again, super fast; the crowd sings along and gets elf hats, one per heart. Invented name (rule 4).
+ {day:"Xmas",slot:"20 to 31 Dec",name:"The Elf Choir",bpm:152,ph:8,pat:"DECD",f:1.05,sky:"xmas",xmas:1,xlv:3}
 ];
+var WEEK=8;   // the week is the first eight sets; LV[8] is the Christmas set
 var PAT={A:[0,2,4,6,8,10,12],B:[0,2,4,5,6,8,10,12],C:[0,2,3,4,6,8,10,11,12],D:[0,1,2,4,5,6,8,10,11,12],E:[0,3,4,6,8,11,12]};
 var SKY={
  night:{g:["#090418","#2a1147","#6a2060"],ground:["#3a1638","#170a1e"],sil:"#06030c",mt:"#1d0c2e",sun:0,stars:1},
  sunset:{g:["#3b0f3d","#c8452c","#ffb347"],ground:["#b4521c","#3a130f"],sil:"#1a0710",mt:"#6b2420",sun:"#fff0c4",stars:0},
- sunrise:{g:["#1b1140","#b0457a","#ffd08a"],ground:["#a04a4a","#2c1024"],sil:"#160612",mt:"#5a2350",sun:"#fff6d8",stars:0}
+ sunrise:{g:["#1b1140","#b0457a","#ffd08a"],ground:["#a04a4a","#2c1024"],sil:"#160612",mt:"#5a2350",sun:"#fff6d8",stars:0},
+ xmas:{g:["#050c22","#16285a","#4d6fa8"],ground:["#e4edf8","#8396b8"],sil:"#0a1226",mt:"#253a66",sun:0,stars:1,snow:1}
 };
 var PERF=.06,GOOD=.12,COOL=30,FONT="Chivo,'Helvetica Neue',Arial,sans-serif";
 var cv=document.getElementById("shgCv"),cx=cv.getContext("2d"),W=300,H=300,DPR=1;
@@ -7765,6 +7782,15 @@ var S={mode:"title",li:0,bank:0,ev:[],heat:20,love:55,combo:0,coins:0,st:{p:0,g:
 var parts=[],fx=[],dancers=[],stars=[],mts=[];
 var AC=null,MG=null,muted=false,useAC=false,noiseBuf=null,isOpen=false,raf=0,lastFocus=null,oldOverflow="";
 var best=0;try{best=+localStorage.getItem("ss-sweatheart-best")||0}catch(e){}
+// records kept in the visitor's browser: best coins over the week, best "On the beat" over a full week, best Christmas set, initials
+function rd(k){try{return localStorage.getItem(k)}catch(e){return null}}
+function wr(k,v){try{localStorage.setItem(k,String(v))}catch(e){}}
+var bestBeat=+rd("ss-sweatheart-beat")||0, bestXmas=+rd("ss-sweatheart-xmas")||0, myIni=(rd("ss-sweatheart-ini")||"").replace(/[^A-Z0-9]/g,"").slice(0,3);
+var forceXmas=false;
+function xmasOpen(){if(forceXmas)return true;var d=new Date();return d.getMonth()===11&&d.getDate()>=20}
+// a friend's challenge travels in the address: ?sh=<on the beat %>.<Sweat Heartz>(.<initials>)#sweatheart
+var chal=null;(function(){var m=/[?&]sh=(\d{1,3})\.(\d{1,7})(?:\.([A-Za-z0-9]{1,3}))?(?:&|$)/.exec(location.search);if(!m)return;var b=+m[1];if(!(b>0&&b<=100))return;
+ chal={b:b,c:+m[2],i:(m[3]||"").toUpperCase()};try{history.replaceState(null,"",location.pathname+"#sweatheart")}catch(e){}})();
 
 function rnd(seed){var s=seed;return function(){s=(s*16807)%2147483647;return (s-1)/2147483646}}
 (function(){var r=rnd(77),i;
@@ -7786,23 +7812,81 @@ function ensureAudio(){
 }
 function env(g,t,a,peak,dur){g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(peak,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+dur)}
 function kick(t){if(!useAC)return;var o=AC.createOscillator(),g=AC.createGain();o.frequency.setValueAtTime(150,t);o.frequency.exponentialRampToValueAtTime(45,t+.12);env(g,t,.004,.9,.24);o.connect(g);g.connect(MG);o.start(t);o.stop(t+.26)}
-function hat(t){if(!useAC)return;var s=AC.createBufferSource(),f=AC.createBiquadFilter(),g=AC.createGain();s.buffer=noiseBuf;f.type="highpass";f.frequency.value=7000;env(g,t,.002,.14,.05);s.connect(f);f.connect(g);g.connect(MG);s.start(t);s.stop(t+.06)}
+function hat(t){if(!useAC)return;var xm=LV[S.li]&&LV[S.li].xmas,s=AC.createBufferSource(),f=AC.createBiquadFilter(),g=AC.createGain();s.buffer=noiseBuf;f.type=xm?"bandpass":"highpass";f.frequency.value=xm?9000:7000;if(xm)f.Q.value=3;env(g,t,.002,xm?.22:.14,xm?.16:.05);s.connect(f);f.connect(g);g.connect(MG);s.start(t);s.stop(t+.06)}
 function bass(t,fr,dur){if(!useAC)return;var o=AC.createOscillator(),f=AC.createBiquadFilter(),g=AC.createGain();o.type="sawtooth";o.frequency.value=fr;f.type="lowpass";f.frequency.value=420;env(g,t,.01,.26,dur);o.connect(f);f.connect(g);g.connect(MG);o.start(t);o.stop(t+dur+.02)}
 function tick(t,fr){if(!useAC)return;var o=AC.createOscillator(),g=AC.createGain();o.type="triangle";o.frequency.value=fr;env(g,t,.003,.3,.09);o.connect(g);g.connect(MG);o.start(t);o.stop(t+.1)}
 var SC=[440,523.25,587.33,659.25,783.99,880],SEQ=[0,2,3,2,4,3,2,0,3,4,5,4,3,2,3,0];
-function violin(perfect){if(!useAC)return;var t=AC.currentTime,fr=SC[SEQ[S.ni++%SEQ.length]];
- var o=AC.createOscillator(),f=AC.createBiquadFilter(),g=AC.createGain(),l=AC.createOscillator(),lg=AC.createGain();
- o.type="sawtooth";o.frequency.value=fr;l.frequency.value=5.6;lg.gain.setValueAtTime(0,t);lg.gain.linearRampToValueAtTime(fr*.012,t+.14);
- l.connect(lg);lg.connect(o.frequency);f.type="lowpass";f.frequency.value=2300;f.Q.value=2;env(g,t,.025,.3,.34);
- o.connect(f);f.connect(g);g.connect(MG);o.start(t);l.start(t);o.stop(t+.36);l.stop(t+.36);
- if(perfect){var o2=AC.createOscillator(),g2=AC.createGain();o2.frequency.value=fr*2;env(g2,t,.01,.12,.3);o2.connect(g2);g2.connect(MG);o2.start(t);o2.stop(t+.32)}}
-function glug(){if(!useAC)return;var t=AC.currentTime;for(var i=0;i<2;i++){var o=AC.createOscillator(),g=AC.createGain(),a=t+i*.09;o.frequency.setValueAtTime(280,a);o.frequency.exponentialRampToValueAtTime(560,a+.07);env(g,a,.005,.3,.09);o.connect(g);g.connect(MG);o.start(a);o.stop(a+.1)}}
+// the Christmas set: every heart is one note of Jingle Bells (James Lord Pierpont, 1857, public domain), at its own time and pitch.
+// [position in half-beats, note]; 8 half-beats are one bar, 16 bars. C=523.25 D=587.33 E=659.25 F=698.46 G=783.99
+var JBN=(function(){var C=523.25,D=587.33,E=659.25,F=698.46,G=783.99;return [
+ [0,E],[2,E],[4,E], [8,E],[10,E],[12,E], [16,E],[18,G],[20,C],[23,D], [24,E],
+ [32,F],[34,F],[36,F],[39,F], [40,F],[42,E],[44,E],[45,E],[46,E], [48,E],[50,D],[52,D],[54,E], [56,D],[60,G],
+ [64,E],[66,E],[68,E], [72,E],[74,E],[76,E], [80,E],[82,G],[84,C],[87,D], [88,E],
+ [96,F],[98,F],[100,F],[103,F], [104,F],[106,E],[108,E],[109,E],[110,E], [112,G],[114,G],[116,F],[118,D], [120,C]]})();
+// ice flakes sit inside the long notes, one in every two bars
+var JBW=[14,28,37.5,58,78,92,101.5,124];
+// the song's chords, one bass note per bar: C C C C | F C D G | C C C C | F C G C
+var JBB=[130.81,130.81,130.81,130.81,87.31,130.81,146.83,98,130.81,130.81,130.81,130.81,87.31,130.81,98,130.81];
+// level 2, the verse ("Dashing through the snow"): G3..A4 = 392 440 493.88, then C D E F G A of the fifth octave
+var JVN=(function(){var g=392,a=440,b=493.88,C=523.25,D=587.33,E=659.25,F=698.46,G=783.99,A=880;return [
+ [0,g],[2,E],[4,D],[6,C], [8,g],[14,g],[15,g], [16,g],[18,E],[20,D],[22,C], [24,a],
+ [32,a],[34,F],[36,E],[38,D], [40,b], [48,G],[50,G],[52,F],[54,D], [56,E],
+ [64,g],[66,E],[68,D],[70,C], [72,g], [80,g],[82,E],[84,D],[86,C], [88,a],[94,a],
+ [96,a],[98,F],[100,E],[102,D], [104,G],[106,G],[108,G],[110,G], [112,A],[114,G],[116,F],[118,D], [120,C],[124,G]]})();
+var JVW=[11,28,44,60,76,91,122,126.5];
+// the verse's chords: C C C F | F G G C | C C C F | F G G C
+var JVB=[130.81,130.81,130.81,87.31,87.31,98,98,130.81,130.81,130.81,130.81,87.31,87.31,98,98,130.81];
+var TUNE={1:{n:JBN,w:JBW,b:JBB},2:{n:JVN,w:JVW,b:JVB},3:{n:JBN,w:JBW,b:JBB}};
+var XM1=WEEK, XM2=WEEK+1, XM3=WEEK+2;   // LV index of Christmas levels 1, 2 and 3
+// level 3: the crowd sings the tune (an octave below the bells), louder with every elf hat
+var CHOIR=(function(){var m={},i,n=JBN;for(i=0;i<n.length;i++){var nx=i+1<n.length?n[i+1][0]:n[i][0]+8;m[n[i][0]]=[n[i][1]/2,Math.min(4,nx-n[i][0])]}return m})();
+function choir(t,fr,dur,vol){if(!useAC)return;var g=AC.createGain(),sum=AC.createGain(),k,o,f,fg;
+ g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(vol,t+.05);g.gain.setValueAtTime(vol*.85,t+Math.max(.06,dur));g.gain.linearRampToValueAtTime(.0001,t+dur+.14);
+ var dt=[1,1.007,.993,1.013];for(k=0;k<dt.length;k++){o=AC.createOscillator();o.type="sawtooth";o.frequency.value=fr*dt[k];o.connect(sum);o.start(t);o.stop(t+dur+.2)}
+ var FM=[[730,1,7],[1090,.5,8],[2440,.25,9]];for(k=0;k<FM.length;k++){f=AC.createBiquadFilter();f.type="bandpass";f.frequency.value=FM[k][0];f.Q.value=FM[k][2];fg=AC.createGain();fg.gain.value=FM[k][1];sum.connect(f);f.connect(fg);fg.connect(g)}
+ g.connect(MG);try{g.connect(vRoom())}catch(e){}}
+var HO=(function(){var a=[],i,j,t,r=rnd(91);for(i=0;i<46;i++)a.push(i);for(i=a.length-1;i>0;i--){j=Math.floor(r()*(i+1));t=a[i];a[i]=a[j];a[j]=t}return a})();
+function bell(fr,perfect){var t=AC.currentTime,parts=[[1,.32],[2.76,.12],[5.4,.06]];if(perfect)parts.push([2,.1]);
+ for(var i=0;i<parts.length;i++){var o=AC.createOscillator(),g=AC.createGain();o.type="sine";o.frequency.value=fr*parts[i][0];env(g,t,.004,parts[i][1],.9/(1+i*.6));o.connect(g);g.connect(MG);o.start(t);o.stop(t+1)}}
+// a bowed violin: two slightly detuned saws (the string), a slow bow attack with a little bow noise, vibrato that comes in late,
+// the body's resonances (about 290 Hz, 1 kHz, 2.9 kHz) and a small room. The note lasts until about the next note.
+var VREV=null;
+function vRoom(){if(VREV)return VREV;var n=Math.floor(AC.sampleRate*1.5),ir=AC.createBuffer(2,n,AC.sampleRate),c,i,d;
+ for(c=0;c<2;c++){d=ir.getChannelData(c);for(i=0;i<n;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/n,3.2)}
+ var cv2=AC.createConvolver(),wet=AC.createGain();cv2.buffer=ir;wet.gain.value=.22;cv2.connect(wet);wet.connect(MG);VREV=cv2;return VREV}
+function violin(perfect,ev){if(!useAC)return;if(LV[S.li].xmas){bell(ev&&ev.fr||659.25,perfect);return}
+ var t=AC.currentTime,fr=SC[SEQ[S.ni++%SEQ.length]],dur=Math.min(.6,Math.max(.22,(S.spb||.5)*.9)),pk=perfect?.2:.16;
+ var o1=AC.createOscillator(),o2=AC.createOscillator(),vib=AC.createOscillator(),vd=AC.createGain();
+ o1.type="sawtooth";o2.type="sawtooth";o1.frequency.value=fr;o2.frequency.value=fr*1.0025;
+ vib.frequency.value=5.4+Math.random()*.5;vd.gain.setValueAtTime(0,t);vd.gain.setValueAtTime(0,t+.11);vd.gain.linearRampToValueAtTime(fr*.0065,t+.32);
+ vib.connect(vd);vd.connect(o1.frequency);vd.connect(o2.frequency);
+ var mix=AC.createGain();mix.gain.value=.5;o1.connect(mix);o2.connect(mix);
+ var hp=AC.createBiquadFilter();hp.type="highpass";hp.frequency.value=190;
+ var b1=AC.createBiquadFilter();b1.type="peaking";b1.frequency.value=290;b1.Q.value=1.4;b1.gain.value=6;
+ var b2=AC.createBiquadFilter();b2.type="peaking";b2.frequency.value=1050;b2.Q.value=1.8;b2.gain.value=4;
+ var b3=AC.createBiquadFilter();b3.type="peaking";b3.frequency.value=2900;b3.Q.value=2.2;b3.gain.value=7;
+ var lp=AC.createBiquadFilter();lp.type="lowpass";lp.frequency.value=6200;lp.Q.value=.5;
+ mix.connect(hp);hp.connect(b1);b1.connect(b2);b2.connect(b3);b3.connect(lp);
+ var g=AC.createGain();g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(pk,t+.065);g.gain.linearRampToValueAtTime(pk*.82,t+.16);
+ g.gain.setValueAtTime(pk*.82,t+dur);g.gain.linearRampToValueAtTime(.0001,t+dur+.2);lp.connect(g);g.connect(MG);try{g.connect(vRoom())}catch(e){}
+ // the bow on the string: a short breath of noise at the start
+ var ns=AC.createBufferSource(),nf=AC.createBiquadFilter(),ng=AC.createGain();ns.buffer=noiseBuf;nf.type="bandpass";nf.frequency.value=3400;nf.Q.value=.9;
+ ng.gain.setValueAtTime(.0001,t);ng.gain.linearRampToValueAtTime(.045,t+.025);ng.gain.linearRampToValueAtTime(.008,t+.12);ng.gain.linearRampToValueAtTime(.0001,t+.2);
+ ns.connect(nf);nf.connect(ng);ng.connect(hp);
+ var end=t+dur+.25;o1.start(t);o2.start(t);vib.start(t);ns.start(t);o1.stop(end);o2.stop(end);vib.stop(end);ns.stop(t+.21);}
+function crunch(){var t=AC.currentTime,s=AC.createBufferSource(),f=AC.createBiquadFilter(),g=AC.createGain();s.buffer=noiseBuf;f.type="bandpass";f.frequency.value=3200;f.Q.value=1.2;env(g,t,.003,.35,.12);s.connect(f);f.connect(g);g.connect(MG);s.start(t);s.stop(t+.14);
+ var o=AC.createOscillator(),g2=AC.createGain();o.type="sine";o.frequency.value=2093;env(g2,t+.02,.004,.12,.4);o.connect(g2);g2.connect(MG);o.start(t+.02);o.stop(t+.45)}
+function glug(){if(!useAC)return;if(LV[S.li]&&LV[S.li].xmas){crunch();return}var t=AC.currentTime;for(var i=0;i<2;i++){var o=AC.createOscillator(),g=AC.createGain(),a=t+i*.09;o.frequency.setValueAtTime(280,a);o.frequency.exponentialRampToValueAtTime(560,a+.07);env(g,a,.005,.3,.09);o.connect(g);g.connect(MG);o.start(a);o.stop(a+.1)}}
 function thud(){if(!useAC)return;var t=AC.currentTime,o=AC.createOscillator(),g=AC.createGain();o.type="square";o.frequency.value=90;env(g,t,.004,.12,.1);o.connect(g);g.connect(MG);o.start(t);o.stop(t+.12)}
 
 function now(){return useAC?AC.currentTime:performance.now()/1000}
 
 // ---------- game flow ----------
 function build(i){var l=LV[i],spb=60/l.bpm,ev=[],p,k,pt;
+ if(l.xmas){var TN=TUNE[l.xlv].n,TW=TUNE[l.xlv].w,per=[],q;for(q=0;q<TN.length;q++){p=Math.floor(TN[q][0]/16);per[p]=(per[p]||0)+1}
+  for(q=0;q<TN.length;q++)ev.push({t:TN[q][0]*spb/2,k:"n",fr:TN[q][1],heat:COOL*l.f/per[Math.floor(TN[q][0]/16)],j:0});
+  for(q=0;q<TW.length;q++)ev.push({t:TW[q]*spb/2,k:"w",j:0});
+  ev.sort(function(a,b){return a.t-b.t});return ev}
  for(p=0;p<l.ph;p++){pt=PAT[l.pat[p%l.pat.length]];
   for(k=0;k<pt.length;k++)ev.push({t:(p*16+pt[k])*spb/2,k:"n",heat:COOL*l.f/pt.length,j:0});
   ev.push({t:(p*16+14)*spb/2,k:"w",j:0});}
@@ -7812,11 +7896,13 @@ function startSet(i){
   if(!isOpen)return;
   useAC=!!(AC&&AC.state==="running");
   var l=LV[i],spb=60/l.bpm;
+  if(l.xlv===1)S.bank=0;   // a Christmas run starts at level 1; level 2 adds to it
   S.li=i;S.ev=build(i);S.spb=spb;S.Tc=now()+.35;S.T0=S.Tc+4*spb;S.nextH=0;
   S.tEnd=S.ev[S.ev.length-1].t+2*spb;S.heat=20;S.love=55;S.combo=0;S.coins=0;S.ni=0;
-  S.st={p:0,g:0,m:0,w:0,wm:0,a:0,o:0};parts=[];fx=[];S.mode="play";
+  S.st={p:0,g:0,m:0,w:0,wm:0,a:0,o:0};S.lastOff=null;S.hats=0;parts=[];fx=[];S.mode="play";
   $("shgOv").className="shg-off";$("shgMute").style.display="";$("shgHud").className="shg-on";$("shgCtrl").className="shg-on";
-  $("shgSetLbl").textContent="Set "+(i+1)+"/8 · "+l.day+" "+l.slot;$("shgSetName").textContent=l.name;
+  var dk=$("shgDrink");dk.firstChild.nodeValue=l.xmas?"ICE":"DRINK";dk.classList.toggle("shg-ice",!!l.xmas);if(!(window.matchMedia&&matchMedia("(pointer:fine)").matches))$("shgKD").textContent=l.xmas?"on the ice flake":"on the blue drop";
+  $("shgSetLbl").textContent=l.xmas?"Christmas level "+l.xlv+"/3 · "+l.slot:"Set "+(i+1)+"/8 · "+l.day+" "+l.slot;$("shgSetName").textContent=l.name;
   resize();
  });
 }
@@ -7832,42 +7918,75 @@ function press(kind){
  for(i=0;i<S.ev.length;i++){e=S.ev[i];if(e.j||e.k!==kind)continue;d=Math.abs(e.t-t);if(d<bd){bd=d;bestE=e}if(e.t-t>GOOD)break}
  if(!bestE){if(kind==="w")say("not yet","#9fdcff");return}
  bestE.j=1;
- if(kind==="w"){S.heat=Math.max(0,S.heat-COOL);S.st.w++;glug();say("aaah","#9fdcff");splash();return}
- var perfect=bd<PERF;S.combo++;S.bow=1;S.st.a+=1-Math.max(0,bd-.015)/(GOOD-.015);S.st.o+=t-bestE.t;
- var n=(perfect?3:1)*mult();S.coins+=n;S.heat+=bestE.heat;S.love=Math.min(100,S.love+(perfect?4:2.5));
+ if(kind==="w"){S.heat=Math.max(0,S.heat-COOL);S.st.w++;glug();say(LV[S.li].xmas?"brrr":"aaah","#9fdcff");splash();return}
+ var perfect=bd<PERF;S.combo++;S.bow=1;if(LV[S.li].xlv===3)S.hats++;S.lastOff=t-bestE.t;S.st.a+=1-Math.max(0,bd-.015)/(GOOD-.015);S.st.o+=t-bestE.t;
+ var n=(perfect?3:1)*mult()*(LV[S.li].xmas?2:1);S.coins+=n;S.heat+=bestE.heat;S.love=Math.min(100,S.love+(perfect?4:2.5));
  if(perfect)S.st.p++;else S.st.g++;
- violin(perfect);sweat(Math.min(n,6));
+ violin(perfect,bestE);sweat(Math.min(n,6));
  say(perfect?"perfect  +"+n:"good  +"+n,perfect?"#ffe08a":"#ffd2de");
  if(S.heat>=100)fail("heat");
 }
 function fail(why){S.mode="fail";S.why=why;thud();
- show('<div class="shg-kick">Set '+(S.li+1)+' of 8</div><h2>'+(why==="heat"?"You overheated":"The dance floor emptied")+'</h2><p>'+
- (why==="heat"?"Too much love, not enough water. Hit DRINK when the blue drop reaches the ring.":"Too many missed notes. Hit PLAY when a heart reaches the ring.")+
+ show('<div class="shg-kick">'+(LV[S.li].xmas?'Christmas level '+LV[S.li].xlv+' of 3':'Set '+(S.li+1)+' of 8')+'</div><h2>'+(why==="heat"?"You overheated":"The dance floor emptied")+'</h2><p>'+
+ (why==="heat"?(LV[S.li].xmas?"Too much love, not enough ice. Hit ICE when the flake reaches the ring.":"Too much love, not enough water. Hit DRINK when the blue drop reaches the ring."):"Too many missed notes. Hit PLAY when a heart reaches the ring.")+
  '</p><button class="shg-go" id="shgGo" type="button">Play the set again</button>',function(){startSet(S.li)})}
-function done(){S.mode="done";S.bank+=S.coins;S.ga+=S.st.a;S.gn+=S.st.p+S.st.g+S.st.m;var gb=S.gn?Math.round(S.ga/S.gn*100):0;var tot=S.st.p+S.st.g+S.st.m,acc=tot?Math.round((S.st.p+S.st.g)/tot*100):0,last=S.li===LV.length-1;
+function done(){S.mode="done";S.bank+=S.coins;var tot=S.st.p+S.st.g+S.st.m,acc=tot?Math.round((S.st.p+S.st.g)/tot*100):0,last=S.li===WEEK-1;
+ if(LV[S.li].xmas){xmasDone(acc);return}
+ S.ga+=S.st.a;S.gn+=tot;var gb=S.gn?Math.round(S.ga/S.gn*100):0;
  if(last){var nb=S.bank>best;if(nb){best=S.bank;try{localStorage.setItem("ss-sweatheart-best",String(best))}catch(e){}}
+  var nbb=gb>bestBeat;if(nbb){bestBeat=gb;wr("ss-sweatheart-beat",gb)}S.lastWeek={b:gb,c:S.bank};
+  var beaten=chal?(gb>chal.b?'<div class="shg-chal">You beat '+(chal.i||"your friend")+'\u2019s '+chal.b+'% on the beat. Send it back.</div>':'<div class="shg-chal">'+(chal.i||"Your friend")+' is still ahead: '+chal.b+'% on the beat against your '+gb+'%.</div>'):'';
   show('<div class="shg-kick">Sunday, 4 am · eight sets played</div><h2>You sweated</h2><div class="shg-big"><span class="shg-coin">&#9829;</span>'+S.bank+'</div><div class="shg-sub">Sweat Heartz</div>'+
-  '<p><b>On the beat: '+gb+'%</b> over all eight sets · this set '+beatPct()+'%, '+beatLean()+'</p><p>'+(nb?"A new best. ":"Your best so far: "+best+". ")+'Based on a true story: he loves the music so much that he sweats hearts.</p>'+
-  '<p class="shg-foot">* Sweatheart: on other planets also known as Seth Schwarz.</p><button class="shg-go" id="shgGo" type="button">Play again</button>',function(){S.bank=0;S.ga=0;S.gn=0;card(0)});
+  '<p><b>On the beat: '+gb+'%</b> over the whole week'+(nbb?" · a new record":" · your record: "+bestBeat+"%")+'<br>last set '+beatPct()+'%, '+beatLean()+'</p>'+beaten+
+  '<p>'+(nb?"A new best in Sweat Heartz. ":"Your best in Sweat Heartz: "+best+". ")+'Based on a true story: he loves the music so much that he sweats hearts.</p>'+
+  '<div class="shg-ini"><label for="shgIni">Your initials</label><input id="shgIni" maxlength="3" autocomplete="off" spellcheck="false" value="'+myIni+'"></div>'+
+  '<button class="shg-go" id="shgGo" type="button">Challenge a friend</button>'+(xmasOpen()?'<button class="shg-go2 shg-xm" id="shgGo3" type="button">One more: the Christmas set</button>':'')+'<button class="shg-go2" id="shgGo2" type="button">Play again</button><div id="shgShareBox"></div>'+
+  '<p class="shg-foot">* Sweatheart: on other planets also known as Seth Schwarz.</p>',shareWeek,function(){S.bank=0;S.ga=0;S.gn=0;card(0)},function(){card(WEEK)});
  }else{
   show('<div class="shg-kick">Set '+(S.li+1)+' of 8 played</div><div class="shg-big"><span class="shg-coin">&#9829;</span>+'+S.coins+'</div><div class="shg-sub">Sweat Heartz · '+S.bank+' in total</div>'+
   '<p><b>On the beat: '+beatPct()+'%</b> · '+beatLean()+'</p><p>'+acc+'% of the notes hit · '+S.st.p+' perfect · '+S.st.w+' of '+(S.st.w+S.st.wm)+' drinks taken</p><button class="shg-go" id="shgGo" type="button">Next set</button>',function(){card(S.li+1)})}
 }
+function xmasDone(acc){var b=beatPct(),l=LV[S.li];
+ if(l.xlv===1){
+  show('<div class="shg-kick shg-xm">Christmas level 1 of 3 · '+l.name+'</div><div class="shg-big"><span class="shg-coin">&#9829;</span>+'+S.coins+'</div><div class="shg-sub">Sweat Heartz, counted double</div>'+
+  '<p><b>On the beat: '+b+'%</b> · '+beatLean()+'</p><p>'+acc+'% of the notes hit. You played the chorus. Now the verse: Dashing through the snow.</p>'+
+  '<button class="shg-go" id="shgGo" type="button">Level 2</button><button class="shg-go2" id="shgGo2" type="button">Back to the week</button>',function(){card(XM2)},function(){title()});return}
+ if(l.xlv===2){
+  show('<div class="shg-kick shg-xm">Christmas level 2 of 3 · '+l.name+'</div><div class="shg-big"><span class="shg-coin">&#9829;</span>+'+S.coins+'</div><div class="shg-sub">Sweat Heartz, counted double · '+S.bank+' so far</div>'+
+  '<p><b>On the beat: '+b+'%</b> · '+beatLean()+'</p><p>'+acc+'% of the notes hit. Last level: the chorus again, super fast. Every heart gives someone an elf hat, and the crowd starts to sing.</p>'+
+  '<button class="shg-go" id="shgGo" type="button">Level 3</button><button class="shg-go2" id="shgGo2" type="button">Back to the week</button>',function(){card(XM3)},function(){title()});return}
+ var tot=S.bank,nb=tot>bestXmas;if(nb){bestXmas=tot;wr("ss-sweatheart-xmas",tot)}
+ show('<div class="shg-kick shg-xm">Christmas level 3 of 3 · '+l.name+'</div><div class="shg-big"><span class="shg-coin">&#9829;</span>'+tot+'</div><div class="shg-sub">Sweat Heartz for all three Christmas levels</div>'+
+ '<p><b>On the beat: '+b+'%</b> · '+beatLean()+'</p><p>'+acc+'% of the notes hit'+(nb?" · a new Christmas record":" · your Christmas record: "+bestXmas)+'</p>'+
+ '<p>'+Math.min(S.hats,visible())+' elves in the crowd, singing. Merry Christmas from Sweatheart, on other planets also known as Seth Schwarz.</p>'+
+ '<button class="shg-go" id="shgGo" type="button">Play Christmas again</button><button class="shg-go2" id="shgGo2" type="button">Back to the week</button>',function(){card(XM1)},function(){title()})}
+function iniNow(){var f=$("shgIni");if(f){var v=(f.value||"").toUpperCase().replace(/[^A-Z0-9]/g,"").slice(0,3);if(v!==myIni){myIni=v;wr("ss-sweatheart-ini",v)}}return myIni}
+function shareWeek(){var d=S.lastWeek;if(!d)return;var ini=iniNow(),url=location.origin+location.pathname+"?sh="+d.b+"."+d.c+(ini?"."+ini:"")+"#sweatheart";
+ var txt="I played Sweatheart\u2019s whole week on sethschwarz.com: "+d.b+"% on the beat, "+d.c+" Sweat Heartz. Beat it:";
+ var box=$("shgShareBox"),btn=$("shgGo");
+ function shown(msg){if(btn)btn.textContent=msg;if(box&&!box.firstChild){var i=document.createElement("input");i.className="shg-link";i.readOnly=true;i.value=txt+" "+url;box.appendChild(i);try{i.select()}catch(e){}}}
+ function copy(){try{navigator.clipboard.writeText(txt+" "+url).then(function(){shown("Link copied")},function(){shown("Copy the link below")})}catch(e){shown("Copy the link below")}}
+ if(navigator.share){try{navigator.share({title:"Sweatheart",text:txt,url:url}).catch(function(){})}catch(e){copy()}}else copy();
+ goFn=shareWeek;}
 function card(i){var l=LV[i];S.mode="card";S.li=i;$("shgHud").className="";$("shgCtrl").className="";
+ if(l.xmas){show('<div class="shg-kick shg-xm">The secret Christmas set · level '+l.xlv+' of 3 · '+l.slot+'</div><h2>'+l.name+'</h2><p>'+l.bpm+' bpm · '+(l.xlv===1?'the chorus of Jingle Bells: snow on the playa, a Santa hat, every heart rings one note.':l.xlv===2?'the verse, Dashing through the snow, a little faster. Every heart rings one note.':'the chorus again, super fast. Every heart you hit puts an elf hat on someone in the crowd, and the crowd sings along.')+' Catch an ice flake to cool down. Every Sweat Heartz counts double.</p><button class="shg-go" id="shgGo" type="button">Start the set</button>',function(){startSet(i)});return}
  show('<div class="shg-kick">Set '+(i+1)+' of 8 · '+l.day+' '+l.slot+'</div><h2>'+l.name+'</h2><p>'+l.bpm+' bpm'+(l.hard?" · the sunrise set, the hard one":l.last?" · the last set of the week":"")+'</p><button class="shg-go" id="shgGo" type="button">Start the set</button>',function(){startSet(i)})}
 function title(){S.mode="title";S.bank=0;S.ga=0;S.gn=0;$("shgHud").className="";$("shgCtrl").className="";
  var fine=window.matchMedia&&matchMedia("(pointer:fine)").matches;
  show('<div class="shg-kick">Another Game</div><h1>SWEATHEART*</h1><div class="shg-sub">based on a true Sweatheart story</div>'+
  '<p>At a burn in the desert you do not play under your own name. So Seth Schwarz became Sweatheart: he loves the music so much that he sweats hearts.</p>'+
- '<div class="shg-how"><div><span class="shg-dot" style="background:#E4007C"></span><span><b>PLAY</b> when a heart reaches the ring. Every note makes you sweat, and every drop becomes a heart for the crowd: one Sweat Heartz coin each. A second score shows how close to the beat you play.</span></div>'+
+ '<div class="shg-how"><div><span class="shg-dot" style="background:#E4007C"></span><span><b>PLAY</b> when a heart reaches the ring. Every note makes you sweat, and every drop becomes a heart for the crowd: one Sweat Heartz coin each. The third bar, On the beat, shows how close to the beat you play; the little arrow tells you if your last note came early \u25C2 or late \u25B8.</span></div>'+
  '<div><span class="shg-dot" style="background:#6fd3ff"></span><span><b>DRINK</b> when the blue drop reaches the ring, or you overheat.</span></div>'+
  (fine?'<div><span class="shg-dot" style="background:#ffb347"></span><span>Keyboard: Space plays, D drinks, Esc closes.</span></div>':'')+'</div>'+
- '<button class="shg-go" id="shgGo" type="button">Start</button><p class="shg-foot">* on other planets also known as Seth Schwarz</p>'+
- '<div class="shg-tiny">Eight sets in five days · the stage names are invented'+(best?" · best: "+best+" Sweat Heartz":"")+'</div>',function(){card(0)})}
+ (chal?'<div class="shg-chal">'+(chal.i||"A friend")+' played the whole week '+chal.b+'% on the beat ('+chal.c+' Sweat Heartz). Beat it.</div>':'')+
+ '<button class="shg-go" id="shgGo" type="button">Start</button>'+(xmasOpen()?'<button class="shg-go2 shg-xm" id="shgGo3" type="button">The secret Christmas set</button>':'')+'<p class="shg-foot">* on other planets also known as Seth Schwarz</p>'+
+ '<div class="shg-tiny">Eight sets in five days · the stage names are invented'+(best?" · best: "+best+" Sweat Heartz":"")+(bestBeat?" · on the beat: "+bestBeat+"%":"")+'</div>',function(){card(0)},null,function(){card(WEEK)})}
 var goFn=null;
-function show(html,fn){var o=$("shgOv");o.innerHTML='<div class="shg-card">'+html+'</div>';o.className="";goFn=fn;$("shgMute").style.display="none";
- if(S.mode!=="play")$("shgCtrl").className="";
- var b=$("shgGo");if(b){b.addEventListener("click",function(){var f=goFn;goFn=null;if(f){ensureAudio();f()}});try{b.focus({preventScroll:true})}catch(e){}}}
+function show(html,fn,fn2,fn3){var o=$("shgOv");o.innerHTML='<div class="shg-card">'+html+'</div>';o.className="";goFn=fn;$("shgMute").style.display="none";
+ if(S.mode!=="play"){$("shgCtrl").className="";$("shgHud").className=""}
+ var b=$("shgGo");if(b){b.addEventListener("click",function(){var f=goFn;goFn=null;if(f){ensureAudio();f()}});try{b.focus({preventScroll:true})}catch(e){}}
+ var b2=$("shgGo2");if(b2&&fn2)b2.addEventListener("click",function(){ensureAudio();fn2()});
+ var b3=$("shgGo3");if(b3&&fn3)b3.addEventListener("click",function(){ensureAudio();fn3()});}
 
 // ---------- particles ----------
 function laneH(){return Math.max(70,Math.min(104,H*.2))}
@@ -7876,11 +7995,13 @@ function visible(){return Math.max(5,Math.min(dancers.length,5+Math.floor(S.love
 function dy(d,g){return g.hy+(g.sh-g.hy)*(.3+d.d*.62)}
 function sweat(n){var g=geo(),i,d,k=visible();for(i=0;i<n;i++){d=dancers[(Math.random()*k)|0];
  parts.push({x0:g.vx+(Math.random()*26-13)*g.s,y0:g.vy-150*g.s,x1:d.x*W,y1:dy(d,g)-34*g.s*d.h,t:performance.now()+i*45,dur:700+Math.random()*300,kx:Math.random()*30-15})}}
-function splash(){var g=geo(),i;for(i=0;i<8;i++)parts.push({drop:1,x0:g.vx,y0:g.vy-150*g.s,vx:(Math.random()-.5)*160,vy:-60-Math.random()*120,t:performance.now(),dur:520})}
+function splash(){var g=geo(),i;for(i=0;i<8;i++)parts.push({drop:1,ice:LV[S.li].xmas?1:0,x0:g.vx,y0:g.vy-150*g.s,vx:(Math.random()-.5)*160,vy:-60-Math.random()*120,t:performance.now(),dur:520})}
 
 // ---------- drawing ----------
 function heart(x,y,r,col,a){cx.save();cx.globalAlpha=a==null?1:a;cx.fillStyle=col;cx.beginPath();cx.moveTo(x,y+r*.9);
  cx.bezierCurveTo(x-r*1.5,y-r*.2,x-r*.75,y-r*1.25,x,y-r*.35);cx.bezierCurveTo(x+r*.75,y-r*1.25,x+r*1.5,y-r*.2,x,y+r*.9);cx.fill();cx.restore()}
+function flake(x,y,r,col,a){cx.save();cx.globalAlpha=a==null?1:a;cx.strokeStyle=col;cx.lineWidth=Math.max(1.2,r*.17);cx.lineCap="round";cx.translate(x,y);
+ for(var i=0;i<6;i++){cx.rotate(Math.PI/3);cx.beginPath();cx.moveTo(0,0);cx.lineTo(0,-r);cx.moveTo(0,-r*.55);cx.lineTo(r*.28,-r*.8);cx.moveTo(0,-r*.55);cx.lineTo(-r*.28,-r*.8);cx.stroke()}cx.restore()}
 function drop(x,y,r,col,a){cx.save();cx.globalAlpha=a==null?1:a;cx.fillStyle=col;cx.beginPath();cx.moveTo(x,y-r*1.4);
  cx.bezierCurveTo(x+r*1.2,y,x+r,y+r,x,y+r);cx.bezierCurveTo(x-r,y+r,x-r*1.2,y,x,y-r*1.4);cx.fill();cx.restore()}
 function scene(tms,bp){
@@ -7892,15 +8013,25 @@ function scene(tms,bp){
   cx.fillStyle=k.sun;cx.beginPath();cx.arc(W*.5,sy,sr,0,6.3);cx.fill()}
  cx.fillStyle=k.mt;cx.beginPath();cx.moveTo(0,g.hy+1);for(i=0;i<mts.length;i++)cx.lineTo(i/(mts.length-1)*W,g.hy-mts[i]*g.sh);cx.lineTo(W,g.hy+1);cx.fill();
  gr=cx.createLinearGradient(0,g.hy,0,g.sh);gr.addColorStop(0,k.ground[0]);gr.addColorStop(1,k.ground[1]);cx.fillStyle=gr;cx.fillRect(0,g.hy,W,g.sh-g.hy);
+ if(k.snow){var tb=W*.9,ty=g.hy+10*g.s,th2=70*g.s;cx.fillStyle=k.sil;cx.beginPath();cx.moveTo(tb-th2*.38,ty);cx.lineTo(tb,ty-th2);cx.lineTo(tb+th2*.38,ty);cx.fill();
+  var LC=["#ff3d77","#ffe08a","#6fd3ff","#9dff9d"];for(i=0;i<14;i++){var q=(i*7%13)/13,lx=tb+(q-.5)*th2*.6*((i%7+1)/7),ly=ty-th2*((i%7)/7.6)-4*g.s;cx.globalAlpha=.55+.45*Math.abs(Math.sin(tms/400+i));cx.fillStyle=LC[i%4];cx.beginPath();cx.arc(lx,ly,2.2*g.s,0,6.3);cx.fill()}
+  cx.globalAlpha=1;cx.fillStyle="#ffe08a";cx.beginPath();cx.arc(tb,ty-th2-3*g.s,4*g.s,0,6.3);cx.fill()}
  cx.fillStyle=k.sil;cx.globalAlpha=.7;var tx=[.08,.46,.63,.9],th=[34,22,28,24];for(i=0;i<4;i++){var bx=tx[i]*W,by=g.hy+8*g.s,hh=th[i]*g.s;cx.beginPath();cx.moveTo(bx-hh*.8,by);cx.lineTo(bx,by-hh);cx.lineTo(bx+hh*.8,by);cx.fill();cx.fillRect(bx-.7,by-hh-9*g.s,1.4,9*g.s)}cx.globalAlpha=1;
  var vis=visible(),bob=Math.abs(Math.sin(bp*Math.PI));
+ var elf={},lv3=LV[S.li]&&LV[S.li].xlv===3&&S.mode!=="title";if(lv3&&S.hats){var got=0;for(var hi=0;hi<HO.length&&got<S.hats;hi++)if(HO[hi]<vis){elf[HO[hi]]=1;got++}}
  for(i=0;i<vis;i++){var d=dancers[i],x=d.x*W,y=dy(d,g),sc=g.s*d.h*(.6+d.d*.55),up=bob*7*sc*(.5+((i*7)%5)/5);
   cx.fillStyle=k.sil;cx.beginPath();cx.arc(x,y-34*sc-up,5.2*sc,0,6.3);cx.fill();
   cx.beginPath();cx.moveTo(x-6*sc,y-28*sc-up);cx.lineTo(x+6*sc,y-28*sc-up);cx.lineTo(x+4*sc,y);cx.lineTo(x-4*sc,y);cx.fill();
   cx.strokeStyle=k.sil;cx.lineWidth=2.4*sc;cx.lineCap="round";var ar=(d.arm>.45?-1:.3)*(8+bob*9)*sc;
-  cx.beginPath();cx.moveTo(x-5*sc,y-26*sc-up);cx.lineTo(x-11*sc,y-26*sc-up+ar);cx.moveTo(x+5*sc,y-26*sc-up);cx.lineTo(x+11*sc,y-26*sc-up+ar*(d.arm>.7?1:.4));cx.stroke()}
+  cx.beginPath();cx.moveTo(x-5*sc,y-26*sc-up);cx.lineTo(x-11*sc,y-26*sc-up+ar);cx.moveTo(x+5*sc,y-26*sc-up);cx.lineTo(x+11*sc,y-26*sc-up+ar*(d.arm>.7?1:.4));cx.stroke();
+  if(elf[i]){var hy=y-34*sc-up,tip=(d.arm>.5?1:-1)*(5+2*Math.sin(tms/300+d.ph))*sc;
+   cx.fillStyle="#1f9e4a";cx.beginPath();cx.moveTo(x-5.6*sc,hy-3*sc);cx.quadraticCurveTo(x,hy-13*sc,x+tip,hy-15*sc);cx.quadraticCurveTo(x+2*sc,hy-8*sc,x+5.6*sc,hy-3*sc);cx.closePath();cx.fill();
+   cx.fillStyle="#ffe08a";cx.fillRect(x-5.8*sc,hy-4*sc,11.6*sc,2.2*sc);cx.beginPath();cx.arc(x+tip,hy-15*sc,1.7*sc,0,6.3);cx.fill();
+   if(i%3===0){var ph2=(tms/900+d.ph)%1;cx.globalAlpha=(1-ph2)*.85;cx.fillStyle="#fff3e2";cx.font=Math.round(10*sc+4)+"px "+FONT;cx.textAlign="center";cx.fillText("\u266A",x+7*sc,hy-18*sc-ph2*16*sc);cx.globalAlpha=1}
+   cx.fillStyle=k.sil}}
  cx.fillStyle=k.sil;cx.beginPath();cx.ellipse(g.vx,g.vy+16*g.s,120*g.s,30*g.s,0,0,6.3);cx.fill();
  player(g,k,bp);
+ if(k.snow){cx.fillStyle="#fff";for(i=0;i<stars.length;i++){var sf=stars[i],fy=((sf.y*1.8+tms/9000*(1+sf.s))%1)*g.sh,fx2=(sf.x+Math.sin(tms/1400+sf.p)*.012)*W;cx.globalAlpha=.5+.4*sf.s/2;cx.beginPath();cx.arc(fx2,fy,1+sf.s*1.1,0,6.3);cx.fill()}cx.globalAlpha=1}
  if(S.mode==="play"&&S.heat>70){cx.fillStyle="rgba(255,40,30,"+((S.heat-70)/30*.22*(.6+.4*Math.sin(tms/90)))+")";cx.fillRect(0,0,W,g.sh)}
 }
 function player(g,k,bp){var s=g.s,x=g.vx,y=g.vy,sw=Math.sin(bp*Math.PI*2)*2*s;cx.save();cx.translate(x+sw,y);cx.fillStyle=k.sil;cx.strokeStyle=k.sil;cx.lineCap="round";
@@ -7908,7 +8039,11 @@ function player(g,k,bp){var s=g.s,x=g.vx,y=g.vy,sw=Math.sin(bp*Math.PI*2)*2*s;cx
  cx.fillRect(-9*s,-62*s,7*s,64*s);cx.fillRect(3*s,-62*s,7*s,64*s);
  cx.beginPath();cx.moveTo(-14*s,-128*s);cx.lineTo(14*s,-128*s);cx.lineTo(17*s,-58*s);cx.lineTo(-24*s,-40*s);cx.lineTo(-15*s,-70*s);cx.fill();
  cx.beginPath();cx.arc(0,-140*s,10*s,0,6.3);cx.fill();
- cx.fillRect(-15*s,-152*s,30*s,3.5*s);cx.fillRect(-9.5*s,-172*s,19*s,21*s);
+ if(LV[S.li]&&LV[S.li].xmas&&S.mode!=="title"){cx.shadowBlur=0;var sw2=Math.sin(bp*Math.PI)*3*s;
+  cx.fillStyle="#d4213d";cx.beginPath();cx.moveTo(-12*s,-149*s);cx.quadraticCurveTo(-4*s,-178*s,14*s+sw2,-170*s);cx.quadraticCurveTo(8*s,-160*s,12*s,-149*s);cx.closePath();cx.fill();
+  cx.fillStyle="#f4f6fb";cx.beginPath();if(cx.roundRect)cx.roundRect(-14*s,-153*s,28*s,7*s,3.5*s);else cx.rect(-14*s,-153*s,28*s,7*s);cx.fill();
+  cx.beginPath();cx.arc(15*s+sw2,-170*s,4.2*s,0,6.3);cx.fill();cx.fillStyle=k.sil}
+ else{cx.fillRect(-15*s,-152*s,30*s,3.5*s);cx.fillRect(-9.5*s,-172*s,19*s,21*s)}
  cx.shadowBlur=0;
  cx.save();cx.translate(15*s,-124*s);cx.rotate(-.28);cx.beginPath();cx.ellipse(10*s,0,13*s,6.5*s,0,0,6.3);cx.fill();cx.fillRect(20*s,-1.6*s,26*s,3.2*s);cx.restore();
  cx.lineWidth=5*s;cx.beginPath();cx.moveTo(12*s,-122*s);cx.lineTo(34*s,-112*s);cx.lineTo(44*s,-128*s);cx.stroke();
@@ -7919,18 +8054,18 @@ function lane(t,bp){var lh=laneH(),y0=H-lh,cy=y0+lh/2,hx=Math.max(54,W*.18),lead
  cx.fillStyle="rgba(10,4,16,.86)";cx.fillRect(0,y0,W,lh);cx.fillStyle="rgba(255,243,226,.18)";cx.fillRect(0,y0,W,1);cx.fillRect(hx,cy-.5,W-hx,1);
  var pulse=1-Math.min(1,(((bp%1)+1)%1)*2.5);cx.strokeStyle="#fff3e2";cx.lineWidth=2.5+pulse*2;cx.beginPath();cx.arc(hx,cy,21+pulse*3,0,6.3);cx.stroke();
  for(i=0;i<S.ev.length;i++){e=S.ev[i];var dt=e.t-t;if(dt>lead)break;if(dt<-.25||e.j===1)continue;x=hx+dt/lead*(W-hx);var a=e.j===2?.25:1;
-  if(e.k==="n")heart(x,cy,13,"#ff5d8f",a);else{cx.save();cx.globalAlpha=a*.35;cx.fillStyle="#6fd3ff";cx.beginPath();cx.arc(x,cy,20,0,6.3);cx.fill();cx.restore();drop(x,cy+2,11,"#bfeaff",a)}}
+  if(e.k==="n")heart(x,cy,13,"#ff5d8f",a);else{var ice=LV[S.li].xmas;cx.save();cx.globalAlpha=a*.35;cx.fillStyle=ice?"#dff3ff":"#6fd3ff";cx.beginPath();cx.arc(x,cy,20,0,6.3);cx.fill();cx.restore();if(ice)flake(x,cy,13,"#ffffff",a);else drop(x,cy+2,11,"#bfeaff",a)}}
  if(t<0){var c=Math.ceil(-t/S.spb);cx.fillStyle="#fff3e2";cx.font="600 "+Math.round(Math.min(W,H)*.2)+"px "+FONT;cx.textAlign="center";cx.textBaseline="middle";cx.globalAlpha=.9;cx.fillText(c>4?"":String(c),W*.62,(H-lh)*.42);cx.globalAlpha=1}
 }
 function drawParts(tms){var i,p,u;for(i=parts.length-1;i>=0;i--){p=parts[i];u=(tms-p.t)/p.dur;if(u<0)continue;if(u>=1){parts.splice(i,1);continue}
- if(p.drop){drop(p.x0+p.vx*u*.5,p.y0+p.vy*u*.5+220*u*u*.5,4,"#9fdcff",1-u);continue}
+ if(p.drop){var px=p.x0+p.vx*u*.5,py=p.y0+p.vy*u*.5+220*u*u*.5;if(p.ice)flake(px,py,5,"#ffffff",1-u);else drop(px,py,4,"#9fdcff",1-u);continue}
  if(u<.22){var q=u/.22;drop(p.x0+p.kx*q,p.y0-14*q,4.5,"#9fdcff",1)}
  else{var v=(u-.22)/.78,sx=p.x0+p.kx,sy=p.y0-14,mx=(sx+p.x1)/2,my=Math.min(sy,p.y1)-90,w=1-v;
   heart(w*w*sx+2*w*v*mx+v*v*p.x1,w*w*sy+2*w*v*my+v*v*p.y1,6+3*Math.sin(v*3.14),v<.15?"#c79bd0":"#ff5d8f",v>.85?(1-v)/.15:1)}}}
 function drawFx(tms){var g=geo(),i,f,u;cx.textAlign="center";cx.textBaseline="middle";
  for(i=fx.length-1;i>=0;i--){f=fx[i];u=(tms-f.t)/700;if(u>=1)fx.splice(i,1)}
  if(fx.length){f=fx[fx.length-1];u=(tms-f.t)/700;cx.globalAlpha=1-u*u;cx.fillStyle=f.col;cx.font="600 "+Math.round(20*g.s+4)+"px "+FONT;cx.fillText(f.txt.toUpperCase(),g.vx,g.vy-205*g.s-u*18);cx.globalAlpha=1}
- if(S.mode==="play"&&S.combo>=8){cx.fillStyle="#ffe08a";cx.font="600 "+Math.round(15*g.s+3)+"px "+FONT;cx.fillText("x"+mult()+"  ·  "+S.combo+" in a row",W*.66,g.hy*.36)}}
+ if(S.mode==="play"&&S.combo>=8){cx.fillStyle="#ffe08a";cx.font="600 "+Math.round(15*g.s+3)+"px "+FONT;cx.fillText("x"+mult()+"  ·  "+S.combo+" in a row",W*.66,Math.max(g.hy*.36,132))}}
 
 // ---------- frame ----------
 function frame(){
@@ -7941,14 +8076,15 @@ function frame(){
   var hb=S.spb/2,lim=now()+.25,endH=8+Math.ceil(S.tEnd/hb);
   while(S.nextH<endH&&S.Tc+S.nextH*hb<lim){var at=S.Tc+S.nextH*hb,h=S.nextH;
    if(h<8){if(h%2===0)tick(at,h===6?1320:880)}
-   else{var b=(h-8)>>1;if(h%2===0)kick(at);else{hat(at);bass(at,[110,87.31,130.81,98][Math.floor(b/4)%4],hb*.9)}}
+   else{if(LV[S.li].xlv===3){var cn=CHOIR[h-8];if(cn)choir(at,cn[0],cn[1]*hb*.92,.035+.11*Math.min(1,S.hats/24))}
+    var b=(h-8)>>1;if(h%2===0)kick(at);else{hat(at);bass(at,LV[S.li].xmas?TUNE[LV[S.li].xlv].b[Math.floor(b/4)%16]:[110,87.31,130.81,98][Math.floor(b/4)%4],hb*.9)}}
    S.nextH++}
   for(i=0;i<S.ev.length;i++){e=S.ev[i];if(e.t>t-GOOD)break;if(e.j)continue;e.j=2;
    if(e.k==="n"){S.combo=0;S.st.m++;S.love-=9;say("missed","#ff8a8a");if(S.love<=0){S.love=0;fail("love");break}}
-   else{S.st.wm++;say("drink!","#9fdcff")}}
+   else{S.st.wm++;say(LV[S.li].xmas?"ice!":"drink!","#9fdcff")}}
   if(S.mode==="play"&&t>S.tEnd)done();
   S.bow*=.86;
-  if(S.mode==="play")$("shgHeat").style.width=Math.min(100,S.heat)+"%";if(S.mode==="play"){$("shgLove").style.width=Math.max(0,S.love)+"%";$("shgCoinN").textContent=S.bank+S.coins;$("shgBeatN").textContent=(S.st.p+S.st.g+S.st.m)?beatPct()+"%":"\u2013";}
+  if(S.mode==="play")$("shgHeat").style.width=Math.min(100,S.heat)+"%";if(S.mode==="play"){$("shgLove").style.width=Math.max(0,S.love)+"%";$("shgCoinN").textContent=S.bank+S.coins;var nb3=S.st.p+S.st.g+S.st.m;var lo=S.lastOff==null?null:Math.round(S.lastOff*1000);$("shgBeatN").textContent=nb3?beatPct()+"%"+(lo==null?"":Math.abs(lo)<8?" \u2022":lo<0?" \u25C2"+(-lo):" "+lo+"\u25B8"):"\u2013";$("shgBeatB").style.width=(nb3?beatPct():0)+"%";}
  }
  cx.setTransform(DPR,0,0,DPR,0,0);cx.clearRect(0,0,W,H);
  scene(tms,bp);drawParts(tms);
@@ -7971,7 +8107,7 @@ function close(){
  if(!isOpen)return;isOpen=false;S.mode="title";root.hidden=true;
  document.documentElement.style.overflow=oldOverflow;
  try{if(AC&&AC.state==="running")AC.suspend()}catch(e){}
- try{if(location.hash==="#sweatheart")history.replaceState(null,"",location.pathname+location.search)}catch(e){}
+ try{if(/^#sweatheart/.test(location.hash))history.replaceState(null,"",location.pathname+location.search)}catch(e){}
  try{if(lastFocus&&lastFocus.focus)lastFocus.focus({preventScroll:true})}catch(e){}
 }
 
@@ -7980,6 +8116,7 @@ function bind(el,kind){el.addEventListener("pointerdown",function(ev){ev.prevent
 bind($("shgPlay"),"n");bind($("shgDrink"),"w");bind(cv,"n");
 window.addEventListener("keydown",function(ev){
  if(!isOpen)return;var c=ev.code,used=true;
+ var tg=ev.target;if(tg&&tg.tagName==="INPUT"&&c!=="Escape"&&c!=="Enter"&&c!=="NumpadEnter"){ev.stopPropagation();return}
  if(c==="Escape")close();
  else if(ev.repeat){used=(c==="Space")}
  else if(c==="Enter"||c==="NumpadEnter"){var b=$("shgGo");if(b&&$("shgOv").className!=="shg-off")b.click();else used=false}
@@ -8004,12 +8141,12 @@ function plant(){
  a.addEventListener("click",function(ev){ev.preventDefault();ev.stopPropagation();open()});
  wm.appendChild(a);
 }
-function byHash(){if(location.hash==="#sweatheart")open()}
+function byHash(){if(location.hash==="#sweatheart-xmas-test"){forceXmas=true;open()}else if(location.hash==="#sweatheart")open()}
 plant();
 window.addEventListener("hashchange",byHash);
 if(document.readyState==="complete")setTimeout(byHash,300);else window.addEventListener("load",function(){setTimeout(byHash,300)});
 window.__ssSweatheart=open;
-window.__ssSweatheartGame={S:S,press:press,now:now,start:startSet,open:open,close:close,LV:LV,isOpen:function(){return isOpen}};
+window.__ssSweatheartGame={S:S,press:press,now:now,start:startSet,open:open,close:close,LV:LV,isOpen:function(){return isOpen},xmas:function(on){forceXmas=!!on;return xmasOpen()},records:function(){return {coins:best,beat:bestBeat,xmas:bestXmas,ini:myIni}},chal:function(){return chal}};
 })();
 </script>
 <!-- sweatheart: end -->
