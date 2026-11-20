@@ -8812,16 +8812,22 @@ html[lang="ar"] :is(p,h1,h2,h3,h4,h5,li,blockquote,figcaption,dd,dt,label){unico
 </style>
 <script>
 /* language switcher (i18n block, 18 Nov 2026). English is the page itself; every other language is one small file,
-   fetched only when chosen. Texts are matched by their English wording, so the page markup carries no keys. */
+   fetched only when chosen. Texts are matched by their English wording, so the page markup carries no keys.
+   Since 20 Nov 2026 (item 82) it also translates what screen readers and tooltips read (alt, aria-label, title,
+   placeholder), and texts with one changing part: an English text with {x} in it matches any wording with something
+   in that place ("Cover of {x}", "{x} your time"), and the {x} of the translation takes that part. */
 (function(){
   var LANGS=[["en","English"],["de","Deutsch"],["es","Español"],["fr","Français"],["zh","中文"],["hi","हिन्दी"],["tr","Türkçe"],["ar","العربية"],["pt","Português"],["it","Italiano"],["af","Afrikaans"],["ru","Русский"]];
-  var KEY="ss_lang", cur="en", EN=null, IDX=null, packs={}, asked={}, obs=null, box, btn, list;
+  var KEY="ss_lang", cur="en", EN=null, IDX=null, PATS=[], packs={}, asked={}, obs=null, box, btn, list;
+  var ATTRS=["alt","aria-label","title","placeholder"], ASEL="[alt],[aria-label],[title],[placeholder]";
   function known(c){ for(var i=0;i<LANGS.length;i++) if(LANGS[i][0]===c) return true; return false; }
   function norm(s){ return s.replace(/\s+/g," ").trim(); }
 
   window.__i18n=function(code,arr){
     packs[code]=arr;
-    if(code==="en"){ EN=arr; IDX=Object.create(null); for(var i=0;i<arr.length;i++) IDX[norm(arr[i])]=i; }
+    if(code==="en"){ EN=arr; IDX=Object.create(null); PATS=[];
+      for(var i=0;i<arr.length;i++){ var k=norm(arr[i]); IDX[k]=i;
+        if(k.indexOf("{x}")>=0){ var q=k.split("{x}"); if(q.length===2) PATS.push({re:new RegExp("^"+esc(q[0])+"(.+?)"+esc(q[1])+"$"),i:i}); } } }
     if(cur!=="en"&&EN&&packs[cur]){ run(document.body); watch(); }
   };
   function load(code){
@@ -8831,15 +8837,33 @@ html[lang="ar"] :is(p,h1,h2,h3,h4,h5,li,blockquote,figcaption,dd,dt,label){unico
     document.head.appendChild(s);
   }
 
+  function esc(s){ return s.replace(/[.*+?^${}()|[\]\\]/g,"\\$&"); }
+  function pat(k){ for(var p=0;p<PATS.length;p++){ var m=PATS[p].re.exec(k); if(m) return {i:PATS[p].i,x:m[1]}; } return null; }
+  function look(src){   /* the translation of an English wording in the chosen language, or null */
+    var k=norm(src), i=IDX[k], t;
+    if(i!==undefined){ t=packs[cur][i]; return (typeof t==="string"&&t)?t:null; }
+    var pm=pat(k); if(!pm) return null;
+    t=packs[cur][pm.i]; return (typeof t==="string"&&t.indexOf("{x}")>=0)?t.replace("{x}",pm.x):null;
+  }
+  function oneEl(el){   /* alt, aria-label, title and placeholder; the original English is kept on the element */
+    if(!el.getAttribute||(box&&box.contains(el))) return;
+    var st=el.__ia||(el.__ia={});
+    for(var j=0;j<ATTRS.length;j++){ var a=ATTRS[j]; if(!el.hasAttribute(a)) continue;
+      var v=el.getAttribute(a), rec=st[a], src=(rec&&v===rec.tr)?rec.en:v;
+      if(!src||!/[A-Za-z]/.test(src)) continue;
+      var out=src; if(cur!=="en"){ var t=look(src); if(t) out=t; }
+      st[a]={en:src,tr:out}; if(v!==out) el.setAttribute(a,out); }
+  }
   function one(n){
     var p=n.parentNode; if(!p) return;
     var t=p.nodeName; if(t==="SCRIPT"||t==="STYLE"||t==="TEXTAREA") return;
     if(box&&box.contains(n)) return;
     var src=(n.__tr!==undefined&&n.nodeValue===n.__tr)?n.__en:n.nodeValue;
-    var k=norm(src), i=IDX[k], tr;
-    if(i===undefined){ if(k!=="· NIGHT"||IDX["Night"]===undefined) return; }   /* the bar writes "· NIGHT" itself; it follows the word for Night */
+    var k=norm(src), i=IDX[k], tr, night=false, pm=null;
+    if(i===undefined){ if(k==="· NIGHT"&&IDX["Night"]!==undefined) night=true;   /* the bar writes "· NIGHT" itself; it follows the word for Night */
+      else { pm=pat(k); if(!pm) return; } }
     var out=src;
-    if(cur!=="en"){ tr=(i===undefined)?"· "+String(packs[cur][IDX["Night"]]).toUpperCase():packs[cur][i]; if(typeof tr==="string"&&tr){ var a=src.match(/^\s*/)[0], z=src.match(/\s*$/)[0]; out=a+tr+z; } }
+    if(cur!=="en"){ tr=night?"· "+String(packs[cur][IDX["Night"]]).toUpperCase():pm?look(k):packs[cur][i]; if(typeof tr==="string"&&tr){ var a=src.match(/^\s*/)[0], z=src.match(/\s*$/)[0]; out=a+tr+z; } }
     n.__en=src; n.__tr=out;
     if(n.nodeValue!==out) n.nodeValue=out;
   }
@@ -8850,7 +8874,10 @@ html[lang="ar"] :is(p,h1,h2,h3,h4,h5,li,blockquote,figcaption,dd,dt,label){unico
     var w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,null), n, all=[];
     while((n=w.nextNode())) all.push(n);
     for(var i=0;i<all.length;i++) one(all[i]);
+    oneEl(root); var els=root.querySelectorAll?root.querySelectorAll(ASEL):[];
+    for(var e=0;e<els.length;e++) oneEl(els[e]);
   }
+  var OPTS={childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:ATTRS};
   function watch(){
     if(obs||!window.MutationObserver) return;
     obs=new MutationObserver(function(recs){
@@ -8859,11 +8886,12 @@ html[lang="ar"] :is(p,h1,h2,h3,h4,h5,li,blockquote,figcaption,dd,dt,label){unico
       for(var i=0;i<recs.length;i++){
         var r=recs[i];
         if(r.type==="characterData") run(r.target);
+        else if(r.type==="attributes") oneEl(r.target);
         else for(var j=0;j<r.addedNodes.length;j++) run(r.addedNodes[j]);
       }
-      obs.observe(document.body,{childList:true,subtree:true,characterData:true});
+      obs.observe(document.body,OPTS);
     });
-    obs.observe(document.body,{childList:true,subtree:true,characterData:true});
+    obs.observe(document.body,OPTS);
   }
 
   function set(code,keep){
