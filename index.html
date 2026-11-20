@@ -5252,7 +5252,7 @@ html:not(.ss-test) .ac-test{display:none}                  /* the test log is te
     q.fields.addEventListener("input", refresh); q.fields.addEventListener("change", refresh);
     dlg.addEventListener("click", function (e) {
       if (e.target === dlg) return close();                                   // a click on the backdrop
-      var t = e.target.closest ? e.target.closest("[data-bk],[data-mode]") : null; if (!t) return;
+      var t = e.target.closest ? e.target.closest("[data-bk],[data-mode]") : null; if (!t || t === dlg) return;   // the dialog itself carries data-mode: a tap in a field must not rebuild the fields
       if (t.hasAttribute("data-mode")) return setMode(t.getAttribute("data-mode"));
       var a = t.getAttribute("data-bk");
       if (a === "x") return close();
