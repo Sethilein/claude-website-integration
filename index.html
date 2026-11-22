@@ -8858,6 +8858,207 @@ window.__ssSweatheartGame={S:S,press:press,now:now,start:startSet,open:open,clos
 })();
 </script>
 <!-- sitetest:js:end -->
+<!-- bridge: start -->
+<style>
+/* Item 101 (22 Nov 2026): Game 04 does not stop at its last picture. The record on the turntable in the stars turns gold,
+   lifts off and flies out of the picture; then "Follow the record" takes it to the globe: it comes in from above, circles
+   the world once on the moon's ring and stays there; a tap leads to Game 03, The Quest for the Golden Violin. Source: source/bridge/bridge.html · put in by source/bridge/apply.py */
+.g4-epi{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2}
+.g4-ov.g4-epi-wait{visibility:hidden}
+.g4-epi-line{font-size:14px;line-height:1.5;margin:10px auto 14px;max-width:380px;color:#fff}
+.g4-btn.g4-epi-go{background:#DFC166;border-color:#DFC166;color:#111;margin-right:8px}
+.g4-btn.g4-epi-go:hover{filter:brightness(1.08)}
+.gb-epi{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:4}
+.gb-go{position:absolute;z-index:5;width:56px;height:56px;margin:-28px 0 0 -28px;border-radius:50%;border:0;background:transparent;cursor:pointer;padding:0}
+.gb-go:focus-visible{outline:2px solid #DFC166;outline-offset:2px}
+.g4-epi-skip{position:absolute;right:10px;bottom:8px;z-index:3;font:500 10.5px/1 "IBM Plex Mono",ui-monospace,monospace;letter-spacing:.14em;text-transform:uppercase;
+  color:rgba(255,255,255,.7);background:rgba(0,0,0,.35);border:0;border-radius:999px;padding:8px 12px;cursor:pointer}
+</style>
+<script>
+(function(){
+  var LINE="The record does not stay on the turntable. It flies on, out of the night and round the world.",
+      GO="Follow the record ↑", SKIP="Skip";
+  var reduce=false; try{ reduce=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches; }catch(e){}
+  // the disc in the last scene of the video: where it sits in the 960 x 540 picture (measured on the frames)
+  var V={w:960,h:540,x:457,y:432,rx:37,ry:21}, T_GLOW=5600, T_LIFT=6600, T_OUT=10400;
+  var hooked=null;
+
+  function hook(){
+    var sec=document.getElementById("nElves"), api=window.__ssElves;
+    if(!sec||!api||hooked===sec) return;
+    var ov=sec.querySelector(".g4-ov"), stage=sec.querySelector(".g4-stage"), cv=stage&&stage.querySelector("canvas");
+    if(!ov||!stage||!cv) return;
+    hooked=sec;
+    var ep=null;
+    new MutationObserver(function(){
+      if(ov.classList.contains("hide")||ov.getAttribute("data-epi")) return;
+      if(!api.S||api.S.phase!=="end") return;
+      ov.setAttribute("data-epi","1");
+      if(reduce||!api.VID||!api.VID.ev_night||!api.VID.ev_night.ok){ finish(); return; }
+      ov.classList.add("g4-epi-wait"); ep=play(stage,cv,api,finish);
+    }).observe(ov,{attributes:true,attributeFilter:["class"],childList:true,subtree:true});
+    // "Sail again" starts a new run: the next end may have its epilogue again
+    ov.addEventListener("click",function(e){ var b=e.target.closest&&e.target.closest('[data-g4="go"]'); if(b) setTimeout(function(){ ov.removeAttribute("data-epi"); },0); });
+    function finish(){
+      if(ep){ ep.stop(); ep=null; }
+      ov.classList.remove("g4-epi-wait");
+      var box=ov.querySelector(".g4-box")||ov, go=box.querySelector('[data-g4="go"]');
+      if(!go||box.querySelector(".g4-epi-go")) return;
+      var p=document.createElement("p"); p.className="g4-epi-line"; p.textContent=LINE;
+      var b=document.createElement("button"); b.type="button"; b.className="g4-btn g4-epi-go"; b.textContent=GO;
+      b.addEventListener("click",follow);
+      go.parentNode.insertBefore(p,go); go.parentNode.insertBefore(b,go);
+    }
+  }
+
+  function follow(){
+    var w=document.getElementById("nWorld"), gl=document.getElementById("globe");
+    if(!w||!gl) return;
+    try{ gl.scrollIntoView({behavior:reduce?"auto":"smooth",block:"center"}); }catch(e){ gl.scrollIntoView(); }
+    // when the globe is in view and the page has stopped scrolling, the record arrives there
+    var n=0, lastY=-1, t=setInterval(function(){
+      n++; var r=gl.getBoundingClientRect(), y=window.pageYOffset, still=Math.abs(y-lastY)<2; lastY=y;
+      if((r.top<innerHeight*0.7&&r.bottom>innerHeight*0.25&&still&&n>3)||n>40){ clearInterval(t); arrive(gl); }
+    },120);
+  }
+
+  // The record comes in from the top, circles the world once on the moon's ring and stays above it, turning,
+  // with the line the globe's own record carries: a tap leads to Game 03, The Quest for the Golden Violin.
+  var arriving=null;
+  function arrive(gl){
+    var wrap=gl.parentNode; if(!wrap) return;
+    if(arriving) arriving.stop();
+    if(getComputedStyle(wrap).position==="static") wrap.style.position="relative";
+    var c=document.createElement("canvas"); c.className="gb-epi"; c.setAttribute("aria-hidden","true"); wrap.appendChild(c);
+    var go=document.createElement("button"); go.type="button"; go.className="gb-go"; go.setAttribute("aria-label","The golden record: play The Quest for the Golden Violin"); go.hidden=true; wrap.appendChild(go);
+    var x=c.getContext("2d"), t0=performance.now(), raf=0, live=true, trail=[];
+    var IN=1800, ORB=4200, HOLD=11000, OUTT=900, LBL="THE QUEST FOR THE GOLDEN VIOLIN ↓";
+    function stop(){ if(!live) return; live=false; cancelAnimationFrame(raf); try{ c.remove(); go.remove(); }catch(e){} arriving=null; }
+    go.addEventListener("click",function(){
+      stop();
+      try{ if(window.__ssArcade&&window.__ssArcade.game) window.__ssArcade.game(3); }catch(e){}
+      var a=document.getElementById("nArcade"); if(a) try{ a.scrollIntoView({behavior:reduce?"auto":"smooth",block:"start"}); }catch(e){ a.scrollIntoView(); }
+    });
+    function disc(cx,cy,r,rot,al){
+      if(al<=0) return; x.save(); x.globalAlpha=Math.min(1,al); x.translate(cx,cy);
+      var g=x.createRadialGradient(-r*0.3,-r*0.35,r*0.1,0,0,r); g.addColorStop(0,"#fff3b0"); g.addColorStop(0.55,"#ffd36b"); g.addColorStop(1,"#b0602a");
+      x.shadowColor="rgba(255,211,107,.55)"; x.shadowBlur=r*1.1; x.fillStyle=g; x.beginPath(); x.arc(0,0,r,0,7); x.fill(); x.shadowBlur=0;
+      x.strokeStyle="rgba(120,70,20,.35)"; x.lineWidth=Math.max(0.6,r*0.03); for(var i=1;i<4;i++){ x.beginPath(); x.arc(0,0,r*(0.45+i*0.15),0,7); x.stroke(); }
+      x.rotate(rot); x.strokeStyle="rgba(255,255,255,.6)"; x.lineWidth=Math.max(1,r*0.07); x.beginPath(); x.arc(0,0,r*0.75,-0.5,0.3); x.stroke();
+      x.fillStyle="#f1ede4"; x.beginPath(); x.arc(0,0,r*0.32,0,7); x.fill(); x.fillStyle="#000"; x.beginPath(); x.arc(0,0,Math.max(0.8,r*0.07),0,7); x.fill();
+      x.restore();
+    }
+    function frame(){
+      if(!live) return; raf=requestAnimationFrame(frame);
+      var rc=gl.getBoundingClientRect(), wr=wrap.getBoundingClientRect(), d=Math.min(2,window.devicePixelRatio||1);
+      var W=Math.round(wr.width*d), H=Math.round(wr.height*d); if(c.width!==W||c.height!==H){ c.width=W; c.height=H; }
+      x.clearRect(0,0,W,H);
+      var gx=(rc.left-wr.left)*d, gy=(rc.top-wr.top)*d, gw=rc.width*d, cx=gx+gw/2, cy=gy+gw/2, R=gw/2*0.9, Ro=R*1.5;
+      var t=reduce?IN+ORB+500:performance.now()-t0, rot=2*Math.PI*((performance.now()%3600)/3600), r=Math.max(7*d,R*0.075), px, py, al=1, behind=false;
+      var a0=-0.25*Math.PI;                        // where it joins the ring: front right
+      var hx0=cx+R*0.8, hy0=cy-R*0.7;             // where it stays: by the globe, upper right
+      if(t<IN){ var k=t/IN, e=1-Math.pow(1-k,3), sx=cx+gw*0.45, sy=gy-gw*0.35, ex=cx+Ro*Math.cos(a0), ey=cy-Ro*0.22*Math.sin(a0);
+        px=sx+(ex-sx)*e; py=sy+(ey-sy)*e; r*=1.6-0.6*e; al=Math.min(1,k*3); }
+      else if(t<IN+ORB){ var k2=(t-IN)/ORB, a=a0-2*Math.PI*(k2<.5?2*k2*k2:1-Math.pow(-2*k2+2,2)/2);
+        px=cx+Ro*Math.cos(a); py=cy-Ro*0.22*Math.sin(a); behind=Math.sin(a)>0; r*=behind?0.75:1.05;
+        if(behind&&Math.abs(px-cx)<R*0.98) al=0; }
+      else { var k3=Math.min(1,(t-IN-ORB)/900), e3=1-Math.pow(1-k3,3), ex2=cx+Ro*Math.cos(a0), ey2=cy-Ro*0.22*Math.sin(a0);
+        px=ex2+(hx0-ex2)*e3; py=ey2+(hy0-ey2)*e3+Math.sin(t/700)*2*d*e3; r*=1+0.25*e3;
+        var tl=t-IN-ORB; if(tl>HOLD) al=Math.max(0,1-(tl-HOLD)/OUTT); if(tl>HOLD+OUTT){ stop(); return; } }
+      if(al>0.05){ trail.push({x:px,y:py,l:1}); if(trail.length>40) trail.shift(); }
+      for(var i=0;i<trail.length;i++){ var s=trail[i]; s.l-=0.03; if(s.l>0){ x.fillStyle="rgba(255,211,107,"+(s.l*0.35).toFixed(3)+")"; x.beginPath(); x.arc(s.x,s.y,r*0.35*s.l,0,7); x.fill(); } }
+      disc(px,py,r,rot,al);
+      if(t>=IN+ORB&&al>0.05){
+        var la=Math.min(1,(t-IN-ORB)/700)*al; x.save(); x.globalAlpha=la; x.font="500 "+(10*d)+"px 'IBM Plex Mono',ui-monospace,monospace";
+        var tw=x.measureText(LBL).width, lx=Math.max(6*d,Math.min(W-tw-6*d,px-tw/2)), ly=py+r+18*d;
+        x.fillStyle="rgba(0,0,0,.66)"; x.fillRect(lx-5*d,ly-12*d,tw+10*d,17*d); x.fillStyle="#fff"; x.fillText(LBL,lx,ly); x.restore();
+        go.hidden=false; go.style.left=Math.round(hx0/d)+"px"; go.style.top=Math.round(hy0/d)+"px";   // still, so a finger can find it
+      }
+    }
+    raf=requestAnimationFrame(frame);
+    arriving={stop:stop};
+  }
+
+  function play(stage,cv,api,done){
+    var c=document.createElement("canvas"); c.className="g4-epi"; c.setAttribute("aria-hidden","true"); stage.appendChild(c);
+    var sk=document.createElement("button"); sk.type="button"; sk.className="g4-epi-skip"; sk.textContent=SKIP; stage.appendChild(sk);
+    var x=c.getContext("2d"), t0=performance.now(), raf=0, sparks=[], sounded=false, live=true, A=null;
+    sk.addEventListener("click",function(){ end(); });
+    function pos(W,H,t){   // the disc on the turntable, following the video's gentle float
+      var sc=Math.max(W/V.w,H/V.h), ox=(W-V.w*sc)/2, oy=(H-V.h*sc)/2, bob=Math.sin(t/900)*1.6*sc;
+      return {x:ox+V.x*sc,y:oy+V.y*sc+bob,rx:V.rx*sc,ry:V.ry*sc,sc:sc};
+    }
+    function disc(cx,cy,rx,ry,rot,al){
+      x.save(); x.globalAlpha=al; x.translate(cx,cy); x.scale(1,ry/rx);
+      var g=x.createRadialGradient(-rx*0.3,-rx*0.3,rx*0.1,0,0,rx); g.addColorStop(0,"#FFF1B8"); g.addColorStop(0.45,"#DFC166"); g.addColorStop(1,"#8E6B1F");
+      x.fillStyle=g; x.beginPath(); x.arc(0,0,rx,0,7); x.fill();
+      x.strokeStyle="rgba(90,60,10,.35)"; x.lineWidth=Math.max(0.6,rx*0.02);
+      for(var i=1;i<5;i++){ x.beginPath(); x.arc(0,0,rx*(0.4+i*0.13),0,7); x.stroke(); }
+      x.rotate(rot); x.strokeStyle="rgba(255,255,255,.55)"; x.lineWidth=Math.max(1,rx*0.05);
+      x.beginPath(); x.arc(0,0,rx*0.78,-0.5,0.35); x.stroke();
+      x.fillStyle="#f1ede4"; x.beginPath(); x.arc(0,0,rx*0.3,0,7); x.fill();
+      x.fillStyle="#111"; x.beginPath(); x.arc(0,0,Math.max(1,rx*0.06),0,7); x.fill();
+      x.restore();
+    }
+    function chime(){
+      if(sounded) return; sounded=true;
+      try{
+        A=new (window.AudioContext||window.webkitAudioContext)(); var m=A.createGain(); m.gain.value=0.16; m.connect(A.destination);
+        var base=(api.CFG&&api.CFG.toene)||[62,65,69], seq=[base[0]+12,base[1]+12,base[2]+12,base[0]+24,base[2]+24], now=A.currentTime;
+        seq.forEach(function(n,i){ var f=440*Math.pow(2,(n-69)/12), t=now+i*0.22, o=A.createOscillator(), o2=A.createOscillator(), g=A.createGain();
+          o.type="sine"; o2.type="triangle"; o.frequency.value=f; o2.frequency.value=f*2.001;
+          g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(0.5,t+0.02); g.gain.exponentialRampToValueAtTime(0.0001,t+1.6);
+          var g2=A.createGain(); g2.gain.value=0.25; o.connect(g); o2.connect(g2); g2.connect(g); g.connect(m); o.start(t); o2.start(t); o.stop(t+1.7); o2.stop(t+1.7); });
+      }catch(e){}
+    }
+    function frame(){
+      if(!live) return;
+      raf=requestAnimationFrame(frame);
+      if(api.S&&api.S.paused) { t0+=16; return; }
+      var r=cv.getBoundingClientRect(), d=Math.min(2,window.devicePixelRatio||1), W=Math.round(r.width*d), H=Math.round(r.height*d);
+      if(c.width!==W||c.height!==H){ c.width=W; c.height=H; }
+      x.clearRect(0,0,W,H);
+      var t=performance.now()-t0, p=pos(W,H,t), rot=t/3600*2*Math.PI*1.8;
+      if(t<T_GLOW) return;
+      if(t<T_LIFT){   // the black record turns gold where it lies
+        var k=(t-T_GLOW)/(T_LIFT-T_GLOW), hg=x.createRadialGradient(p.x,p.y,0,p.x,p.y,p.rx*2.4);
+        hg.addColorStop(0,"rgba(255,211,107,"+(0.45*k).toFixed(3)+")"); hg.addColorStop(1,"rgba(255,211,107,0)");
+        x.fillStyle=hg; x.beginPath(); x.arc(p.x,p.y,p.rx*2.4,0,7); x.fill();
+        disc(p.x,p.y,p.rx*0.92,p.ry*0.92,rot,k); return;
+      }
+      chime();
+      // the turntable is empty now: a dark platter and its spindle where the record was
+      x.save(); x.globalAlpha=Math.min(1,(t-T_LIFT)/300); x.fillStyle="#2a2133"; x.beginPath(); x.ellipse(p.x,p.y,p.rx*1.04,p.ry*1.08,0,0,7); x.fill();
+      x.strokeStyle="rgba(255,255,255,.12)"; x.lineWidth=Math.max(0.6,p.rx*0.03); x.beginPath(); x.ellipse(p.x,p.y,p.rx*0.7,p.ry*0.7,0,0,7); x.stroke();
+      x.fillStyle="#d9d4e0"; x.beginPath(); x.arc(p.x,p.y,Math.max(1,p.rx*0.07),0,7); x.fill(); x.restore();
+      var u=Math.min(1,(t-T_LIFT)/(T_OUT-T_LIFT)), e=u<0.5?2*u*u:1-Math.pow(-2*u+2,2)/2;
+      // up and away in a soft curve to the upper right, turning to face us, growing, then small in the distance
+      var tx=W*0.78, ty=-H*0.18, cx1=p.x+W*0.02, cy1=p.y-H*0.55;
+      var bx=(1-e)*(1-e)*p.x+2*(1-e)*e*cx1+e*e*tx, by=(1-e)*(1-e)*p.y+2*(1-e)*e*cy1+e*e*ty;
+      var grow=1+1.4*Math.sin(Math.PI*Math.min(1,e*1.15)), rx=p.rx*0.92*grow*(1-0.55*e), ry=rx*Math.min(1,(p.ry/p.rx)+e*1.6);
+      if(Math.random()<0.9) sparks.push({x:bx+(Math.random()-0.5)*rx,y:by+(Math.random()-0.5)*ry,v:Math.random()*0.6+0.2,l:1,s:(Math.random()*1.6+0.6)*d});
+      for(var i=sparks.length-1;i>=0;i--){ var s=sparks[i]; s.l-=0.018; s.y+=s.v*d; if(s.l<=0){ sparks.splice(i,1); continue; }
+        x.fillStyle="rgba(255,226,140,"+(s.l*0.9).toFixed(3)+")"; x.beginPath(); x.arc(s.x,s.y,s.s,0,7); x.fill(); }
+      var hg2=x.createRadialGradient(bx,by,0,bx,by,rx*2.6); hg2.addColorStop(0,"rgba(255,211,107,.35)"); hg2.addColorStop(1,"rgba(255,211,107,0)");
+      x.fillStyle=hg2; x.beginPath(); x.arc(bx,by,rx*2.6,0,7); x.fill();
+      disc(bx,by,rx,ry,rot,1);
+      if(u>=1&&sparks.length===0) end();
+      else if(t>T_OUT+1800) end();
+    }
+    function end(){ if(!live) return; live=false; cancelAnimationFrame(raf); try{ c.remove(); sk.remove(); }catch(e){} done(); }
+    raf=requestAnimationFrame(frame);
+    return {stop:function(){ if(live){ live=false; cancelAnimationFrame(raf); try{ c.remove(); sk.remove(); }catch(e){} } }};
+  }
+
+  // Game 04 builds its section only when the arcade comes near (item 84): wait for it
+  hook();
+  if(!hooked&&window.MutationObserver){
+    var mo=new MutationObserver(function(){ hook(); if(hooked) mo.disconnect(); });
+    mo.observe(document.body,{childList:true,subtree:true});
+  }
+})();
+</script>
+<!-- bridge: end -->
 <!-- i18n:start -->
 <style>
 /* language switcher (i18n block, 18 Nov 2026) */
