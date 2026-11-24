@@ -92,6 +92,32 @@ h1 .pk{color:var(--pink)}
 .top{font-size:10.5px;letter-spacing:.18em}.door .wd{display:none}.card{padding:30px 22px 24px}.card .big{font-size:120px}.card h3{font-size:28px}.foot .r{margin-left:0}}
 @media (prefers-reduced-motion:reduce){.door .leaf{transition:none}.door.today:not(.open) .leaf{animation:none}.card{animation:none}}
 body.preview{padding-bottom:56px}
+/* ---- Christmas (item 104): snow, the 24 lights, today's gift ribbon, the LED bow ---- */
+.wrap{position:relative;z-index:1}
+#snow{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:5}
+.lights{position:relative;margin:30px 0 0;height:64px}
+.lights svg{display:block;width:100%;height:64px;overflow:visible}
+.lights .wire{fill:none;stroke:#3a3a3a;stroke-width:1.2}
+.lights .cap{fill:#5a5a5a}
+.lights .b{fill:#1c1c1c;stroke:#2c2c2c;stroke-width:.8;cursor:pointer;transition:fill .6s}
+.lights .b.lit{fill:#FFD36B;stroke:none;filter:url(#bulbGlow);animation:twinkle 3.2s ease-in-out infinite}
+.lights .b.today{fill:#E4007C;stroke:none;filter:url(#bulbGlow);animation:twinkle 1.9s ease-in-out infinite}
+@keyframes twinkle{50%{opacity:.55}}
+.door .ribbon{position:absolute;inset:0;pointer-events:none;z-index:1}
+.door .ribbon:before,.door .ribbon:after{content:"";position:absolute;background:rgba(255,211,107,.55)}
+.door .ribbon:before{left:calc(50% - 2px);top:0;bottom:0;width:4px}
+.door .ribbon:after{top:calc(42% - 2px);left:0;right:0;height:4px}
+.door .knot{position:absolute;left:50%;top:42%;width:30px;height:16px;margin:-12px 0 0 -15px;z-index:1;pointer-events:none}
+.door .knot:before,.door .knot:after{content:"";position:absolute;top:0;width:13px;height:11px;border:2px solid rgba(255,211,107,.8);border-radius:60% 40% 60% 40%}
+.door .knot:before{left:0;transform:rotate(-18deg)}.door .knot:after{right:0;transform:rotate(18deg)}
+.door .leaf .n,.door .leaf>div:last-child{position:relative;z-index:2}
+.door .leaf .n{text-shadow:0 0 18px #000}
+#bowfx{position:fixed;left:0;top:0;width:32px;height:32px;pointer-events:none;z-index:2147483647;opacity:0;transform-origin:27px 3px;will-change:transform,opacity;transition:opacity .25s}
+#bowfx svg{display:block;overflow:visible}
+#bowfx .led{fill:#fff;opacity:.15}
+html.bowon,html.bowon *{cursor:none !important}
+@media (prefers-reduced-motion:reduce){.lights .b.lit,.lights .b.today{animation:none}html{cursor:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32' fill='none'%3E%3Cg transform='translate%2816 16%29 rotate%28-45%29'%3E%3Cg stroke='%23E4007C' stroke-opacity='.5' stroke-linecap='round' stroke-linejoin='round' fill='none'%3E%3Cpath d='M-15.2 -1.9Q0 -0.5 15.6 -2.1' stroke-width='2.5'/%3E%3Cpath d='M-9.4 1.05L15.7 0.35' stroke-width='1.7'/%3E%3Cpath d='M15.2 -2.65L17.3 -2.55L17.5 -1.85L16.3 0.75L15.3 0.75Z' stroke-width='1.1'/%3E%3Cpath d='M-13.6 -1.45L-9.1 -1.45L-9.5 1.75L-12.9 1.75Z' stroke-width='1.1'/%3E%3Crect x='-17.1' y='-2.35' width='2.4' height='1.6' rx='.5' stroke-width='1.4'/%3E%3C/g%3E%3Cpath d='M-9.4 1.05L15.7 0.35' stroke='%23EFE7D4' stroke-width='.75' stroke-linecap='round'/%3E%3Cpath d='M-15.2 -1.9Q0 -0.5 15.6 -2.1' stroke='%235E2410' stroke-width='1.35' fill='none' stroke-linecap='round'/%3E%3Cpath d='M-14 -2.25Q0 -1.0 14.8 -2.45' stroke='%23B0623A' stroke-width='.35' fill='none' stroke-linecap='round'/%3E%3Cpath d='M-8.8 -1.55L-4.6 -1.25' stroke='%23C9CDD2' stroke-width='1.6'/%3E%3Cpath d='M-9.6 -1.6L-8.8 -1.55' stroke='%232A1A14' stroke-width='1.7'/%3E%3Cpath d='M15.2 -2.65L17.3 -2.55L17.5 -1.85L16.3 0.75L15.3 0.75Z' fill='%235E2410'/%3E%3Cpath d='M17.35 -2.5L17.5 -1.85L16.35 0.7' stroke='%23F5F0E6' stroke-width='.45' fill='none'/%3E%3Cpath d='M-13.6 -1.45L-9.1 -1.45L-9.5 1.75L-12.9 1.75Z' fill='%23141110'/%3E%3Cpath d='M-9.35 -1.2L-9.75 1.75' stroke='%23D8DCE0' stroke-width='.55'/%3E%3Ccircle cx='-11.3' cy='0' r='.55' fill='%23F3F1EC'/%3E%3Crect x='-17' y='-2.25' width='2.2' height='1.4' rx='.4' fill='%23D0D4D8'/%3E%3Crect x='-16.2' y='-2.25' width='.6' height='1.4' fill='%23141110'/%3E%3C/g%3E%3C/svg%3E") 27 3,auto}}
+
 </style>
 </head>
 <body>
@@ -100,6 +126,7 @@ body.preview{padding-bottom:56px}
   <h1><span class="pk">24</span> doors.</h1>
   <p class="lede">One door a day, 1 to 24 December, at seven in the morning. Games and secret levels, music, stories, things to keep: the night side of this site, one piece at a time.</p>
   <div class="status" id="status" aria-live="polite"></div>
+  <div class="lights" id="lights" aria-hidden="true"></div>
   <div class="grid" id="grid" role="list"></div>
   <div class="legend"><span><i class="p"></i>Today</span><span><i></i>Open, not yet seen</span><span>Opens 07:00 Berlin time</span></div>
   <div class="ig">
@@ -108,6 +135,8 @@ body.preview{padding-bottom:56px}
   </div>
   <div class="foot"><a href="../#night">sethschwarz.com</a><a href="../#book">Book a show</a><a class="r" href="../impressum/">Impressum</a><a href="../datenschutz/">Datenschutz</a></div>
 </div>
+<canvas id="snow" aria-hidden="true"></canvas>
+<div id="bowfx" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" overflow="visible"><defs><filter id="ledGlow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="0.8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><g transform='translate(16 16) rotate(-45)'><g class='body'><g stroke='#E4007C' stroke-opacity='.5' stroke-linecap='round' stroke-linejoin='round' fill='none'><path d='M-15.2 -1.9Q0 -0.5 15.6 -2.1' stroke-width='2.5'/><path d='M-9.4 1.05L15.7 0.35' stroke-width='1.7'/><path d='M15.2 -2.65L17.3 -2.55L17.5 -1.85L16.3 0.75L15.3 0.75Z' stroke-width='1.1'/><path d='M-13.6 -1.45L-9.1 -1.45L-9.5 1.75L-12.9 1.75Z' stroke-width='1.1'/><rect x='-17.1' y='-2.35' width='2.4' height='1.6' rx='.5' stroke-width='1.4'/></g><path d='M-9.4 1.05L15.7 0.35' stroke='#EFE7D4' stroke-width='.75' stroke-linecap='round'/><path d='M-15.2 -1.9Q0 -0.5 15.6 -2.1' stroke='#5E2410' stroke-width='1.35' fill='none' stroke-linecap='round'/><path d='M-14 -2.25Q0 -1.0 14.8 -2.45' stroke='#B0623A' stroke-width='.35' fill='none' stroke-linecap='round'/><path d='M-8.8 -1.55L-4.6 -1.25' stroke='#C9CDD2' stroke-width='1.6'/><path d='M-9.6 -1.6L-8.8 -1.55' stroke='#2A1A14' stroke-width='1.7'/><path d='M15.2 -2.65L17.3 -2.55L17.5 -1.85L16.3 0.75L15.3 0.75Z' fill='#5E2410'/><path d='M17.35 -2.5L17.5 -1.85L16.35 0.7' stroke='#F5F0E6' stroke-width='.45' fill='none'/><path d='M-13.6 -1.45L-9.1 -1.45L-9.5 1.75L-12.9 1.75Z' fill='#141110'/><path d='M-9.35 -1.2L-9.75 1.75' stroke='#D8DCE0' stroke-width='.55'/><circle cx='-11.3' cy='0' r='.55' fill='#F3F1EC'/><rect x='-17' y='-2.25' width='2.2' height='1.4' rx='.4' fill='#D0D4D8'/><rect x='-16.2' y='-2.25' width='.6' height='1.4' fill='#141110'/></g><g class='leds' filter='url(#ledGlow)'><circle class="led" cx="-6.04" cy="-1.33" r="0.62"/><circle class="led" cx="-4.58" cy="-1.29" r="0.62"/><circle class="led" cx="-3.11" cy="-1.26" r="0.62"/><circle class="led" cx="-1.64" cy="-1.25" r="0.62"/><circle class="led" cx="-0.16" cy="-1.25" r="0.62"/><circle class="led" cx="1.31" cy="-1.26" r="0.62"/><circle class="led" cx="2.79" cy="-1.29" r="0.62"/><circle class="led" cx="4.27" cy="-1.33" r="0.62"/><circle class="led" cx="5.75" cy="-1.39" r="0.62"/><circle class="led" cx="7.23" cy="-1.46" r="0.62"/><circle class="led" cx="8.71" cy="-1.54" r="0.62"/><circle class="led" cx="10.20" cy="-1.63" r="0.62"/><circle class="led" cx="11.68" cy="-1.75" r="0.62"/><circle class="led" cx="13.17" cy="-1.87" r="0.62"/><circle class="led" cx="14.66" cy="-2.01" r="0.62"/></g></g></svg></div>
 <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="ct"><div class="card" id="card"></div></div>
 <script type="application/json" id="doors">[{"n":1,"date":"2026-12-01","dlabel":"Tue 1 Dec","kind":"S","kname":"Story","title":"189 cities","line":"Every city I have played, one dot each, on a globe you can turn.","href":"../#nWorld","act":"Spin the globe","how":"","dl":false},{"n":2,"date":"2026-12-02","dlabel":"Wed 2 Dec","kind":"F","kname":"To keep","title":"For your phone","line":"A lock screen for the night side. Free to keep.","href":"wallpaper-night.jpg","act":"Download the wallpaper","how":"1179 × 2556 pixels, made for the phone.","dl":true},{"n":3,"date":"2026-12-03","dlabel":"Thu 3 Dec","kind":"G","kname":"Game","title":"Insert coin","line":"Three games, one cabinet. Every level plays one of my tracks.","href":"../#nArcade","act":"Insert coin","how":"Choose a game on the start screen.","dl":false},{"n":4,"date":"2026-12-04","dlabel":"Fri 4 Dec","kind":"M","kname":"Music","title":"One minute of a set","line":"Sixty seconds, uncut, from a night of your choosing.","href":"../#nListen","act":"Press play","how":"","dl":false},{"n":5,"date":"2026-12-05","dlabel":"Sat 5 Dec","kind":"S","kname":"Story","title":"Ten records on wax","line":"The releases that came out on vinyl, on one shelf.","href":"../#nMusic","act":"See the releases","how":"","dl":false},{"n":6,"date":"2026-12-06","dlabel":"Sun 6 Dec","kind":"G","kname":"Game","title":"Sakhalin mode","line":"Run a zone without a single hit. Wax wings.","href":"../#nArcade","act":"Play The Playa Runner","how":"Game 02, The Playa Runner.","dl":false},{"n":7,"date":"2026-12-07","dlabel":"Mon 7 Dec","kind":"G","kname":"Game","title":"WAXWING","line":"The one art car that flies. Ride it for a row of golden vinyl.","href":"../#nArcade","act":"Find WAXWING","how":"Game 02, The Playa Runner.","dl":false},{"n":8,"date":"2026-12-08","dlabel":"Tue 8 Dec","kind":"S","kname":"Story","title":"Twenty burns","line":"Nine Burning Man, ten AfrikaBurn, one Midburn.","href":"../#nPlaya","act":"Walk the playa","how":"","dl":false},{"n":9,"date":"2026-12-09","dlabel":"Wed 9 Dec","kind":"G","kname":"Game","title":"The golden record","line":"Every few minutes a golden record leaves the Earth. Tap it.","href":"../#nWorld","act":"Watch the globe","how":"It swings once round the moon. Tap it, and it takes you to Game 03.","dl":false},{"n":10,"date":"2026-12-10","dlabel":"Thu 10 Dec","kind":"G","kname":"Game","title":"Singularity","line":"Game 03 ends in a black hole. Set its mass.","href":"../#nArcade","act":"Fly into the hole","how":"Game 03. Catch the golden violin, then set the mass of the hole on the start screen.","dl":false},{"n":11,"date":"2026-12-11","dlabel":"Fri 11 Dec","kind":"M","kname":"Music","title":"Burning Man, uncut","line":"A few minutes from the playa.","href":"../#nListen","act":"Press play","how":"","dl":false},{"n":12,"date":"2026-12-12","dlabel":"Sat 12 Dec","kind":"M","kname":"Music","title":"Elves of Karoo","line":"The track today. The game tomorrow.","href":"../#nMusic","act":"Listen","how":"","dl":false},{"n":13,"date":"2026-12-13","dlabel":"Sun 13 Dec","kind":"G","kname":"Game","title":"All aboard","line":"Ten animals, one boat, the music video as the scene.","href":"../#nElves","act":"All aboard","how":"","dl":false},{"n":14,"date":"2026-12-14","dlabel":"Mon 14 Dec","kind":"F","kname":"To keep","title":"The press kit","line":"Pictures, bio, rider. For promoters and press.","href":"../kits/Seth_Schwarz_Press_Kit_2026.pdf","act":"Download the press kit","how":"Pictures, bio, rider. PDF, about 10 MB.","dl":true},{"n":15,"date":"2026-12-15","dlabel":"Tue 15 Dec","kind":"S","kname":"Story","title":"Stayed","line":"People who planned to walk past.","href":"../#nWatch","act":"Watch","how":"","dl":false},{"n":16,"date":"2026-12-16","dlabel":"Wed 16 Dec","kind":"M","kname":"Music","title":"Create The Universe","line":"The track the arcade keeps time with. With Solidmind, Lydgen and ARTEMIDES.","href":"../#nMusic","act":"Listen","how":"","dl":false},{"n":17,"date":"2026-12-17","dlabel":"Thu 17 Dec","kind":"G","kname":"Game","title":"Canon in Gold","line":"Pachelbel, your own canon, then mine.","href":"../#nArcade","act":"Play the canon","how":"Game 06, right under the arcade.","dl":false},{"n":18,"date":"2026-12-18","dlabel":"Fri 18 Dec","kind":"M","kname":"Music","title":"Sunrise","line":"A violin at first light.","href":"../#nListen","act":"Press play","how":"","dl":false},{"n":19,"date":"2026-12-19","dlabel":"Sat 19 Dec","kind":"G","kname":"Game","title":"One light-day","line":"The far side of the black hole. Your violin is the needle.","href":"../#nArcade","act":"Find the far side","how":"Game 03. Go through the horizon three times.","dl":false},{"n":20,"date":"2026-12-20","dlabel":"Sun 20 Dec","kind":"G","kname":"Game","title":"Sweat Heartz","line":"The hidden game. Its Christmas levels open today.","href":"../#sweatheart","act":"Find the asterisk","how":"On the night side, look for the small pink asterisk behind the wordmark.","dl":false},{"n":21,"date":"2026-12-21","dlabel":"Mon 21 Dec","kind":"S","kname":"Story","title":"Coming home","line":"Hoyerswerda, two years ago tonight.","href":"../#nStory","act":"Read the story","how":"","dl":false},{"n":22,"date":"2026-12-22","dlabel":"Tue 22 Dec","kind":"F","kname":"To keep","title":"Stems","line":"Parts of a track, to play with.","href":"../#nStems","act":"Open the stems","how":"","dl":false},{"n":23,"date":"2026-12-23","dlabel":"Wed 23 Dec","kind":"M","kname":"Music","title":"Constant Unfolding","line":"The first listen. February 2027, on Darkest Hour.","href":"../#nMusic","act":"Listen first","how":"","dl":false},{"n":24,"date":"2026-12-24","dlabel":"Thu 24 Dec","kind":"G","kname":"Game","title":"Christmas level 3","line":"The crowd sings along. Merry Christmas from the night side.","href":"../#sweatheart","act":"Play the Christmas level","how":"Sweat Heartz, the third Christmas level. Play it with whoever is in the room.","dl":false}]</script>
 <script>
@@ -151,12 +180,13 @@ body.preview{padding-bottom:56px}
       var inn = el("div","in"); inn.appendChild(el("div","k", pad(d.n) + " · " + KIND[d.kind])); inn.appendChild(el("div","t", d.title));
       var leaf = el("div","leaf"); leaf.appendChild(el("div","n", pad(d.n)));
       var foot = el("div"); var dd = el("div","d"); var wd = el("span","wd", d.dlabel.slice(0,4)); dd.appendChild(wd); dd.appendChild(document.createTextNode(d.dlabel.slice(4))); foot.appendChild(dd); if (!open) foot.appendChild(el("div","lock")); leaf.appendChild(foot);
+      if (d.n === tn && !(open && seen[d.n])) { leaf.appendChild(el("div","ribbon")); leaf.appendChild(el("div","knot")); }
       b.appendChild(inn); b.appendChild(leaf);
       if (open && !seen[d.n]) b.appendChild(el("span","dot"));
       b.addEventListener("click", onDoor);
       grid.appendChild(b); cards[d.n] = b;
     }
-    drawStatus();
+    drawStatus(); drawLights();
   }
   function left(ms){
     var m = Math.max(0, Math.floor(ms / 60000)), d = Math.floor(m / 1440), h = Math.floor(m % 1440 / 60), mi = m % 60;
@@ -200,6 +230,7 @@ body.preview{padding-bottom:56px}
     var first = !seen[n];
     markSeen(n);
     if (c){ c.className = c.className.replace(/\s*open\b/,"") + " open"; var dot = c.querySelector(".dot"); if (dot) dot.parentNode.removeChild(dot); }
+    if (animate && first && !reduce && c && window.__ssXmas) window.__ssXmas.burst(c);
     var delay = (animate && first && !reduce && c) ? 620 : 0;
     setTimeout(function(){ fill(d); show(); }, delay);
   }
@@ -215,6 +246,30 @@ body.preview{padding-bottom:56px}
     a.href = d.href; if (d.dl) a.setAttribute("download", "");
     acts.appendChild(a); card.appendChild(acts);
     var st = el("div","st"); st.innerHTML = 'Today’s door is in the stories too: <a href="https://www.instagram.com/seth_schwarz/" rel="noopener">@seth_schwarz</a>'; card.appendChild(st);
+  }
+
+  /* ---------- Christmas: the 24 lights (one per door), snow, the LED bow ---------- */
+  var lightsBox = document.getElementById("lights"), bulbs = [];
+  (function(){
+    var W = 1000, H = 64, sw = 4, ns = "http://www.w3.org/2000/svg";
+    var svg = document.createElementNS(ns, "svg"); svg.setAttribute("viewBox", "0 0 " + W + " " + H); svg.setAttribute("preserveAspectRatio", "none");
+    svg.innerHTML = '<defs><filter id="bulbGlow" x="-200%" y="-200%" width="500%" height="500%"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>';
+    function wireY(x){ var seg = W / sw, u = (x % seg) / seg; return 8 + 34 * Math.sin(Math.PI * u); }
+    var d = "M0 8"; for (var x = 4; x <= W; x += 4) d += "L" + x + " " + wireY(x).toFixed(1);
+    var wire = document.createElementNS(ns, "path"); wire.setAttribute("d", d); wire.setAttribute("class", "wire"); svg.appendChild(wire);
+    for (var i = 0; i < 24; i++){
+      var bx = (i + 0.5) * W / 24, by = wireY(bx);
+      var cap = document.createElementNS(ns, "rect"); cap.setAttribute("x", bx - 2.5); cap.setAttribute("y", by - 1); cap.setAttribute("width", 5); cap.setAttribute("height", 5); cap.setAttribute("class", "cap"); svg.appendChild(cap);
+      var e = document.createElementNS(ns, "ellipse"); e.setAttribute("cx", bx); e.setAttribute("cy", by + 11); e.setAttribute("rx", 4.6); e.setAttribute("ry", 7.2);
+      e.setAttribute("class", "b"); e.setAttribute("data-n", i + 1); e.style.animationDelay = (-(i * 0.37) % 3.2).toFixed(2) + "s";
+      e.addEventListener("click", (function(n){ return function(){ if (isOpen(n)) openDoor(n, true); else showLocked(n); }; })(i + 1));
+      svg.appendChild(e); bulbs.push(e);
+    }
+    lightsBox.appendChild(svg);
+  })();
+  function drawLights(){
+    var tn = todayN();
+    for (var i = 0; i < bulbs.length; i++){ var n = i + 1; bulbs[i].setAttribute("class", "b" + (n === tn ? " today" : (isOpen(n) ? " lit" : ""))); }
   }
   sheet.addEventListener("click", function(e){ if (e.target === sheet) hide(); });
   document.addEventListener("keydown", function(e){ if (e.key === "Escape" && sheet.className.indexOf("on") > -1) hide(); });
@@ -236,6 +291,95 @@ body.preview{padding-bottom:56px}
     setLab(); bar.appendChild(lab); bar.appendChild(r); document.body.appendChild(bar);
   }
   window.__ssAdvent = { D: D, todayN: todayN, isOpen: isOpen, open: openDoor, day: function(v){ fake = v; lastT = todayN(); build(); } };
+})();
+</script>
+
+<script>
+/* Christmas layer (item 104): snow over the page, gold sparkles when a door opens, the LED bow as the cursor.
+   Runs only while the tab is visible; "Reduce motion" keeps a still bow cursor and no snow. ES5. */
+(function(){
+  "use strict";
+  var calm = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var fine = window.matchMedia && window.matchMedia("(pointer: fine)").matches;
+  var cv = document.getElementById("snow"), cx = cv.getContext("2d"), W = 0, H = 0, dpr = 1;
+  var flakes = [], sparks = [], mx = -999, my = -999, raf = 0, last = 0, T = 0;
+  function size(){ dpr = Math.min(2, window.devicePixelRatio || 1); W = window.innerWidth; H = window.innerHeight;
+    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); cx.setTransform(dpr, 0, 0, dpr, 0, 0); }
+  function flake(top){ var r = Math.random(); return { x: Math.random() * W, y: top ? -10 - Math.random() * 40 : Math.random() * H,
+    r: r < .7 ? .8 + Math.random() * 1.4 : 2 + Math.random() * 1.8, star: r > .9, vy: 14 + Math.random() * 26, ph: Math.random() * 6.28,
+    amp: 6 + Math.random() * 14, a: .35 + Math.random() * .45, rot: Math.random() * 6.28 }; }
+  function star(f){ cx.save(); cx.translate(f.x, f.y); cx.rotate(f.rot); cx.strokeStyle = "rgba(255,255,255," + f.a + ")"; cx.lineWidth = .9;
+    cx.beginPath(); for (var k = 0; k < 3; k++){ var a = k * Math.PI / 3, L = f.r * 2.2; cx.moveTo(-Math.cos(a) * L, -Math.sin(a) * L); cx.lineTo(Math.cos(a) * L, Math.sin(a) * L); } cx.stroke(); cx.restore(); }
+  function tick(now){
+    raf = 0; if (document.hidden) return;
+    var dt = Math.min(0.05, (now - (last || now)) / 1000); last = now; T += dt;
+    cx.clearRect(0, 0, W, H);
+    var wind = Math.sin(T * 0.13) * 10;
+    for (var i = 0; i < flakes.length; i++){
+      var f = flakes[i]; f.y += f.vy * dt; f.ph += dt * 0.9; f.rot += dt * 0.4;
+      var x = f.x + Math.sin(f.ph) * f.amp + wind * (f.r / 3);
+      var dx = x - mx, dy = f.y - my, d2 = dx * dx + dy * dy;
+      if (d2 < 4900){ var d = Math.sqrt(d2) || 1, push = (70 - d) / 70; f.x += dx / d * push * 90 * dt; f.y += dy / d * push * 40 * dt; }
+      if (f.y > H + 10 || x < -30 || x > W + 30){ flakes[i] = flake(true); continue; }
+      if (f.star){ var sx = f.x; f.x = x; star(f); f.x = sx; }
+      else { cx.fillStyle = "rgba(255,255,255," + f.a + ")"; cx.beginPath(); cx.arc(x, f.y, f.r, 0, 6.2832); cx.fill(); }
+    }
+    for (var j = sparks.length - 1; j >= 0; j--){
+      var p = sparks[j]; p.t += dt; if (p.t > p.life){ sparks.splice(j, 1); continue; }
+      p.vy += 260 * dt; p.x += p.vx * dt; p.y += p.vy * dt; var k = 1 - p.t / p.life;
+      cx.fillStyle = p.c.replace("A", (k * .95).toFixed(3)); cx.beginPath(); cx.arc(p.x, p.y, p.r * (0.5 + k * 0.5), 0, 6.2832); cx.fill();
+    }
+    raf = requestAnimationFrame(tick);
+  }
+  function go(){ if (!raf && !document.hidden) { last = 0; raf = requestAnimationFrame(tick); } }
+  if (!calm){
+    size(); var N = Math.round(Math.min(110, Math.max(40, W * H / 14000)));
+    for (var i = 0; i < N; i++) flakes.push(flake(false));
+    window.addEventListener("resize", size);
+    document.addEventListener("visibilitychange", go);
+    go();
+  }
+  window.__ssXmas = { burst: function(el){
+    if (calm) return; var r = el.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height * .42;
+    for (var i = 0; i < 46; i++){ var a = Math.random() * 6.2832, v = 90 + Math.random() * 260;
+      sparks.push({ x: x, y: y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 120, r: 1.2 + Math.random() * 2.2, t: 0, life: .7 + Math.random() * .6,
+        c: Math.random() < .75 ? "rgba(255,211,107,A)" : "rgba(255,255,255,A)" }); }
+    scan(); go();
+  }, flakes: function(){ return flakes.length; } };
+
+  /* the LED bow: the same bow as on the night side of sethschwarz.com (source/_bow.py, _bowfx.py) */
+  var fx = document.getElementById("bowfx"), root = document.documentElement, leds = fx ? fx.querySelectorAll(".led") : [], NL = leds.length;
+  var bx = -100, by = -100, shown = false, scanT = -9, braf = 0, tapHide = 0;
+  function place(){ fx.style.left = (bx - 27) + "px"; fx.style.top = (by - 3) + "px"; }
+  function scan(){ scanT = performance.now(); if (!braf) braf = requestAnimationFrame(bow); }
+  function bow(now){
+    braf = 0; if (!shown || calm) return;
+    var k = (now - scanT) / 1100, hot = k >= 0 && k < 1;
+    var pop = hot ? (k < .15 ? k / .15 : (k > .8 ? (1 - k) / .2 : 1)) : 0;
+    fx.style.transform = "scale(" + (1 + .55 * pop).toFixed(3) + ")";
+    var pos = hot ? ((k * 2) % 2 < 1 ? (k * 2) % 2 : 2 - (k * 2) % 2) * (NL - 1) : -9, drift = now / 22;
+    for (var i = 0; i < NL; i++){
+      var b = hot ? Math.max(0, 1 - Math.abs(i - pos) / 3.2) : 0, hue = (i / (NL - 1) * 300 + drift) % 360;
+      var c = leds[i]; c.style.fill = "hsl(" + hue.toFixed(0) + ",100%," + (58 + 22 * b).toFixed(0) + "%)";
+      c.style.opacity = (hot ? .25 + .75 * b : .55).toFixed(3); c.setAttribute("r", (0.62 + 0.7 * b).toFixed(2));
+    }
+    braf = requestAnimationFrame(bow);
+  }
+  if (fx && !calm){
+    document.addEventListener("pointermove", function(ev){
+      if (ev.pointerType === "mouse"){ bx = ev.clientX; by = ev.clientY; mx = bx; my = by; place();
+        if (!shown){ shown = true; fx.style.opacity = "1"; root.className += " bowon"; } if (!braf) braf = requestAnimationFrame(bow); }
+    }, true);
+    document.addEventListener("pointerdown", function(ev){
+      bx = ev.clientX; by = ev.clientY; mx = bx; my = by; place();
+      if (ev.pointerType !== "mouse"){            /* phone: the bow shows up where you tap, scans once and goes */
+        shown = true; fx.style.opacity = "1"; clearTimeout(tapHide);
+        tapHide = setTimeout(function(){ fx.style.opacity = "0"; shown = false; mx = my = -999; }, 1200);
+      }
+      scan();
+    }, true);
+    document.documentElement.addEventListener("mouseleave", function(){ fx.style.opacity = "0"; shown = false; mx = my = -999; root.className = root.className.replace(/\s*bowon\b/, ""); });
+  }
 })();
 </script>
 </body>
