@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>24 doors · Seth Schwarz · Advent 2026</title>
+<meta name="description" content="One door a day, 1 to 24 December, at seven in the morning. Games and secret levels, music, stories, things to keep.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="24 doors · Seth Schwarz">
+<meta property="og:description" content="One door a day, 1 to 24 December. Games, music, stories, things to keep.">
+<meta property="og:image" content="https://sethschwarz.com/advent/og.jpg">
+<meta property="og:url" content="https://sethschwarz.com/advent/">
+<meta name="theme-color" content="#000000">
+<link rel="icon" href="../favicon.png">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<style>
+@font-face{font-family:"Ballet Mecanique";src:url(ballet.woff2) format("woff2");font-display:swap}
+@font-face{font-family:"Chivo";font-weight:100 900;src:url(../fonts/chivo-latin-wght-normal.woff2) format("woff2");font-display:swap}
+@font-face{font-family:"Inter";font-weight:100 900;src:url(../fonts/inter-latin-wght-normal.woff2) format("woff2");font-display:swap}
+@font-face{font-family:"IBM Plex Mono";font-weight:400;src:url(../fonts/ibm-plex-mono-latin-400-normal.woff2) format("woff2");font-display:swap}
+@font-face{font-family:"IBM Plex Mono";font-weight:500;src:url(../fonts/ibm-plex-mono-latin-500-normal.woff2) format("woff2");font-display:swap}
+:root{--ink:#000;--paper:#fff;--pink:#E4007C;--tint:#F7C6DD;--gold:#FFD36B;--line:#222;--soft:#bdbdbd;--mute:#8a8a8a;
+--ballet:"Ballet Mecanique",Impact,sans-serif;--chivo:"Chivo",system-ui,sans-serif;--inter:"Inter",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:#000;-webkit-text-size-adjust:100%}
+body{background:#000;color:#fff;font:400 16px/1.55 var(--inter);min-height:100vh;
+background-image:radial-gradient(1px 1px at 12% 18%,rgba(255,255,255,.35),transparent 60%),radial-gradient(1px 1px at 78% 9%,rgba(255,255,255,.28),transparent 60%),radial-gradient(1px 1px at 41% 31%,rgba(255,211,107,.35),transparent 60%),radial-gradient(1px 1px at 91% 44%,rgba(255,255,255,.22),transparent 60%),radial-gradient(1px 1px at 6% 63%,rgba(255,255,255,.22),transparent 60%),radial-gradient(1px 1px at 58% 72%,rgba(255,255,255,.18),transparent 60%);background-attachment:fixed}
+a{color:inherit}
+.wrap{max-width:1120px;margin:0 auto;padding:0 28px}
+.top{display:flex;justify-content:space-between;align-items:center;padding:26px 0 0;font:500 12px/1 var(--mono);letter-spacing:.24em;text-transform:uppercase}
+.top a{text-decoration:none;color:var(--mute)}.top a:hover{color:#fff}
+.top .home{color:#fff}
+h1{font-family:var(--ballet);font-weight:400;font-size:clamp(84px,15vw,190px);line-height:.84;letter-spacing:.005em;margin:54px 0 0}
+h1 .pk{color:var(--pink)}
+.lede{max-width:640px;margin:34px 0 0;font-size:clamp(17px,2.1vw,20px);color:#d9d9d9}
+.status{margin:30px 0 0;display:flex;flex-wrap:wrap;gap:14px 22px;align-items:center;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:16px 0}
+.status .s{font:500 13px/1.4 var(--mono);letter-spacing:.2em;text-transform:uppercase}
+.status .s b{font-weight:500;color:var(--pink)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:46px;padding:0 22px;border:1px solid #fff;background:transparent;color:#fff;font:500 13px/1 var(--mono);letter-spacing:.2em;text-transform:uppercase;text-decoration:none;cursor:pointer;border-radius:0}
+.btn:hover{background:#fff;color:#000}
+.btn.pk{background:var(--pink);border-color:var(--pink)}.btn.pk:hover{background:#fff;border-color:#fff;color:#000}
+.btn:focus-visible,.door:focus-visible,.x:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;margin:34px 0 0}
+.door{position:relative;aspect-ratio:4/5;border:1px solid var(--line);background:#070707;color:#fff;cursor:pointer;text-align:left;font:inherit;perspective:900px;overflow:hidden;border-radius:0;padding:0}
+.door .in{position:absolute;inset:0;padding:12px;display:flex;flex-direction:column;justify-content:flex-end;background:#0c0c0c}
+.door .in .k{font:500 10px/1.2 var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--mute)}
+.door .in .t{font:600 15px/1.18 var(--chivo);margin-top:6px}
+.door .leaf{position:absolute;inset:0;background:#050505;border-right:1px solid #1a1a1a;padding:12px;display:flex;flex-direction:column;justify-content:space-between;transform-origin:left center;transition:transform .75s cubic-bezier(.3,.7,.2,1);backface-visibility:hidden;-webkit-backface-visibility:hidden;z-index:2}
+.door .n{font-family:var(--ballet);font-size:clamp(44px,6vw,72px);line-height:.85;color:#fff}
+.door .d{font:500 10px/1.2 var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--mute)}
+.door.locked .n{color:#3a3a3a}.door.locked .d{color:#4a4a4a}
+.door.locked{cursor:default}
+.door.open .leaf{transform:rotateY(-104deg)}
+.door.open{border-color:#333}
+.door.today{border-color:var(--pink)}
+.door.today .leaf .n{color:var(--pink)}
+.door.today:not(.open) .leaf{box-shadow:inset 0 0 40px rgba(228,0,124,.18)}
+.door .dot{position:absolute;top:12px;right:12px;width:7px;height:7px;border-radius:50%;background:var(--gold);z-index:3}
+.door .lock{width:12px;height:12px;border:1.5px solid #3a3a3a;border-radius:2px;position:relative;margin-top:4px}
+.door .lock:before{content:"";position:absolute;left:1.5px;right:1.5px;top:-6px;height:6px;border:1.5px solid #3a3a3a;border-bottom:0;border-radius:5px 5px 0 0}
+.door.today:not(.open) .leaf{animation:breathe 4s ease-in-out infinite}
+@keyframes breathe{50%{box-shadow:inset 0 0 60px rgba(228,0,124,.32)}}
+.legend{display:flex;flex-wrap:wrap;gap:8px 22px;margin:22px 0 0;font:500 11px/1.4 var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--mute)}
+.legend i{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--gold);margin-right:8px;vertical-align:1px}
+.legend i.p{background:none;border:1px solid var(--pink);border-radius:0;width:9px;height:9px}
+.ig{margin:56px 0 0;border:1px solid var(--line);padding:26px;display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center}
+.ig h2{font:600 26px/1.15 var(--chivo);letter-spacing:-.01em}
+.ig p{color:var(--soft);margin-top:6px;max-width:560px}
+.foot{margin:56px 0 0;padding:22px 0 40px;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:12px 26px;font:500 11px/1.4 var(--mono);letter-spacing:.2em;text-transform:uppercase;color:var(--mute)}
+.foot a{text-decoration:none}.foot a:hover{color:#fff}
+.foot .r{margin-left:auto}
+/* panel */
+.sheet{position:fixed;inset:0;z-index:20;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.78);padding:22px}
+.sheet.on{display:flex}
+.card{position:relative;width:min(560px,100%);max-height:calc(100vh - 44px);overflow:auto;background:#050505;border:1px solid #2a2a2a;padding:34px 32px 30px;animation:rise .5s cubic-bezier(.3,.7,.2,1)}
+@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.card .x{position:absolute;top:10px;right:10px;width:44px;height:44px;border:0;background:none;color:var(--mute);font:400 26px/1 var(--inter);cursor:pointer}
+.card .x:hover{color:#fff}
+.card .lab{font:500 11px/1.4 var(--mono);letter-spacing:.22em;text-transform:uppercase;color:var(--mute)}
+.card .big{font-family:var(--ballet);font-size:150px;line-height:.82;color:var(--pink);margin:18px 0 0}
+.card h3{font:600 34px/1.08 var(--chivo);letter-spacing:-.015em;margin:20px 0 0}
+.card .line{font-size:18px;color:#ddd;margin:12px 0 0}
+.card .how{font-size:15px;color:var(--mute);margin:10px 0 0}
+.card .acts{display:flex;flex-wrap:wrap;gap:12px;margin:26px 0 0}
+.card .st{margin:24px 0 0;padding-top:16px;border-top:1px solid var(--line);font:500 11px/1.6 var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--mute)}
+.card .st a{color:var(--tint);text-decoration:none}
+.test{position:fixed;left:0;right:0;bottom:0;z-index:30;background:#111;border-top:1px solid #333;padding:10px 16px;display:flex;gap:14px;align-items:center;font:500 11px/1.3 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:#bbb}
+.test input{flex:1;max-width:420px;accent-color:#E4007C}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media (max-width:860px){.grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.ig{grid-template-columns:1fr}}
+@media (max-width:520px){.wrap{padding:0 16px}.grid{gap:8px}.door .leaf,.door .in{padding:9px}.door .in .t{font-size:13px}.door .d,.door .in .k{font-size:9px;letter-spacing:.12em}
+.top{font-size:10.5px;letter-spacing:.18em}.door .wd{display:none}.card{padding:30px 22px 24px}.card .big{font-size:120px}.card h3{font-size:28px}.foot .r{margin-left:0}}
+@media (prefers-reduced-motion:reduce){.door .leaf{transition:none}.door.today:not(.open) .leaf{animation:none}.card{animation:none}}
+body.preview{padding-bottom:56px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><a class="home" href="../#night">Seth Schwarz</a><a href="https://www.instagram.com/seth_schwarz/" rel="noopener">@seth_schwarz</a></div>
+  <h1><span class="pk">24</span> doors.</h1>
+  <p class="lede">One door a day, 1 to 24 December, at seven in the morning. Games and secret levels, music, stories, things to keep: the night side of this site, one piece at a time.</p>
+  <div class="status" id="status" aria-live="polite"></div>
+  <div class="grid" id="grid" role="list"></div>
+  <div class="legend"><span><i class="p"></i>Today</span><span><i></i>Open, not yet seen</span><span>Opens 07:00 Berlin time</span></div>
+  <div class="ig">
+    <div><h2>Every door is a story too.</h2><p>Each morning the door of the day goes up on Instagram first, with a link back here. On Thursdays and Sundays a post on one of the games follows in the evening.</p></div>
+    <a class="btn" href="https://www.instagram.com/seth_schwarz/" rel="noopener">Follow @seth_schwarz</a>
+  </div>
+  <div class="foot"><a href="../#night">sethschwarz.com</a><a href="../#book">Book a show</a><a class="r" href="../impressum/">Impressum</a><a href="../datenschutz/">Datenschutz</a></div>
+</div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="ct"><div class="card" id="card"></div></div>
+<script type="application/json" id="doors">[{"n":1,"date":"2026-12-01","dlabel":"Tue 1 Dec","kind":"S","kname":"Story","title":"189 cities","line":"Every city I have played, one dot each, on a globe you can turn.","href":"../#nWorld","act":"Spin the globe","how":"","dl":false},{"n":2,"date":"2026-12-02","dlabel":"Wed 2 Dec","kind":"F","kname":"To keep","title":"For your phone","line":"A lock screen for the night side. Free to keep.","href":"wallpaper-night.jpg","act":"Download the wallpaper","how":"1179 × 2556 pixels, made for the phone.","dl":true},{"n":3,"date":"2026-12-03","dlabel":"Thu 3 Dec","kind":"G","kname":"Game","title":"Insert coin","line":"Three games, one cabinet. Every level plays one of my tracks.","href":"../#nArcade","act":"Insert coin","how":"Choose a game on the start screen.","dl":false},{"n":4,"date":"2026-12-04","dlabel":"Fri 4 Dec","kind":"M","kname":"Music","title":"One minute of a set","line":"Sixty seconds, uncut, from a night of your choosing.","href":"../#nListen","act":"Press play","how":"","dl":false},{"n":5,"date":"2026-12-05","dlabel":"Sat 5 Dec","kind":"S","kname":"Story","title":"Ten records on wax","line":"The releases that came out on vinyl, on one shelf.","href":"../#nMusic","act":"See the releases","how":"","dl":false},{"n":6,"date":"2026-12-06","dlabel":"Sun 6 Dec","kind":"G","kname":"Game","title":"Sakhalin mode","line":"Run a zone without a single hit. Wax wings.","href":"../#nArcade","act":"Play The Playa Runner","how":"Game 02, The Playa Runner.","dl":false},{"n":7,"date":"2026-12-07","dlabel":"Mon 7 Dec","kind":"G","kname":"Game","title":"WAXWING","line":"The one art car that flies. Ride it for a row of golden vinyl.","href":"../#nArcade","act":"Find WAXWING","how":"Game 02, The Playa Runner.","dl":false},{"n":8,"date":"2026-12-08","dlabel":"Tue 8 Dec","kind":"S","kname":"Story","title":"Twenty burns","line":"Nine Burning Man, ten AfrikaBurn, one Midburn.","href":"../#nPlaya","act":"Walk the playa","how":"","dl":false},{"n":9,"date":"2026-12-09","dlabel":"Wed 9 Dec","kind":"G","kname":"Game","title":"The golden record","line":"Every few minutes a golden record leaves the Earth. Tap it.","href":"../#nWorld","act":"Watch the globe","how":"It swings once round the moon. Tap it, and it takes you to Game 03.","dl":false},{"n":10,"date":"2026-12-10","dlabel":"Thu 10 Dec","kind":"G","kname":"Game","title":"Singularity","line":"Game 03 ends in a black hole. Set its mass.","href":"../#nArcade","act":"Fly into the hole","how":"Game 03. Catch the golden violin, then set the mass of the hole on the start screen.","dl":false},{"n":11,"date":"2026-12-11","dlabel":"Fri 11 Dec","kind":"M","kname":"Music","title":"Burning Man, uncut","line":"A few minutes from the playa.","href":"../#nListen","act":"Press play","how":"","dl":false},{"n":12,"date":"2026-12-12","dlabel":"Sat 12 Dec","kind":"M","kname":"Music","title":"Elves of Karoo","line":"The track today. The game tomorrow.","href":"../#nMusic","act":"Listen","how":"","dl":false},{"n":13,"date":"2026-12-13","dlabel":"Sun 13 Dec","kind":"G","kname":"Game","title":"All aboard","line":"Ten animals, one boat, the music video as the scene.","href":"../#nElves","act":"All aboard","how":"","dl":false},{"n":14,"date":"2026-12-14","dlabel":"Mon 14 Dec","kind":"F","kname":"To keep","title":"The press kit","line":"Pictures, bio, rider. For promoters and press.","href":"../kits/Seth_Schwarz_Press_Kit_2026.pdf","act":"Download the press kit","how":"Pictures, bio, rider. PDF, about 10 MB.","dl":true},{"n":15,"date":"2026-12-15","dlabel":"Tue 15 Dec","kind":"S","kname":"Story","title":"Stayed","line":"People who planned to walk past.","href":"../#nWatch","act":"Watch","how":"","dl":false},{"n":16,"date":"2026-12-16","dlabel":"Wed 16 Dec","kind":"M","kname":"Music","title":"Create The Universe","line":"The track the arcade keeps time with. With Solidmind, Lydgen and ARTEMIDES.","href":"../#nMusic","act":"Listen","how":"","dl":false},{"n":17,"date":"2026-12-17","dlabel":"Thu 17 Dec","kind":"G","kname":"Game","title":"Canon in Gold","line":"Pachelbel, your own canon, then mine.","href":"../#nArcade","act":"Play the canon","how":"Game 06, right under the arcade.","dl":false},{"n":18,"date":"2026-12-18","dlabel":"Fri 18 Dec","kind":"M","kname":"Music","title":"Sunrise","line":"A violin at first light.","href":"../#nListen","act":"Press play","how":"","dl":false},{"n":19,"date":"2026-12-19","dlabel":"Sat 19 Dec","kind":"G","kname":"Game","title":"One light-day","line":"The far side of the black hole. Your violin is the needle.","href":"../#nArcade","act":"Find the far side","how":"Game 03. Go through the horizon three times.","dl":false},{"n":20,"date":"2026-12-20","dlabel":"Sun 20 Dec","kind":"G","kname":"Game","title":"Sweat Heartz","line":"The hidden game. Its Christmas levels open today.","href":"../#sweatheart","act":"Find the asterisk","how":"On the night side, look for the small pink asterisk behind the wordmark.","dl":false},{"n":21,"date":"2026-12-21","dlabel":"Mon 21 Dec","kind":"S","kname":"Story","title":"Coming home","line":"Hoyerswerda, two years ago tonight.","href":"../#nStory","act":"Read the story","how":"","dl":false},{"n":22,"date":"2026-12-22","dlabel":"Tue 22 Dec","kind":"F","kname":"To keep","title":"Stems","line":"Parts of a track, to play with.","href":"../#nStems","act":"Open the stems","how":"","dl":false},{"n":23,"date":"2026-12-23","dlabel":"Wed 23 Dec","kind":"M","kname":"Music","title":"Constant Unfolding","line":"The first listen. February 2027, on Darkest Hour.","href":"../#nMusic","act":"Listen first","how":"","dl":false},{"n":24,"date":"2026-12-24","dlabel":"Thu 24 Dec","kind":"G","kname":"Game","title":"Christmas level 3","line":"The crowd sings along. Merry Christmas from the night side.","href":"../#sweatheart","act":"Play the Christmas level","how":"Sweat Heartz, the third Christmas level. Play it with whoever is in the room.","dl":false}]</script>
+<script>
+(function(){
+  "use strict";
+  var D = JSON.parse(document.getElementById("doors").textContent);
+  var SITE = "../", PREVIEW = false;
+  /* Doors open at 07:00 in Berlin. In December Berlin is UTC+1 all month, so 07:00 there is 06:00 UTC. */
+  var YEAR = 2026;
+  function opensAt(n){ return Date.UTC(YEAR, 11, n, 6, 0, 0); }
+  var ORDER = [13,4,20,9,1,17,6,22,11,2,15,24,8,19,3,12,23,7,16,10,21,5,18,14];
+  var KIND = {G:"Game", M:"Music", S:"Story", F:"To keep"};
+  var fake = null;
+  (function(){
+    var m = /[?&]day=(\d+)/.exec(location.search);
+    if (m) fake = parseInt(m[1], 10);
+  })();
+  function now(){
+    if (fake !== null) return fake <= 0 ? Date.UTC(YEAR,10,30,12) : (fake > 24 ? Date.UTC(YEAR,11,26,12) : Date.UTC(YEAR,11,fake,12));
+    return Date.now();
+  }
+  function isOpen(n){ return now() >= opensAt(n); }
+  function todayN(){ var t = now(), n = 0; for (var i = 1; i <= 24; i++) if (t >= opensAt(i)) n = i; return n; }
+  var seen = {};
+  try { var s = JSON.parse(localStorage.getItem("ss-advent-seen") || "[]"); for (var i = 0; i < s.length; i++) seen[s[i]] = 1; } catch(e) {}
+  function markSeen(n){ seen[n] = 1; try { var a = []; for (var k in seen) if (seen.hasOwnProperty(k)) a.push(+k); localStorage.setItem("ss-advent-seen", JSON.stringify(a)); } catch(e) {} }
+  function pad(n){ return (n < 10 ? "0" : "") + n; }
+  function el(t, c, x){ var e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; }
+  function byN(n){ for (var i = 0; i < D.length; i++) if (D[i].n === n) return D[i]; return null; }
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  var grid = document.getElementById("grid"), status = document.getElementById("status"), cards = {};
+  function build(){
+    grid.innerHTML = "";
+    var tn = todayN();
+    for (var i = 0; i < ORDER.length; i++){
+      var d = byN(ORDER[i]), open = isOpen(d.n);
+      var b = el("button", "door" + (open ? "" : " locked") + (d.n === tn ? " today" : "") + (open && seen[d.n] ? " open" : ""));
+      b.type = "button"; b.setAttribute("role","listitem"); b.setAttribute("data-n", d.n);
+      b.setAttribute("aria-label", "Door " + d.n + ", " + d.dlabel + (open ? ": " + d.title : ", opens at 07:00"));
+      var inn = el("div","in"); inn.appendChild(el("div","k", pad(d.n) + " · " + KIND[d.kind])); inn.appendChild(el("div","t", d.title));
+      var leaf = el("div","leaf"); leaf.appendChild(el("div","n", pad(d.n)));
+      var foot = el("div"); var dd = el("div","d"); var wd = el("span","wd", d.dlabel.slice(0,4)); dd.appendChild(wd); dd.appendChild(document.createTextNode(d.dlabel.slice(4))); foot.appendChild(dd); if (!open) foot.appendChild(el("div","lock")); leaf.appendChild(foot);
+      b.appendChild(inn); b.appendChild(leaf);
+      if (open && !seen[d.n]) b.appendChild(el("span","dot"));
+      b.addEventListener("click", onDoor);
+      grid.appendChild(b); cards[d.n] = b;
+    }
+    drawStatus();
+  }
+  function left(ms){
+    var m = Math.max(0, Math.floor(ms / 60000)), d = Math.floor(m / 1440), h = Math.floor(m % 1440 / 60), mi = m % 60;
+    return (d ? d + " d " : "") + (d || h ? h + " h " : "") + mi + " min";
+  }
+  function drawStatus(){
+    status.innerHTML = "";
+    var tn = todayN(), s = el("div","s");
+    if (tn === 0){
+      s.innerHTML = "Door <b>01</b> opens Tue 1 Dec, 07:00 · in " + left(opensAt(1) - now());
+      status.appendChild(s);
+    } else if (tn < 24 || now() < Date.UTC(YEAR,11,25,0)){
+      s.innerHTML = "Today · door <b>" + pad(tn) + "</b> · " + byN(tn).dlabel;
+      status.appendChild(s);
+      var b = el("button", "btn pk", "Open today's door"); b.type = "button";
+      b.addEventListener("click", function(){ openDoor(tn, true); });
+      status.appendChild(b);
+      if (tn < 24){ var n2 = el("div","s"); n2.style.color = "#8a8a8a"; n2.textContent = "Next door in " + left(opensAt(tn + 1) - now()); status.appendChild(n2); }
+    } else {
+      s.innerHTML = "All <b>24</b> doors are open. Merry Christmas from the night side.";
+      status.appendChild(s);
+    }
+  }
+  function onDoor(e){ var n = +this.getAttribute("data-n"); if (!isOpen(n)) { showLocked(n); return; } openDoor(n, true); }
+  var sheet = document.getElementById("sheet"), card = document.getElementById("card"), lastFocus = null;
+  function show(){ lastFocus = document.activeElement; sheet.className = "sheet on"; var x = card.querySelector(".x"); if (x) x.focus(); }
+  function hide(){ sheet.className = "sheet"; if (location.hash.indexOf("#d") === 0) { try { history.replaceState(null, "", location.pathname + location.search); } catch(e) {} } if (lastFocus && lastFocus.focus) lastFocus.focus(); }
+  function closeBtn(){ var x = el("button","x","×"); x.type = "button"; x.setAttribute("aria-label","Close"); x.addEventListener("click", hide); return x; }
+  function showLocked(n){
+    var d = byN(n); card.innerHTML = "";
+    card.appendChild(closeBtn());
+    card.appendChild(el("div","lab","Door " + pad(n) + " · " + d.dlabel));
+    var big = el("div","big", pad(n)); big.style.color = "#3a3a3a"; card.appendChild(big);
+    var h = el("h3", null, "Not yet."); h.id = "ct"; card.appendChild(h);
+    card.appendChild(el("p","line","This door opens on " + d.dlabel + " at 07:00, Berlin time. In " + left(opensAt(n) - now()) + "."));
+    var st = el("div","st"); st.innerHTML = 'See it first in the stories: <a href="https://www.instagram.com/seth_schwarz/" rel="noopener">@seth_schwarz</a>'; card.appendChild(st);
+    show();
+  }
+  function openDoor(n, animate){
+    var d = byN(n), c = cards[n];
+    var first = !seen[n];
+    markSeen(n);
+    if (c){ c.className = c.className.replace(/\s*open\b/,"") + " open"; var dot = c.querySelector(".dot"); if (dot) dot.parentNode.removeChild(dot); }
+    var delay = (animate && first && !reduce && c) ? 620 : 0;
+    setTimeout(function(){ fill(d); show(); }, delay);
+  }
+  function fill(d){
+    card.innerHTML = "";
+    card.appendChild(closeBtn());
+    card.appendChild(el("div","lab","Door " + pad(d.n) + " · " + d.dlabel + " · " + KIND[d.kind]));
+    card.appendChild(el("div","big", pad(d.n)));
+    var h = el("h3", null, d.title); h.id = "ct"; card.appendChild(h);
+    card.appendChild(el("p","line", d.line));
+    if (d.how) card.appendChild(el("p","how", d.how));
+    var acts = el("div","acts"), a = el("a","btn pk", d.act);
+    a.href = d.href; if (d.dl) a.setAttribute("download", "");
+    acts.appendChild(a); card.appendChild(acts);
+    var st = el("div","st"); st.innerHTML = 'Today’s door is in the stories too: <a href="https://www.instagram.com/seth_schwarz/" rel="noopener">@seth_schwarz</a>'; card.appendChild(st);
+  }
+  sheet.addEventListener("click", function(e){ if (e.target === sheet) hide(); });
+  document.addEventListener("keydown", function(e){ if (e.key === "Escape" && sheet.className.indexOf("on") > -1) hide(); });
+  function fromHash(){
+    var m = /^#d(\d{1,2})$/.exec(location.hash); if (!m) return;
+    var n = parseInt(m[1], 10); if (n < 1 || n > 24) return;
+    if (isOpen(n)) openDoor(n, false); else showLocked(n);
+  }
+  window.addEventListener("hashchange", fromHash);
+  build(); fromHash();
+  var lastT = todayN();
+  setInterval(function(){ if (todayN() !== lastT) { lastT = todayN(); build(); } else drawStatus(); }, 30000);
+  if (PREVIEW){
+    document.body.className += " preview";
+    var bar = el("div","test"), lab = el("span"), r = el("input");
+    r.type = "range"; r.min = 0; r.max = 25; r.value = fake === null ? todayN() : fake;
+    function setLab(){ var v = +r.value; lab.textContent = "Preview · " + (v === 0 ? "30 Nov" : v > 24 ? "after Christmas" : v + " Dec, noon"); }
+    r.addEventListener("input", function(){ fake = +r.value; setLab(); lastT = todayN(); build(); });
+    setLab(); bar.appendChild(lab); bar.appendChild(r); document.body.appendChild(bar);
+  }
+  window.__ssAdvent = { D: D, todayN: todayN, isOpen: isOpen, open: openDoor, day: function(v){ fake = v; lastT = todayN(); build(); } };
+})();
+</script>
+</body>
+</html>
