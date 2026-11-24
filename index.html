@@ -783,7 +783,7 @@ footer.ft .col{padding-block:26px 34px}
 @media (max-width:760px){.fl-vis{grid-template-columns:1fr}}
 .fl-cv{display:block;width:100%;height:clamp(200px,26vw,280px)}
 .fl-cyw{margin:0;min-width:0}
-.fl-cy{display:block;width:100%;aspect-ratio:1;max-height:340px;border:1px solid var(--line);border-radius:50%}
+.fl-cy{display:block;width:100%;aspect-ratio:1;max-height:340px;border:1px solid var(--line);border-radius:50%} #dLab .fl-cy{border-radius:4px} /* item 105: a square plate is square */
 :root[data-side="day"] .fl-cy{border-radius:2px}
 .fl-cystatic{display:none;width:100%;aspect-ratio:1;max-height:340px;color:var(--accent);border:1px solid var(--line);border-radius:50%;padding:4%;box-sizing:border-box}
 :root[data-side="day"] .fl-cystatic{border-radius:2px;padding:0}
@@ -2826,7 +2826,7 @@ html[lang="hsb"] .kits ul.kits-en{display:none}
     var PN=0, gx=null, gy=null, cyLast=0;
     var SQ=[[1,2],[1,3],[2,3],[1,4],[3,4],[2,5],[3,5],[4,5],[1,6],[5,6],[3,7],[5,7]];
     function cySize(){ CW=Math.round(cy.clientWidth*dpr); if(!CW) return; cy.width=CW; cy.height=CW; PN=CW>500?3200:CW>300?2400:1500; if(coarse) PN=Math.min(PN,1800); scatter(); }
-    function scatter(){ gx=new Float32Array(PN); gy=new Float32Array(PN); for(var i=0;i<PN;i++){ var a=Math.random()*6.283, r=Math.sqrt(Math.random()); gx[i]=Math.cos(a)*r; gy[i]=Math.sin(a)*r; } }
+    function scatter(){ gx=new Float32Array(PN); gy=new Float32Array(PN); for(var i=0;i<PN;i++){ var a=Math.random()*6.283, r=Math.sqrt(Math.random()); if(isDay){ gx[i]=Math.random()*2-1; gy[i]=Math.random()*2-1; } else { gx[i]=Math.cos(a)*r; gy[i]=Math.sin(a)*r; } } }
     function beatNow(t){
       if(snd&&mode==="club") return Math.exp(-((t*f)%1)*6);
       if(snd) return 0.35+0.35*Math.cos(2*Math.PI*f*t);
@@ -2839,10 +2839,11 @@ html[lang="hsb"] .kits ul.kits-en{display:none}
       if(isDay){ n=SQ[k][0]; m=SQ[k][1]; cap.textContent="Chladni plate · mode "+n+"–"+m+" · "+(f<10?f.toFixed(1):Math.round(f))+" Hz"; }
       else { var bar=Math.floor(t*(mode==="club"?f:2.0667)/4); n=3+((k+bar)%5); n2=n*2+((bar>>1)%3); kr=2+(k%4)+((bar>>2)%2); kr2=kr+1.5; rot=t*0.12+0.18*pulse;
         cap.textContent="Mandala · "+n+"-fold · pulsing at "+(mode==="club"||!snd?"124 BPM":(f<10?f.toFixed(1):Math.round(f))+" Hz"); }
-      cc.fillStyle=isDay?"rgba(251,250,246,0.30)":"rgba(6,5,6,0.32)"; cc.fillRect(0,0,CW,CW);
+      /* item 105: the clone's plate */ if(isDay){ cc.fillStyle="rgb(251,250,246)"; } else { cc.fillStyle="rgba(6,5,6,0.32)"; } cc.fillRect(0,0,CW,CW);
       var half=CW/2, sc=half*(isDay?0.96:0.94*(1+0.035*pulse)), base=isDay?0.0012:0.0014, J=isDay?0.05:0.045+0.035*pulse;
       cc.fillStyle=isDay?"rgba(142,111,26,0.85)":(pulse>0.5?"rgba(255,90,170,0.95)":"rgba(228,0,124,0.85)");
-      var sz=Math.max(1,1.15*dpr);
+      var sz=isDay?Math.max(1,0.95*dpr):Math.max(1,1.15*dpr);
+      if(isDay){ cc.strokeStyle="rgba(142,111,26,.25)"; cc.lineWidth=Math.max(1,dpr); cc.strokeRect(half-sc,half-sc,2*sc,2*sc); }
       for(var i=0;i<PN;i++){ var x=gx[i], y=gy[i], v;
         if(isDay){ var X=(x+1)/2, Y=(y+1)/2; v=Math.cos(n*PI*X)*Math.cos(m*PI*Y)-Math.cos(m*PI*X)*Math.cos(n*PI*Y); }
         else { var r=Math.sqrt(x*x+y*y), th=Math.atan2(y,x); v=Math.sin(kr*PI*r)*Math.cos(n*th+rot)+0.3*Math.sin(kr2*PI*r)*Math.cos(n2*th-rot*1.4); }
@@ -9059,6 +9060,59 @@ window.__ssSweatheartGame={S:S,press:press,now:now,start:startSet,open:open,clos
 })();
 </script>
 <!-- bridge: end -->
+<!-- strings: start -->
+<style>
+/* Item 105 (24 Nov 2026): the strings from the clone test's top, on the day side's hero. Twelve lines that sway like
+   bowed strings and lean towards the pointer. Source: source/klon105/strings.html · put in by source/klon105/apply.py */
+#day .hero .hs{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;display:block}
+#day .hero .col{position:relative;z-index:1}
+</style>
+<script>
+(function(){
+  var hero=document.querySelector("#day .hero"); if(!hero) return;
+  var cv=document.createElement("canvas"); cv.className="hs"; cv.setAttribute("aria-hidden","true");
+  var col=hero.querySelector(".col"); hero.insertBefore(cv,col||null);
+  var c=cv.getContext("2d"), W=0, H=0, dpr=1, t=0, mx=.62, my=.5, tx=.62, ty=.5, raf=0, onScreen=true, lastMove=0;
+  var calm=false; try{ calm=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches; }catch(e){}
+  var gold="#DFC166"; try{ var g=getComputedStyle(document.getElementById("day")).getPropertyValue("--hot").trim(); if(g) gold=g; }catch(e){}
+  function rgb(h){ h=h.replace("#",""); if(h.length===3) h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2]; var n=parseInt(h,16); return [(n>>16)&255,(n>>8)&255,n&255]; }
+  var G=rgb(gold);
+  function day(){ return document.documentElement.getAttribute("data-side")==="day"; }
+  function size(){ var r=cv.getBoundingClientRect(); dpr=Math.min(2,window.devicePixelRatio||1); W=Math.max(1,r.width); H=Math.max(1,r.height); cv.width=W*dpr|0; cv.height=H*dpr|0; }
+  function level(){ try{ if(window.__ssRadioLevel){ var v=window.__ssRadioLevel(); if(v>0.02) return Math.min(1,v); } }catch(e){} return 0; }
+  function frame(now){
+    raf=0; if(!W) size();
+    c.setTransform(dpr,0,0,dpr,0,0); c.clearRect(0,0,W,H);
+    if(!calm){ t+=0.0065; if(now-lastMove>3500){ tx=.62+.22*Math.sin(t*0.35); ty=.5+.18*Math.sin(t*0.27); } }
+    mx+=(tx-mx)*.06; my+=(ty-my)*.06;
+    var lv=level(), lines=12, amp=H*0.055*(1+lv*1.5), step=Math.max(6,W/120);
+    for(var i=0;i<lines;i++){
+      var p=i/(lines-1), y=H*(0.30+p*0.56);
+      c.beginPath();
+      for(var x=0;x<=W+step;x+=step){
+        var u=x/W, d=Math.abs(u-mx), pull=Math.exp(-d*d*26);
+        var yy=y+Math.sin(u*6.283*(1.1+p*1.3)+t*(1+p)+p*2.2)*amp*(0.35+pull*1.4)
+               -pull*amp*2.1*(0.5+0.5*Math.sin(t*1.7+p*3.0))-(my-0.5)*22*pull;
+        if(x===0) c.moveTo(x,yy); else c.lineTo(x,yy);
+      }
+      var a=0.22*(1-p*0.55)+lv*0.25;
+      c.strokeStyle=i%3===0?"rgba("+G[0]+","+G[1]+","+G[2]+","+(a*1.25).toFixed(3)+")":"rgba(190,215,235,"+(a*0.55).toFixed(3)+")";
+      c.lineWidth=i%3===0?1.4:0.8; c.stroke();
+    }
+    if(!calm&&onScreen&&day()&&!document.hidden) raf=requestAnimationFrame(frame);
+  }
+  function kick(){ if(!raf&&day()) raf=requestAnimationFrame(frame); }
+  size(); kick();
+  addEventListener("resize",function(){ size(); kick(); },{passive:true});
+  addEventListener("pointermove",function(e){ var r=cv.getBoundingClientRect(); if(!r.width||!r.height) return;
+    var x=(e.clientX-r.left)/r.width, y=(e.clientY-r.top)/r.height; if(y<-0.2||y>1.2) return;
+    tx=Math.max(0,Math.min(1,x)); ty=Math.max(0,Math.min(1,y)); lastMove=performance.now(); kick(); },{passive:true});
+  if("IntersectionObserver" in window) new IntersectionObserver(function(en){ onScreen=en[0].isIntersecting; if(onScreen){ size(); kick(); } }).observe(hero);
+  new MutationObserver(function(){ if(day()){ size(); kick(); } }).observe(document.documentElement,{attributes:true,attributeFilter:["data-side"]});
+  document.addEventListener("visibilitychange",function(){ if(!document.hidden) kick(); });
+})();
+</script>
+<!-- strings: end -->
 <!-- i18n:start -->
 <style>
 /* language switcher (i18n block, 18 Nov 2026) */
