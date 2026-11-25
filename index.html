@@ -1205,6 +1205,106 @@ html[lang="hsb"] .kits ul.kits-en{display:none}
     </div>
   </section>
 
+<!-- waveatlas: start -->
+<style>
+.wa{padding-top:clamp(48px,8vw,96px);padding-bottom:clamp(32px,6vw,72px)}
+.wa-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(10px,1.6vw,20px);margin-top:clamp(20px,3vw,32px)}
+.wa-c{margin:0;background:var(--d-deep,#0A0918);border-radius:14px;overflow:hidden;color:#fff}
+.wa-c canvas{display:block;width:100%;aspect-ratio:1/1;image-rendering:auto}
+.wa-c figcaption{padding:12px 14px 16px;font:400 14px/1.45 var(--body,"Inter",system-ui,sans-serif)}
+.wa-c figcaption b{display:block;font:700 17px/1.2 var(--display,"Chivo","Helvetica Neue",Arial,sans-serif);color:var(--d-hot,#DFC166);margin-bottom:4px}
+.wa-c figcaption span{display:block;color:rgba(255,255,255,.82)}
+.wa-c figcaption i{display:block;margin-top:8px;font:400 11px/1.4 "IBM Plex Mono",ui-monospace,Menlo,monospace;font-style:normal;letter-spacing:.02em;color:rgba(255,255,255,.55)}
+.wa-note{margin-top:clamp(16px,2.4vw,24px);max-width:62ch;color:var(--d-muted,#5E5A72);font-size:15px;line-height:1.55}
+@media (max-width:900px){.wa-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:420px){.wa-c figcaption{padding:10px 11px 13px;font-size:13px}.wa-c figcaption b{font-size:15px}}
+</style>
+<section class="wa blk col" id="dWaves" data-p="d" aria-labelledby="waH">
+  <div class="eyebrow">Wave atlas</div>
+  <h2 id="waH">Four shapes waves really draw.</h2>
+  <p class="sub">Each one is drawn live from its equation, and each has a name in physics, a year and a paper.</p>
+  <div class="wa-grid">
+    <figure class="wa-c"><canvas data-wa="fork" role="img" aria-label="Wave fronts that split into a fork around one dark point"></canvas><figcaption><b>The fork</b><span>Where waves cancel out, a wave front can split in two.</span><i>Wavefront dislocation · Nye &amp; Berry, 1974</i></figcaption></figure>
+    <figure class="wa-c"><canvas data-wa="hex" role="img" aria-label="A pulsing honeycomb of bright and dark cells"></canvas><figcaption><b>The honeycomb</b><span>Three waves crossing at equal angles build hexagons, as on a shaken layer of liquid.</span><i>Faraday waves · first described by Faraday, 1831</i></figcaption></figure>
+    <figure class="wa-c"><canvas data-wa="quasi" role="img" aria-label="A twelvefold star pattern that never repeats"></canvas><figcaption><b>Order without repeats</b><span>Six waves make a twelvefold pattern that is ordered but never repeats itself.</span><i>Faraday quasi-patterns · Edwards &amp; Fauve, 1993</i></figcaption></figure>
+    <figure class="wa-c"><canvas data-wa="airy" role="img" aria-label="A beam of light that curves upward on its own"></canvas><figcaption><b>The bend</b><span>A wave that curves on its own, with nothing pushing it.</span><i>Airy beam · Berry &amp; Balazs, 1979 · in light, 2007</i></figcaption></figure>
+  </div>
+  <p class="wa-note">Videos online often label shapes like these with numbers such as 174, 528 or 963 Hz. Those numbers come from a numerology of the 1970s, not from acoustics: the same tone draws a different figure on a different plate.</p>
+</section>
+<script>
+(function(){
+  var cvs=[].slice.call(document.querySelectorAll('canvas[data-wa]'));
+  if(!cvs.length)return;
+  var still=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var N=(window.innerWidth<600)?120:170;           /* field resolution, scaled up by CSS */
+  var GOLD=[223,193,102], DEEP=[10,9,24], LIGHT=[255,238,190];
+  /* Airy function Ai(x): power series near zero, asymptotic forms further out */
+  function ai(x){
+    if(x>4){var z=2/3*Math.pow(x,1.5);return Math.exp(-z)/(2*Math.sqrt(Math.PI)*Math.pow(x,.25));}
+    if(x<-6){var a=-x,z2=2/3*Math.pow(a,1.5);return Math.sin(z2+Math.PI/4)/(Math.sqrt(Math.PI)*Math.pow(a,.25));}
+    var c1=0.355028053887817,c2=0.258819403792807,f=1,g=x,tf=1,tg=x,x3=x*x*x;
+    for(var k=1;k<40;k++){tf*=x3/((3*k-1)*(3*k));tg*=x3/((3*k)*(3*k+1));f+=tf;g+=tg;if(Math.abs(tf)+Math.abs(tg)<1e-12)break;}
+    return c1*f-c2*g;
+  }
+  var AIRY=null;
+  function airyTable(){ /* intensity |Ai(x-(z/2)^2)|^2 on the grid, computed once */
+    AIRY=new Float32Array(N*N);var mx=0;
+    for(var j=0;j<N;j++){for(var i=0;i<N;i++){
+      var z=i/N*5.6, x=(1-j/N)*17-10;            /* z: propagation (left to right), x: across */
+      var v=ai(x-(z/2)*(z/2)); v=v*v*Math.exp(0.06*(x-(z/2)*(z/2)));
+      AIRY[j*N+i]=v; if(v>mx)mx=v;}}
+    for(var q=0;q<AIRY.length;q++)AIRY[q]=Math.min(1,AIRY[q]/mx*1.6);
+  }
+  function field(kind,t){
+    var out=new Float32Array(N*N),k,p=0;
+    for(var j=0;j<N;j++){var y=(j/N-.5)*2;for(var i=0;i<N;i++,p++){var x=(i/N-.5)*2,v;
+      if(kind==='fork'){ /* psi = (x+iy)·e^{iky}: phase stripes with one dislocation, amplitude zero at the core */
+        var ph=30*y+Math.atan2(y,x)-t*1.6, r=Math.sqrt(x*x+y*y);
+        v=(0.5+0.5*Math.cos(ph))*Math.min(1,r/0.16)*Math.max(0,1-Math.max(0,r-0.92)*6);
+      }else if(kind==='hex'||kind==='quasi'){ /* sum of plane waves at equal angles, standing in time */
+        var n=kind==='hex'?3:6, kk=kind==='hex'?22:26, s=0;
+        for(k=0;k<n;k++){var th=Math.PI*(kind==='hex'?2*k/3:k/6);s+=Math.cos(kk*(x*Math.cos(th)+y*Math.sin(th)));}
+        s=s/n*(0.72+0.28*Math.cos(t*1.3));
+        v=Math.min(1,Math.max(0,s*(kind==='hex'?1.4:2.2)));
+        var rr=Math.sqrt(x*x+y*y); if(rr>0.96)v*=Math.max(0,1-(rr-0.96)*25);
+      }else{ /* airy: static beam, a bright pulse travels along the parabola */
+        var b=AIRY[p], zt=(i/N*5.6), pulse=Math.exp(-Math.pow(zt-((t*0.8)%7-0.5),2)*1.5);
+        v=b*(0.55+0.45*pulse);
+      }
+      out[p]=v<0?0:v;}}
+    return out;
+  }
+  function paint(cv,kind,t){
+    var c=cv._c, img=cv._img, d=img.data, f=field(kind,t);
+    for(var q=0,o=0;q<f.length;q++,o+=4){var v=f[q],w=v*v;
+      d[o]  =DEEP[0]+(GOLD[0]-DEEP[0])*v+(LIGHT[0]-GOLD[0])*w*.5;
+      d[o+1]=DEEP[1]+(GOLD[1]-DEEP[1])*v+(LIGHT[1]-GOLD[1])*w*.5;
+      d[o+2]=DEEP[2]+(GOLD[2]-DEEP[2])*v+(LIGHT[2]-GOLD[2])*w*.5;
+      d[o+3]=255;}
+    c.putImageData(img,0,0);
+  }
+  cvs.forEach(function(cv){cv.width=N;cv.height=N;cv._c=cv.getContext('2d');cv._img=cv._c.createImageData(N,N);cv._on=false;});
+  if(cvs.some(function(c){return c.getAttribute('data-wa')==='airy';}))airyTable();
+  cvs.forEach(function(cv){paint(cv,cv.getAttribute('data-wa'),0.8);});
+  if(still)return;                                  /* reduce motion: one still frame each */
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){e.target._on=e.isIntersecting;});},{rootMargin:'80px'});
+    cvs.forEach(function(cv){io.observe(cv);});
+  }else cvs.forEach(function(cv){cv._on=true;});
+  var t0=performance.now(), last=0, slow=0;
+  function tick(now){
+    requestAnimationFrame(tick);
+    if(document.hidden)return;
+    if(now-last<(slow>4?66:33))return;              /* about 30 frames a second, 15 if frames run long */
+    var a=performance.now(), t=(now-t0)/1000;
+    cvs.forEach(function(cv){if(cv._on)paint(cv,cv.getAttribute('data-wa'),t);});
+    var cost=performance.now()-a; slow=cost>20?slow+1:Math.max(0,slow-1); last=now;
+  }
+  requestAnimationFrame(tick);
+})();
+</script>
+<!-- waveatlas: end -->
+
   <section class="flab" id="dLab" data-p="d"><div class="col">
     <div class="eyebrow">Frequency lab</div>
     <h2>Same mind, different frequencies.</h2>
@@ -7822,6 +7922,880 @@ return api;
 })();
 </script>
 <!-- game4: end -->
+<!-- game6: start -->
+<style>
+/* GAME 06 "Canon in Gold" (22 Nov 2026). Its own section under the arcade (after Game 04), made from the template below.
+   Its script waits as text until the section comes near the screen (like item 84 does for the arcade).
+   Source: source/game6/ (game.js, game.css, markup.html, block.html), put together by source/game6/build.py,
+   put into the page by source/game6/apply.py. Change it there, not here. */
+.g6sec{margin-top:clamp(40px,6vw,80px)}
+.g6sec>.col{display:flex;flex-direction:column;align-items:center}
+.g6sec .ac-head{align-self:stretch;margin-bottom:clamp(20px,3vw,32px)}
+.g6-credit{width:100%;max-width:600px;margin:14px auto 0;text-align:left;font-family:var(--mono,"IBM Plex Mono",monospace);font-size:11px;letter-spacing:.04em;line-height:1.6;color:var(--muted,#A39AA0)}
+#nCanon{scroll-margin-top:110px}
+/* Canon in Gold — Game 06 · Aussehen. Alles hängt an .g6 und trifft nichts außerhalb.
+   Nach dem Games-Kapitel des Brand Books: Tinte und Papier; Gold ist deine Stimme (was du spielst), Nachtblau und
+   Rosé (Tint) die beiden Kopien; Pink nur für den Schlag, den Multiplikator und den Startknopf.
+   Ballet Mécanique für Titel, Chivo 600 für Überschriften, Inter für Text, IBM Plex Mono für Etiketten und Zahlen. */
+.g6{--g6line:rgba(255,255,255,.16);--g6well:#0b0b0b;--g6soft:rgba(255,255,255,.62);
+  --g6pink:#E4007C;--g6tint:#F7C6DD;--g6gold:#FFD36B;--g6blue:#6FD0FF;
+  --g6ballet:"Ballet Mecanique","Chivo","Helvetica Neue",Helvetica,sans-serif;
+  --g6head:"Chivo","Helvetica Neue",Arial,sans-serif;
+  --g6text:"Inter",ui-sans-serif,system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+  --g6mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  width:100%;max-width:600px;margin:0 auto;color:#fff;-webkit-text-size-adjust:100%;font-family:var(--g6text)}
+.g6 *{box-sizing:border-box}
+.g6-mq{display:flex;align-items:center;justify-content:space-between;gap:10px;
+  background:var(--g6well);border:1px solid var(--g6line);border-radius:10px;padding:8px 12px;margin-bottom:8px}
+.g6-mq b{font-family:var(--g6mono);font-size:12px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;white-space:nowrap}
+.g6-mq span{font-family:var(--g6mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--g6soft);text-align:right}
+.g6-stage{position:relative;border-radius:12px;overflow:hidden;border:1px solid var(--g6line);background:#000;aspect-ratio:1/1}
+.g6-stage canvas{display:block;width:100%;height:100%;touch-action:manipulation}
+.g6-ov{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;overflow:auto;
+  background:rgba(0,0,0,.78);padding:18px;text-align:center}
+.g6-ov.hide{display:none}
+.g6-box{max-width:440px;margin:auto}
+.g6-ov h1{font-family:var(--g6ballet);font-size:34px;margin:0 0 10px;font-weight:600;letter-spacing:.01em;line-height:1.1;max-width:none;color:var(--g6gold)}
+.g6-ov h2{font-family:var(--g6head);font-size:20px;margin:0 0 8px;font-weight:600;line-height:1.25;max-width:none;color:#fff}
+.g6-ov p{font-family:var(--g6text);font-size:13.5px;line-height:1.5;margin:0 0 10px;color:rgba(255,255,255,.86);max-width:none}
+.g6-ov p.g6-lead{font-size:15px;color:#fff}
+.g6-ov b{color:#fff;font-weight:600}
+.g6-lv{list-style:none;counter-reset:lv;padding:0;margin:4px 0 12px;text-align:left;font-size:13px;line-height:1.45;color:rgba(255,255,255,.8)}
+.g6-lv li{counter-increment:lv;position:relative;padding-left:26px;margin:0 0 6px}
+.g6-lv li:before{content:counter(lv);position:absolute;left:0;top:0;font-family:var(--g6mono);font-size:11px;color:var(--g6gold);
+  border:1px solid rgba(255,211,107,.5);border-radius:50%;width:18px;height:18px;line-height:17px;text-align:center}
+.g6-best{font-family:var(--g6mono)!important;font-size:11px!important;letter-spacing:.06em;color:var(--g6soft)!important}
+.g6-btn{appearance:none;-webkit-appearance:none;font-family:var(--g6mono);font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+  border-radius:999px;padding:12px 22px;margin:6px 5px 0;cursor:pointer;border:1px solid rgba(255,255,255,.5);background:transparent;color:#fff}
+.g6-btn.g6-go{background:var(--g6pink);border-color:var(--g6pink);color:#fff}
+.g6-btn:focus-visible,.g6-pad:focus-visible{outline:2px solid #fff;outline-offset:3px}
+.g6-deck{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:9px}
+.g6-pad{appearance:none;-webkit-appearance:none;border:2px solid rgba(255,255,255,.75);border-radius:16px;height:84px;cursor:pointer;
+  background:rgba(255,255,255,.05);position:relative;padding:0;color:#fff;transition:background .06s,transform .06s;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+.g6-pad span{font-family:var(--g6mono);font-size:13px;letter-spacing:.14em;text-transform:uppercase}
+.g6-pad:after{content:"";position:absolute;left:50%;top:14px;transform:translateX(-50%);border-radius:50%;background:#fff;opacity:.8}
+.g6-pad[data-lane="0"]:after{width:8px;height:8px}
+.g6-pad[data-lane="1"]:after{width:11px;height:11px}
+.g6-pad[data-lane="2"]:after{width:14px;height:14px}
+.g6-pad span{position:relative;top:10px}
+.g6-pad.press{background:rgba(255,211,107,.28);border-color:var(--g6gold);transform:scale(.97)}
+.g6-pad:disabled{opacity:.35;cursor:default}
+.g6-hud{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:8px;font-family:var(--g6mono);font-size:12px;letter-spacing:.06em;color:var(--g6soft)}
+.g6-voices{display:flex;gap:5px}
+.g6-v{display:inline-block;width:10px;height:10px;border-radius:50%}
+.g6-vg{background:var(--g6gold)}.g6-vb{background:var(--g6blue)}.g6-vr{background:var(--g6tint)}
+.g6-keys{flex:1;text-align:center;display:none}
+.g6-sc{color:#fff;font-size:14px}
+.g6-sc b{color:var(--g6pink);font-weight:600;margin-right:4px}
+@media (pointer:fine){
+  .g6-keys{display:block}
+  .g6-deck{width:80%;margin-left:auto;margin-right:auto}
+  .g6-pad{height:64px}
+}
+@media (prefers-reduced-motion: reduce){ .g6-pad{transition:none} }
+</style>
+<template id="g6Tpl"><section class="arcade g6sec" id="nCanon" aria-label="Game 06, Canon in Gold: play a melody and hear it come back as a canon"><div class="col">
+    <div class="ac-head">
+      <div class="eyebrow">Arcade lounge · Game 06</div>
+      <h2 aria-level="3">Canon in Gold.</h2>
+      <p class="sub">One melody, three voices. You play it; eight beats later it comes back in blue, sixteen later in rosé, and the three meet in a triangle. From Pachelbel's Canon to Seth's own track.</p>
+    </div>
+<div class="g6" data-g6="root">
+  <div class="g6-mq"><b data-g6="mqT">Canon in Gold</b><span data-g6="mqS">Game 06</span></div>
+  <div class="g6-stage">
+    <canvas data-g6="cv" width="720" height="720" role="img" aria-label="Canon in Gold"></canvas>
+    <div class="g6-ov" data-g6="ov"><div class="g6-box" data-g6="ovBox"></div></div>
+  </div>
+  <div class="g6-deck" data-g6="deck"></div>
+  <div class="g6-hud">
+    <span class="g6-voices"><i class="g6-v g6-vg"></i><i class="g6-v g6-vb"></i><i class="g6-v g6-vr"></i></span>
+    <span class="g6-keys" data-g6="keys"></span>
+    <span class="g6-sc"><b data-g6="mult">×1</b> <span data-g6="score">0</span></span>
+  </div>
+</div>
+    <p class="g6-credit">Levels 1 and 2: Johann Pachelbel, Canon in D (around 1680, public domain), played as violin pizzicato. Level 3: Create The Universe, Seth Schwarz &amp; Solidmind feat. Lydgen &amp; ARTEMIDES.</p>
+  </div></section></template>
+<script type="text/plain" id="lazy-game6">
+/* ==========================================================================
+   GAME 06 · "Canon in Gold" (22. Nov 2026)
+
+   Martin, 22. Nov: „Baue mir daraus ein super geiles Arcade-Game" (zu einem Reel über Pachelbels Kanon:
+   drei Stimmen spielen dieselbe Melodie, je acht Schläge versetzt, und bilden zusammen ein Dreieck).
+   Seine Wahl: „Kanon spielen", Musik „Pachelbel, dann Seth", eigener Abschnitt unter der Arcade.
+   Eigener Code, eigene Gestaltung; nur die Idee (ein Kanon als Kreis) ist übernommen.
+
+   Das Spiel:
+   - Du bist die goldene Stimme. Auf dem Kreis (rundherum = Zeit, weiter außen = höher) tauchen bei jedem
+     Schlag drei Töne auf, die zum Bass passen. Tippe Tief, Mitte oder Hoch, wenn das goldene Licht sie erreicht.
+   - Acht Schläge später spielt Blau deine Melodie nach, nach sechzehn Rosé. Die drei Köpfe stehen immer
+     im Dreieck (der Melodiekreis hat 24 Schritte, die Stimmen 8 auseinander).
+   - Klingen alle drei zusammen als voller Akkord, leuchtet das Dreieck: TRIANGLE.
+   - Level 1: Pachelbels Kanon in D, der goldene Ring zeigt seine Melodie. Level 2: dein eigener Kanon,
+     das kleine Dreieck zeigt den Ton, der den Akkord vollmacht. Level 3: Seths Track „Create The Universe";
+     hier wechseln die Akkorde langsamer als die Kopien, also vorausdenken (die Punkte zeigen, ob der Ton
+     auch passt, wenn Blau und Rosé ihn spielen).
+   - Kein Verlieren. Am Ende: dein eigener Kanon zum Anhören.
+   - Fassung 2 (22. Nov, 22:17, Martin: „bitte als gestrichenes String-Instrument"): die drei Stimmen sind gestrichene
+     Geigen, der Bass ein gestrichenes Cello (vorher Pizzicato).
+
+   Alles Einstellbare steht in CFG. ES5, kein Framework, nichts von fremden Servern.
+   ========================================================================== */
+window.CanonInGold = function(root, opt){
+"use strict";
+opt = opt || {};
+
+/* ===================== CFG ===================== */
+var CFG = {
+  lap: 24,                 // Schritte auf dem Melodiekreis
+  versatz: 8,              // so viele Schritte spielt Blau später (Rosé doppelt so viele)
+  eingabe: 40,             // so viele Schritte spielt Gold je Level
+  nachklang: 16,           // danach spielen nur noch Blau und Rosé
+  einzaehlen: 4,           // Schritte Bass vor dem ersten Ton
+  zeit: { perfekt: 0.075, gut: 0.150, locker: 0.40, lernen: 0.25, lernenMax: 0.30 },   // in Sekunden bzw. Anteil Schritt
+  punkte: { perfekt: 100, gut: 60, locker: 20, kanon: 50, kopie: 25, dreieck: 150 },
+  mal: [[0,1],[4,2],[12,3],[24,4]],      // Serie ab … Treffer -> Multiplikator
+  tonraum: [60, 84],       // tiefster und höchster Ton auf dem Kreis (MIDI)
+  laut: { gold: 0.16, blau: 0.11, rose: 0.11, bass: 0.15, track: 0.80 },
+  pan: { gold: 0, blau: -0.45, rose: 0.45 },
+  filter: { zu: 2200, auf: 20000 },      // der Track öffnet sich mit der Dreieck-Serie
+  farben: { gold:"#FFD36B", blau:"#6FD0FF", rose:"#F7C6DD", pink:"#E4007C", papier:"#FFFFFF" },
+  tasten: { "arrowleft":0, "f":0, "a":0, "1":0,
+            " ":1, "arrowdown":1, "arrowup":1, "g":1, "h":1, "2":1,
+            "arrowright":2, "j":2, "l":2, "3":2 }
+};
+
+/* Pachelbel, Kanon in D (um 1680, gemeinfrei): der Bass und drei Phrasen der Oberstimme, ein Ton je Schritt.
+   Die dritte Phrase ist so gesetzt, dass alle drei Stimmen zusammen den vollen Akkord ergeben. */
+var D_DUR = [[50,[2,6,9]],[45,[9,1,4]],[47,[11,2,6]],[42,[6,9,1]],[43,[7,11,2]],[38,[2,6,9]],[43,[7,11,2]],[45,[9,1,4]]];
+var PACHELBEL = [78,76,74,73,71,69,71,73,  74,73,71,69,67,66,67,64,  81,81,78,78,74,74,74,69];
+/* Seths Track: Harmonie, Tempo und Schleife wie im Arcade-Automaten (#arcadeTracks und MB), ein Akkord je Takt */
+var CTU = { k:"createuniverse", t:"Create The Universe", a:"Seth Schwarz & Solidmind feat. Lydgen & ARTEMIDES", bpm:123,
+  ph:0.4708, at:2, beats:32, lm:[0.4845,0.5189,0.6891,0.8989,1.0207],
+  prog:[[7,[11,2,4]],[7,[11,2,4]],[2,[6,9,4]],[2,[6,9,4]],[2,[6,9,4]],[9,[4,9,11]],[9,[4,9,11]],[7,[11,2,4]]] };
+
+var LEVELS = [
+  { id:"pachelbel", bpm:72, schlag:1, chords:D_DUR, perStep:1, hint:true, synth:true },
+  { id:"eigen",     bpm:84, schlag:1, chords:D_DUR, perStep:1, hint:false, synth:true, voll:true },
+  { id:"seth",      bpm:123, schlag:2, chords:CTU.prog, perStep:2, hint:false, track:true, voll:true, voraus:true }
+];
+
+/* ===================== Texte ===================== */
+var TXT = {
+  en: {
+    title: function(best){ return '<h1>Canon in Gold</h1><p class="g6-lead">Play a melody once. Two voices play it back, eight beats behind, and the three meet in a triangle.</p>'+
+      '<p>Three notes appear on the circle with every beat. Tap <b>Low</b>, <b>Mid</b> or <b>High</b> as the gold light reaches them. Further out is higher, around is time.</p>'+
+      '<ol class="g6-lv"><li><b>Pachelbel</b> · Canon in D. Follow the gold ring.</li><li><b>Your own canon</b>. The small triangle completes the chord.</li><li><b>Create The Universe</b> · Seth Schwarz. Think eight beats ahead.</li></ol>'+
+      (best?'<p class="g6-best">Your best on this device: '+best+'</p>':''); },
+    start: "Start", again: "Play again", listen: "Hear your canon", stop: "Stop", cont: "Continue",
+    paused: "Paused", tuning: "Tuning the strings …",
+    lv: ["Pachelbel · Canon in D", "Your own canon", "Create The Universe · Seth Schwarz"],
+    lvShort: ["Level 1 · Pachelbel", "Level 2 · Your canon", "Level 3 · Seth"],
+    lvTip: ["Follow the gold ring.", "Pick the note with the small triangle.", "The dots show if a note still fits when blue and rosé play it."],
+    lanes: ["Low", "Mid", "High"],
+    judge: { p:"PERFECT", g:"GOOD", l:"LOOSE", canon:"CANON", tri:"TRIANGLE", rest:"" },
+    voices: function(n){ return n+(n===1?" voice":" voices"); },
+    end: function(sc,best,tri,notes,isBest){ return '<h2>'+(isBest?'New best: ':'Score: ')+sc+'</h2>'+
+      '<p>'+tri+' triangles. You played '+notes+' notes, and every one of them came back twice.</p>'+
+      '<p class="g6-best">Your best on this device: '+best+'</p>'; },
+    replay: "Your canon, three voices, eight beats apart.",
+    keys: "Keys: ← or F · Space · → or J",
+    cv: "Canon in Gold: a circle where three voices play the same melody eight beats apart"
+  },
+  de: {
+    title: function(best){ return '<h1>Canon in Gold</h1><p class="g6-lead">Spiel eine Melodie einmal. Zwei Stimmen spielen sie nach, acht Schläge später, und die drei treffen sich im Dreieck.</p>'+
+      '<p>Mit jedem Schlag erscheinen drei Töne auf dem Kreis. Tippe <b>Tief</b>, <b>Mitte</b> oder <b>Hoch</b>, wenn das goldene Licht sie erreicht. Weiter außen ist höher, rundherum ist Zeit.</p>'+
+      '<ol class="g6-lv"><li><b>Pachelbel</b> · Kanon in D. Folge dem goldenen Ring.</li><li><b>Dein eigener Kanon</b>. Das kleine Dreieck macht den Akkord voll.</li><li><b>Create The Universe</b> · Seth Schwarz. Denk acht Schläge voraus.</li></ol>'+
+      (best?'<p class="g6-best">Dein Bestwert auf diesem Gerät: '+best+'</p>':''); },
+    start: "Start", again: "Nochmal", listen: "Deinen Kanon anhören", stop: "Stopp", cont: "Weiter",
+    paused: "Pause", tuning: "Die Saiten werden gestimmt …",
+    lv: ["Pachelbel · Kanon in D", "Dein eigener Kanon", "Create The Universe · Seth Schwarz"],
+    lvShort: ["Level 1 · Pachelbel", "Level 2 · Dein Kanon", "Level 3 · Seth"],
+    lvTip: ["Folge dem goldenen Ring.", "Nimm den Ton mit dem kleinen Dreieck.", "Die Punkte zeigen, ob ein Ton noch passt, wenn Blau und Rosé ihn spielen."],
+    lanes: ["Tief", "Mitte", "Hoch"],
+    judge: { p:"PERFEKT", g:"GUT", l:"LOCKER", canon:"KANON", tri:"DREIECK", rest:"" },
+    voices: function(n){ return n+(n===1?" Stimme":" Stimmen"); },
+    end: function(sc,best,tri,notes,isBest){ return '<h2>'+(isBest?'Neuer Bestwert: ':'Punkte: ')+sc+'</h2>'+
+      '<p>'+tri+' Dreiecke. Du hast '+notes+' Töne gespielt, und jeder kam zweimal zurück.</p>'+
+      '<p class="g6-best">Dein Bestwert auf diesem Gerät: '+best+'</p>'; },
+    replay: "Dein Kanon, drei Stimmen, acht Schläge versetzt.",
+    keys: "Tasten: ← oder F · Leertaste · → oder J",
+    cv: "Canon in Gold: ein Kreis, auf dem drei Stimmen dieselbe Melodie acht Schläge versetzt spielen"
+  }
+};
+var T = TXT[opt.lang==="de"?"de":"en"];
+
+/* ===================== DOM ===================== */
+function $(k){ return root.querySelector('[data-g6="'+k+'"]'); }
+var cv=$("cv"), g=cv.getContext("2d",{alpha:false}), ov=$("ov"), ovBox=$("ovBox"), deck=$("deck"),
+    mqT=$("mqT"), mqS=$("mqS"), scoreT=$("score"), multT=$("mult"), keysT=$("keys");
+var RM = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+var W=720, H=720, CX=360, CY=360;
+cv.width=W; cv.height=H;
+if(keysT) keysT.textContent=T.keys;
+var PADS=[];
+(function(){
+  var html=""; for(var i=0;i<3;i++) html+='<button type="button" class="g6-pad" data-lane="'+i+'"><span>'+T.lanes[i]+'</span></button>';
+  deck.innerHTML=html;
+  PADS=[].slice.call(deck.querySelectorAll(".g6-pad"));
+  PADS.forEach(function(b){
+    b.addEventListener("pointerdown",function(e){ e.preventDefault(); press(+b.getAttribute("data-lane"),"tap"); },{passive:false});
+    b.addEventListener("click",function(e){ if(e.detail===0) press(+b.getAttribute("data-lane"),"key"); });
+  });
+})();
+cv.addEventListener("pointerdown",function(e){
+  if(!S.running||S.paused||S.replay) return;
+  var r=cv.getBoundingClientRect(), x=(e.clientX-r.left)/r.width*W-CX, y=(e.clientY-r.top)/r.height*H-CY;
+  var d=Math.sqrt(x*x+y*y), k=nextInput(), C=k>=0?cands(k):null;
+  if(!C) return;
+  var best=0, bd=1e9; for(var i=0;i<3;i++){ var dd=Math.abs(rad(C[i])-d); if(dd<bd){ bd=dd; best=i; } }
+  press(best,"cv");
+});
+document.addEventListener("keydown",function(e){
+  if(opt.keysActive && !opt.keysActive()) return;
+  if(e.metaKey||e.ctrlKey||e.altKey) return;
+  var k=(e.key||"").toLowerCase();
+  if(k==="enter" && !S.running){ var b=ovBox.querySelector("button"); if(b){ e.preventDefault(); b.click(); } return; }
+  if(k==="escape" && S.running){ e.preventDefault(); if(S.paused) resume(); else pause(); return; }
+  if(CFG.tasten.hasOwnProperty(k) && S.running && !S.paused){ e.preventDefault(); if(!e.repeat) press(CFG.tasten[k],"key"); }
+});
+
+/* ===================== Zustand ===================== */
+var S = { running:false, paused:false, replay:false, li:0, t0:0, dur:0.8, notes:{}, cand:{}, done:{}, evald:{},
+  jk:0, sched:0, score:0, combo:0, mult:1, tri:0, played:0, offset:0, best:0, flash:null, lvBanner:0,
+  triGlow:0, heads:null, savedCanon:null, endAt:0, waitTrack:0, phase:"title" };
+try{ var st=JSON.parse(localStorage.getItem("ss-canon")||"{}"); S.best=st.best||0; S.offset=Math.max(-0.3,Math.min(0.3,st.off||0)); }catch(e){}
+function save(){ try{ localStorage.setItem("ss-canon",JSON.stringify({best:S.best,off:Math.round(S.offset*1000)/1000})); }catch(e){} }
+function L(){ return LEVELS[S.li]; }
+
+/* ===================== Ton ===================== */
+var ac=null, master=null, trackLP=null, voiceIn={}, trackBuf=null, trackSrc=null, trackLoading=null;
+function hz(m){ return 440*Math.pow(2,(m-69)/12); }
+function audioInit(){
+  if(ac) return ac;
+  var C=window.AudioContext||window.webkitAudioContext; if(!C) return null;
+  try{ ac=new C({latencyHint:"interactive"}); }catch(e){ try{ ac=new C(); }catch(e2){ return null; } }
+  var comp=ac.createDynamicsCompressor(); comp.threshold.value=-12; comp.knee.value=12; comp.ratio.value=3; comp.attack.value=0.01; comp.release.value=0.25;
+  comp.connect(ac.destination);
+  master=ac.createGain(); master.gain.value=0.9; master.connect(comp);
+  trackLP=ac.createBiquadFilter(); trackLP.type="lowpass"; trackLP.frequency.value=CFG.filter.zu; trackLP.Q.value=0.5;
+  var tg=ac.createGain(); tg.gain.value=CFG.laut.track; trackLP.connect(tg); tg.connect(master);
+  var chain=stringChain(ac,master);
+  ["gold","blau","rose"].forEach(function(v){
+    var gn=ac.createGain(); gn.gain.value=1;
+    if(ac.createStereoPanner){ var p=ac.createStereoPanner(); p.pan.value=CFG.pan[v]; gn.connect(p); p.connect(chain); }
+    else gn.connect(chain);
+    voiceIn[v]=gn;
+  });
+  return ac;
+}
+function now(){ return ac?ac.currentTime:performance.now()/1000; }
+function outLat(){ return ac?((ac.outputLatency||0)+(ac.baseLatency||0)):0; }
+function heard(){ return now()-outLat(); }
+
+/* Gestrichene Streicher (Martin, 22. Nov, 22:17: „bitte als gestrichenes String-Instrument").
+   Jede Stimme ist eine gestrichene Geige, der Bass ein gestrichenes Cello:
+   - die Saite: drei leicht gegeneinander verstimmte Sägezähne (der Ton einer Saite unter dem Bogen ist sägezahnartig);
+   - der Bogen: ein kurzer Hauch Bogenrauschen beim Ansetzen, ein Filter, das sich beim Anstreichen öffnet („Biss"),
+     dann ein ruhiger Ton, der leicht anschwillt;
+   - Vibrato, das erst nach dem Ansetzen kommt, für jede Stimme etwas anders schnell;
+   - der Geigenkörper als Faltung mit zwölf Holzresonanzen (wie in Game 04) und ein Raum.
+   Gold setzt schneller an (das Tippen muss sofort zu hören sein), Blau und Rosé weicher; Blau klingt etwas dunkler.
+   Jeder Ton hält bis zum nächsten Schritt und klingt dann aus: legato wie im Kanon. */
+var NOISE=null;
+function noiseBuf(){ if(NOISE) return NOISE; var n=Math.floor(ac.sampleRate*0.5), b=ac.createBuffer(1,n,ac.sampleRate), d=b.getChannelData(0), r=12345;
+  for(var i=0;i<n;i++){ r=(r*16807)%2147483647; d[i]=(r/2147483647)*2-1; } NOISE=b; return b; }
+var BODY_MODES=[[275,1.0,18],[405,0.55,22],[460,0.9,25],[540,0.8,25],[700,0.35,28],[860,0.4,30],
+                [1050,0.3,30],[1350,0.3,32],[1800,0.28,34],[2400,0.42,30],[2900,0.38,28],[3600,0.18,30]];
+function bodyIR(ctx){
+  var sr=ctx.sampleRate, len=Math.floor(sr*0.18), b=ctx.createBuffer(1,len,sr), d=b.getChannelData(0), pk=0;
+  for(var n=0;n<len;n++){ var t=n/sr, v=0;
+    for(var k=0;k<BODY_MODES.length;k++){ var M=BODY_MODES[k], tau=M[2]/(Math.PI*M[0]); v+=M[1]*Math.exp(-t/tau)*Math.sin(2*Math.PI*M[0]*t+k); }
+    d[n]=v; if(Math.abs(v)>pk) pk=Math.abs(v); }
+  d[0]+=pk*1.6;
+  return b;
+}
+function roomIR(ctx){
+  var sr=ctx.sampleRate, len=Math.floor(sr*1.8), b=ctx.createBuffer(2,len,sr);
+  for(var c=0;c<2;c++){ var d=b.getChannelData(c), lp=0, rnd=c*7+5;
+    for(var n=0;n<len;n++){ rnd=(rnd*16807)%2147483647; var r=(rnd/2147483647)*2-1; lp+=0.3*(r-lp); d[n]=lp*Math.exp(-n/(sr*0.42))*(n<sr*0.015?0:1); } }
+  return b;
+}
+function stringChain(ctx,dest){   // Körper und Raum, für alle drei Geigen gemeinsam
+  var inp=ctx.createGain(), body=ctx.createConvolver(), room=ctx.createConvolver(), wet=ctx.createGain(), dry=ctx.createGain();
+  var hp=ctx.createBiquadFilter(); hp.type="highpass"; hp.frequency.value=180;
+  body.normalize=true; body.buffer=bodyIR(ctx); room.normalize=true; room.buffer=roomIR(ctx);
+  wet.gain.value=0.30; dry.gain.value=1;
+  inp.connect(hp); hp.connect(body); body.connect(dry); dry.connect(dest);
+  body.connect(room); room.connect(wet); wet.connect(dest);
+  STR.room=room;
+  return inp;
+}
+var STR={room:null};
+var VOICE={ gold:{att:0.028, bite:0.05, vib:5.6, bright:1.0, noise:0.10},
+            blau:{att:0.07,  bite:0.03, vib:5.1, bright:0.78, noise:0.06},
+            rose:{att:0.06,  bite:0.03, vib:6.0, bright:0.92, noise:0.06} };
+function bowNote(dest,m,when,len,vol,P){
+  var t=Math.max(when,ac.currentTime), f0=hz(m), end=t+len+0.22;
+  var mix=ac.createGain(); mix.gain.value=1/3;
+  var vib=ac.createOscillator(), vd=ac.createGain();
+  vib.frequency.value=P.vib*(0.97+0.06*((m*7)%5)/4);
+  vd.gain.setValueAtTime(0,t); vd.gain.setValueAtTime(0,t+0.12); vd.gain.linearRampToValueAtTime(f0*0.0055,t+0.38);
+  vib.connect(vd);
+  var det=[-4,0,3.5], osc=[];
+  for(var i=0;i<3;i++){ var o=ac.createOscillator(); o.type="sawtooth"; o.frequency.value=f0*Math.pow(2,det[i]/1200); vd.connect(o.frequency); o.connect(mix); osc.push(o); }
+  // der Biss des Bogens: das Filter öffnet sich beim Ansetzen und setzt sich dann
+  var lp=ac.createBiquadFilter(); lp.type="lowpass"; lp.Q.value=0.7;
+  var top=Math.min(9000,2600+f0*4)*P.bright, rest=Math.min(6500,1700+f0*3)*P.bright;
+  lp.frequency.setValueAtTime(top*0.45,t); lp.frequency.linearRampToValueAtTime(top,t+P.att+0.02); lp.frequency.linearRampToValueAtTime(rest,t+P.att+0.18);
+  mix.connect(lp);
+  var g=ac.createGain(), pk=vol;
+  g.gain.setValueAtTime(0.0001,t); g.gain.linearRampToValueAtTime(pk,t+P.att); g.gain.linearRampToValueAtTime(pk*0.78,t+P.att+0.12);
+  g.gain.linearRampToValueAtTime(pk*0.86,t+Math.max(P.att+0.13,len*0.85));   // leichtes Anschwellen im Strich
+  g.gain.setValueAtTime(pk*0.86,t+len); g.gain.exponentialRampToValueAtTime(0.0001,end);
+  lp.connect(g); g.connect(dest);
+  // das Bogenrauschen beim Ansetzen
+  var ns=ac.createBufferSource(), nf=ac.createBiquadFilter(), ng=ac.createGain();
+  ns.buffer=noiseBuf(); nf.type="bandpass"; nf.frequency.value=Math.min(6000,f0*5); nf.Q.value=1.1;
+  ng.gain.setValueAtTime(0.0001,t); ng.gain.linearRampToValueAtTime(vol*P.noise*6,t+0.018); ng.gain.exponentialRampToValueAtTime(0.0001,t+0.16);
+  ns.connect(nf); nf.connect(ng); ng.connect(dest);
+  for(var k=0;k<3;k++){ osc[k].start(t); osc[k].stop(end); }
+  vib.start(t); vib.stop(end); ns.start(t, Math.random()*0.3); ns.stop(t+0.17);
+}
+function pluck(voice,m,when,vol,len){   // (der Name blieb; gespielt wird gestrichen)
+  if(!ac||!voiceIn[voice]) return;
+  bowNote(voiceIn[voice],m,when,len||S.dur*0.98,vol,VOICE[voice]);
+}
+/* der Bass in Level 1 und 2: ein gestrichenes Cello (Körper um 220 und 600 Hz) */
+var CELLO=null;
+function celloBus(){
+  if(CELLO) return CELLO;
+  var hp=ac.createBiquadFilter(); hp.type="highpass"; hp.frequency.value=45;
+  var b1=ac.createBiquadFilter(); b1.type="peaking"; b1.frequency.value=220; b1.Q.value=1.3; b1.gain.value=5;
+  var b2=ac.createBiquadFilter(); b2.type="peaking"; b2.frequency.value=600; b2.Q.value=1.6; b2.gain.value=3;
+  var lp=ac.createBiquadFilter(); lp.type="lowpass"; lp.frequency.value=2400; lp.Q.value=0.5;
+  hp.connect(b1); b1.connect(b2); b2.connect(lp); lp.connect(master);
+  if(STR.room){ var w=ac.createGain(); w.gain.value=0.18; lp.connect(w); w.connect(STR.room); }
+  CELLO=hp; return hp;
+}
+function bassNote(m,when,len){
+  if(!ac) return;
+  bowNote(celloBus(),m,when,len,CFG.laut.bass,{att:0.09,bite:0.02,vib:4.8,bright:0.55,noise:0.05});
+}
+/* Seths Track: aus dem Ausschnitt eine nahtlose Schleife von acht Takten, wie im Automaten */
+function trackShift(buf,lm){
+  var MLE=[0.0005,0.001,0.002,0.004,0.008];
+  try{ var a=buf.getChannelData(0), sr=buf.sampleRate, n=Math.min(a.length,Math.floor(1.6*sr)), ce=0, j=0, d=[], i;
+    for(i=0;i<n&&j<5;i++){ ce+=a[i]*a[i]/sr; while(j<5&&ce>=MLE[j]){ d.push(i/sr-lm[j]); j++; } }
+    if(d.length<3) return 0; d.sort(function(x,y){ return x-y; }); var md=d[d.length>>1]; return Math.abs(md)<0.08?md:0; }catch(e){ return 0; } }
+function loadTrack(){
+  if(trackBuf) return Promise.resolve(trackBuf);
+  if(trackLoading) return trackLoading;
+  var src=opt.trackSrc||("audio/"+CTU.k+".mp3");
+  if(!ac||!window.fetch||location.protocol==="file:") return (trackLoading=Promise.resolve(null));
+  trackLoading=fetch(src).then(function(r){ if(!r.ok) throw r.status; return r.arrayBuffer(); })
+    .then(function(ab){ return new Promise(function(ok,no){ ac.decodeAudioData(ab,ok,no); }); })
+    .then(function(buf){ var sr=buf.sampleRate, spb=60/CTU.bpm, ph=CTU.ph+trackShift(buf,CTU.lm), lead=0.016, xf=Math.round(0.016*sr),
+        s0=Math.round((ph+CTU.at*spb-lead)*sr), n=Math.round(CTU.beats*spb*sr);
+        if(s0-xf<0||s0+n>buf.length) return null;
+        var out=ac.createBuffer(buf.numberOfChannels,n,sr);
+        for(var ch=0;ch<buf.numberOfChannels;ch++){ var x=buf.getChannelData(ch), o=out.getChannelData(ch), i; o.set(x.subarray(s0,s0+n));
+          for(i=0;i<xf;i++){ var w=i/xf; o[n-xf+i]=o[n-xf+i]*(1-w)+x[s0-xf+i]*w; } }
+        trackBuf={b:out,lead:lead}; return trackBuf; })
+    .catch(function(){ return null; });
+  return trackLoading;
+}
+function startTrack(when){
+  stopTrack(); if(!trackBuf) return;
+  trackSrc=ac.createBufferSource(); trackSrc.buffer=trackBuf.b; trackSrc.loop=true; trackSrc.connect(trackLP);
+  trackLP.frequency.cancelScheduledValues(0); trackLP.frequency.setValueAtTime(CFG.filter.zu,now());
+  trackSrc.start(when-trackBuf.lead);
+}
+function stopTrack(){ if(trackSrc){ try{ trackSrc.stop(); }catch(e){} try{ trackSrc.disconnect(); }catch(e){} trackSrc=null; } }
+function openFilter(x){   // x 0..1
+  if(!ac||!trackLP) return; var f=CFG.filter.zu*Math.pow(CFG.filter.auf/CFG.filter.zu,Math.max(0,Math.min(1,x)));
+  trackLP.frequency.setTargetAtTime(f,now(),0.4);
+}
+
+/* ===================== Harmonie ===================== */
+/* Akkord für Schritt i. Bei Pachelbel liegt Schritt 0 auf D; bei Seths Track beginnt die Schleife mit dem Einzählen,
+   Schritt 0 liegt also schon im dritten Takt (der Akkord dort ist D, wie bei Pachelbel). */
+function chordIndex(i){ var lv=L(), n=lv.chords.length, ci=Math.floor((i+(lv.track?CFG.einzaehlen:0))/lv.perStep); return ((ci%n)+n)%n; }
+function chordAt(i){ return L().chords[chordIndex(i)]; }
+function pcsAt(i){ var c=chordAt(i), s={}; s[((c[0]%12)+12)%12]=1; for(var j=0;j<c[1].length;j++) s[c[1][j]]=1; return s; }
+function fits(m,i){ return !!pcsAt(i)[m%12]; }
+function stepTime(i){ return S.t0+i*S.dur; }
+/* drei Kandidaten für Schritt k: jeder zweite Akkordton (so sind es immer drei verschiedene Akkordtöne, und sie
+   liegen auf dem Kreis weit genug auseinander, auch am Handy), nahe am letzten Ton oder um Pachelbels Ton */
+function cands(k){
+  if(S.cand[k]) return S.cand[k];
+  var lv=L(), pc=pcsAt(k), list=[], m;
+  for(m=CFG.tonraum[0]; m<=CFG.tonraum[1]; m++) if(pc[m%12]) list.push(m);
+  var target=lv.hint?PACHELBEL[k%CFG.lap]:null, ref=target;
+  if(ref==null){ ref=72; for(var b=k-1;b>=Math.max(0,k-4);b--) if(S.notes[b]!=null){ ref=S.notes[b]; break; } }
+  var ci=0, bd=1e9; for(var i=0;i<list.length;i++){ var d=Math.abs(list[i]-ref); if(d<bd){ bd=d; ci=i; } }
+  var shift=target!=null ? [1,0,2,1,2,0,1,0][k%8] : 1;      // wo Pachelbels Ton liegt, wechselt
+  var s0=Math.max(0,Math.min(list.length-5,ci-2*shift));
+  if(target!=null){ var tries=[shift,0,1,2]; for(var q=0;q<4;q++){ var t0=ci-2*tries[q]; if(t0>=0&&t0<=list.length-5){ s0=t0; break; } } }
+  var C=[list[s0],list[s0+2],list[s0+4]];
+  S.cand[k]=C; return C;
+}
+/* welcher Kandidat macht den Akkord voll (mit dem, was Blau und Rosé bei Schritt k spielen werden) */
+function completer(k){
+  var C=cands(k), b=S.notes[k-CFG.versatz], r=S.notes[k-2*CFG.versatz], have={}, n=0;
+  if(b!=null&&k-CFG.versatz<CFG.eingabe&&fits(b,k)){ have[b%12]=1; n++; }
+  if(r!=null&&k-2*CFG.versatz<CFG.eingabe&&fits(r,k)){ if(!have[r%12]) n++; have[r%12]=1; }
+  if(n<2) return -1;
+  for(var i=0;i<3;i++) if(!have[C[i]%12]) return i;
+  return -1;
+}
+function voicesAt(i){   // was bei Schritt i klingt
+  var v={g:null,b:null,r:null}, o=CFG.versatz;
+  if(i>=0&&i<CFG.eingabe) v.g=S.notes[i];
+  if(i-o>=0&&i-o<CFG.eingabe) v.b=S.notes[i-o];
+  if(i-2*o>=0&&i-2*o<CFG.eingabe) v.r=S.notes[i-2*o];
+  return v;
+}
+
+/* ===================== Ablauf ===================== */
+function startGame(){
+  if(!audioInit()){ /* ohne Ton geht es trotzdem */ }
+  if(ac && ac.state==="suspended"){ try{ ac.resume(); }catch(e){} }
+  if(ac){ try{ var sb=ac.createBuffer(1,1,22050), s=ac.createBufferSource(); s.buffer=sb; s.connect(ac.destination); s.start(0); }catch(e){} }
+  if(opt.onStart){ try{ opt.onStart(); }catch(e){} }
+  S.score=0; S.combo=0; S.mult=1; S.tri=0; S.played=0; S.replay=false; S.savedCanon=null;
+  loadTrack();
+  hidePanel(); startLevel(0);
+}
+function startLevel(li,replayNotes){
+  S.li=li; var lv=L();
+  S.dur=60/lv.bpm*lv.schlag;
+  S.notes={}; S.cand={}; S.done={}; S.evald={}; S.jk=0; S.sched=-CFG.einzaehlen; S.flash=null; S.triGlow=0;
+  S.replay=!!replayNotes; if(replayNotes){ for(var k in replayNotes) S.notes[k]=replayNotes[k]; }
+  S.running=true; S.paused=false; S.phase="play";
+  S.lvBanner=performance.now();
+  mqT.textContent=T.lvShort[li]; mqS.textContent=S.replay?T.replay:T.lvTip[li];
+  var t=now()+0.35+(li>0&&!replayNotes?1.0:0);      // zwischen zwei Levels ein kurzer Atemzug
+  S.t0=t+CFG.einzaehlen*S.dur;
+  if(lv.track && trackBuf){ startTrack(t); openFilter(0); } else stopTrack();
+  S.useTrack=!!(lv.track&&trackBuf);
+  hud(); setPads(true);
+  wake();
+}
+function nextLevel(){
+  ring(CFG.farben.gold); ring(CFG.farben.blau);                 // ein Level geschafft: Licht nach außen
+  for(var q=0;q<3;q++){ var a=-Math.PI/2+q*Math.PI*2/3; burst(CX+Math.cos(a)*240,CY+Math.sin(a)*240,[CFG.farben.gold,CFG.farben.blau,CFG.farben.rose][q],14,200); }
+  if(S.replay){ endRun(true); return; }
+  if(S.li===1) S.savedCanon=copyNotes();
+  if(S.li>=LEVELS.length-1){ endRun(); return; }
+  var ni=S.li+1;
+  if(LEVELS[ni].track && !trackBuf){
+    // auf Seths Track kurz warten; kommt er nicht, spielt der Bass ihn nach
+    S.phase="wait"; S.waitTrack=performance.now();
+    var tl=loadTrack(), done=false;
+    tl.then(function(){ if(!done){ done=true; startLevel(ni); } });
+    setTimeout(function(){ if(!done){ done=true; startLevel(ni); } },4000);
+    return;
+  }
+  startLevel(ni);
+}
+function copyNotes(){ var o={}; for(var k in S.notes) o[k]=S.notes[k]; return o; }
+function endRun(fromReplay){
+  S.running=false; S.phase="end"; stopTrack(); setPads(false);
+  if(fromReplay){ panel(T.title(S.best)+btn("go",T.again)+(S.savedCanon?btn("listen",T.listen):"")); bindPanel(); return; }
+  var isBest=S.score>S.best; if(isBest){ S.best=S.score; }
+  save();
+  if(!S.savedCanon) S.savedCanon=copyNotes();
+  panel(T.end(S.score,S.best,S.tri,S.played,isBest)+btn("go",T.again)+btn("listen",T.listen));
+  bindPanel();
+  if(opt.onEnd){ try{ opt.onEnd(S.score); }catch(e){} }
+}
+function listen(){
+  if(!S.savedCanon) return;
+  audioInit(); if(ac&&ac.state==="suspended"){ try{ ac.resume(); }catch(e){} }
+  if(opt.onStart){ try{ opt.onStart(); }catch(e){} }
+  hidePanel(); startLevel(1,S.savedCanon);
+}
+
+/* Takt und Urteil — zwei Uhren wie in Game 04: geplant wird vorausschauend, geurteilt wird nach dem, was zu hören ist */
+var VORLAUF=0.15;
+function step(){
+  if(!S.running||S.paused) return;
+  var lv=L(), o=CFG.versatz;
+  // 1. vorausplanen: Bass, Kopien (und im Anhören auch Gold)
+  while(stepTime(S.sched) < now()+VORLAUF && S.sched < CFG.eingabe+CFG.nachklang){
+    var i=S.sched, t=stepTime(i);
+    if(lv.synth || !S.useTrack){ var c=chordAt(i), bm=c[0]<24? 36+((c[0]%12)+12)%12 : c[0]; if(bm<36) bm+=12; bassNote(bm,t,S.dur*0.96); }
+    if(i>=0){
+      var v=voicesAt(i);
+      if(S.replay && v.g!=null) pluck("gold",v.g,t,CFG.laut.gold);
+      if(v.b!=null) pluck("blau",v.b,t,CFG.laut.blau);
+      if(v.r!=null) pluck("rose",v.r,t,CFG.laut.rose);
+    }
+    S.sched++;
+  }
+  var h=heard()-S.offset, pos=(h-S.t0)/S.dur;
+  // 2. verpasste Schritte schließen (Pause in der Melodie; auch die Kopien schweigen dort)
+  if(!S.replay){
+    while(S.jk<CFG.eingabe && h > stepTime(S.jk)+CFG.zeit.locker*S.dur){
+      if(!S.done[S.jk]){ S.done[S.jk]="rest"; S.combo=0; setMult(); }
+      S.jk++;
+    }
+  }
+  // 3. Zusammenklang bewerten, sobald ein Schritt zu Ende gehört ist
+  var ei=Math.floor(pos-0.02);
+  for(var e=Math.max(0,ei-2); e<=ei; e++){ if(e<CFG.eingabe+CFG.nachklang && !S.evald[e] && (S.replay || e<S.jk || e>=CFG.eingabe) ) evaluate(e); }
+  // 4. Ende des Levels
+  if(pos > CFG.eingabe+CFG.nachklang+0.6){ S.running=false; nextLevel(); }
+}
+function evaluate(i){
+  S.evald[i]=1;
+  var v=voicesAt(i), pc={}, n=0, ok=0, sounding=0, o=CFG.versatz;
+  if(v.b!=null){ var pb=pt(i-o,v.b); burst(pb[0],pb[1],CFG.farben.blau,4,110); }
+  if(v.r!=null){ var pr=pt(i-2*o,v.r); burst(pr[0],pr[1],CFG.farben.rose,4,110); }
+  if(S.replay && v.g!=null){ var pg2=pt(i,v.g); burst(pg2[0],pg2[1],CFG.farben.gold,6,150); }
+  [v.g,v.b,v.r].forEach(function(m,j){ if(m==null) return; sounding++; if(fits(m,i)){ ok++; if(!pc[m%12]){ pc[m%12]=1; n++; } }
+    if(j>0 && fits(m,i) && !S.replay) addScore(CFG.punkte.kopie); });
+  if(sounding===3 && ok===3 && n===3){
+    S.triGlow=1; S.triFlash=1; ring(CFG.farben.gold);
+    var A1=pt(i,v.g), A2=pt(i-o,v.b), A3=pt(i-2*o,v.r);
+    along(A1,A2,CFG.farben.gold,8); along(A2,A3,CFG.farben.blau,8); along(A3,A1,CFG.farben.rose,8);
+    if(!S.replay){ S.tri++; addScore(CFG.punkte.dreieck*S.mult); flash(T.judge.tri,"tri"); }
+    if(S.useTrack) openFilter(Math.min(1,0.25+S.tri/20));
+  } else if(sounding>=2 && ok===sounding) S.triGlow=Math.max(S.triGlow,0.45);
+  hud();
+}
+function nextInput(){
+  var h=heard()-S.offset;
+  for(var k=S.jk;k<CFG.eingabe;k++){ if(!S.done[k]) return k; }
+  return -1;
+}
+function press(lane,src){
+  if(!S.running||S.paused||S.replay) return;
+  if(ac&&ac.state==="suspended"){ try{ ac.resume(); }catch(e){} }
+  var h=heard()-S.offset, k=Math.round((h-S.t0)/S.dur);
+  padFlash(lane);
+  if(k<0||k>=CFG.eingabe){ return; }
+  if(S.done[k]){ // schon gespielt: vielleicht ist der nächste gemeint (sehr früh getippt)
+    if(k+1<CFG.eingabe && !S.done[k+1] && stepTime(k+1)-h < CFG.zeit.locker*S.dur) k=k+1; else return; }
+  var dev=h-stepTime(k), ad=Math.abs(dev);
+  if(ad > CFG.zeit.locker*S.dur) return;
+  var C=cands(k), m=C[lane];
+  S.notes[k]=m; S.done[k]="hit"; S.played++;
+  pluck("gold",m,now(),CFG.laut.gold);
+  var q = ad<=CFG.zeit.perfekt?"p":(ad<=CFG.zeit.gut?"g":"l");
+  if(q!=="l"){ S.combo++; // das Gerät lernt: Bluetooth-Kopfhörer, langsame Bildschirme
+    S.offset=Math.max(-CFG.zeit.lernenMax,Math.min(CFG.zeit.lernenMax,S.offset+dev*CFG.zeit.lernen*0.5)); }
+  else S.combo=0;
+  setMult();
+  addScore((q==="p"?CFG.punkte.perfekt:q==="g"?CFG.punkte.gut:CFG.punkte.locker)*S.mult);
+  var lv=L(), label=T.judge[q];
+  if(lv.hint && m===PACHELBEL[k%CFG.lap]){ addScore(CFG.punkte.kanon); label=T.judge.canon+" · "+label; }
+  flash(label,q,lane,k);
+  var P=pt(k,m); burst(P[0],P[1],CFG.farben.gold,q==="p"?16:(q==="g"?10:5),q==="p"?240:180); if(q==="p") burst(P[0],P[1],"#FFFFFF",6,120);
+  while(S.jk<CFG.eingabe && S.done[S.jk]) S.jk++;
+  hud();
+}
+function setMult(){ var m=1; for(var i=0;i<CFG.mal.length;i++) if(S.combo>=CFG.mal[i][0]) m=CFG.mal[i][1]; S.mult=m; }
+function addScore(p){ S.score+=Math.round(p); }
+function flash(text,kind,lane,k){ S.flash={t:performance.now(),text:text,kind:kind,k:k,lane:lane}; }
+function pause(){ if(!S.running||S.paused) return; S.paused=true; S.pauseAt=now(); if(ac){ try{ ac.suspend(); }catch(e){} }
+  panel('<h2>'+T.paused+'</h2>'+btn("cont",T.cont)); bindPanel(); }
+function resume(){ if(!S.paused) return; hidePanel(); if(ac){ try{ ac.resume(); }catch(e){} } S.paused=false; wake(); }
+
+/* ===================== Zeichnen ===================== */
+var raf=0, lastDraw=0;
+function wake(){ if(!raf) raf=requestAnimationFrame(loop); }
+function loop(){
+  raf=0;
+  var vis = opt.visible ? opt.visible() : true;
+  if(!vis){ if(S.running&&!S.paused) pause(); return; }
+  step(); draw();
+  if(S.running || PARTS.length || performance.now()-lastDraw<200 || S.phase==="title"||S.phase==="wait"||S.phase==="end") raf=requestAnimationFrame(loop);
+  lastDraw=performance.now();
+}
+function ang(s){ return -Math.PI/2 + ((s%CFG.lap)+CFG.lap)%CFG.lap/CFG.lap*Math.PI*2; }
+function rad(m){ return 150 + (m-CFG.tonraum[0])/(CFG.tonraum[1]-CFG.tonraum[0])*185; }
+function pt(s,m){ var a=ang(s), r=rad(m); return [CX+Math.cos(a)*r, CY+Math.sin(a)*r]; }
+/* ---------- Licht: Glühen, Funken, Nachleuchten ----------
+   Alles Leuchtende sind vorgerenderte weiche Lichtpunkte (Sprites), die additiv übereinander gelegt werden — das sieht aus
+   wie Licht und kostet am Handy kaum etwas (kein shadowBlur). Funken beim Tippen, kleine Funken, wenn Blau und Rosé deinen
+   Ton spielen, und beim vollen Akkord leuchtet das Dreieck golden auf und schickt einen Ring nach außen.
+   „Bewegung reduzieren": keine Funken, kein Funkeln, keine Ringe; das Leuchten bleibt ruhig. */
+var SPR={}, PARTS=[], COMET={g:[],b:[],r:[]}, lastT=performance.now(), RINGS=[], DUST=null;
+function sprite(col){
+  if(SPR[col]) return SPR[col];
+  var c=document.createElement("canvas"); c.width=c.height=64; var x=c.getContext("2d"), gr=x.createRadialGradient(32,32,0,32,32,32);
+  gr.addColorStop(0,"rgba(255,255,255,1)"); gr.addColorStop(0.18,col); gr.addColorStop(0.45,hexA(col,0.35)); gr.addColorStop(1,hexA(col,0));
+  x.fillStyle=gr; x.fillRect(0,0,64,64); SPR[col]=c; return c;
+}
+function hexA(h,a){ var n=parseInt(h.slice(1),16); return "rgba("+(n>>16&255)+","+(n>>8&255)+","+(n&255)+","+a+")"; }
+function glow(x,y,size,col,a){ if(a<=0.01) return; g.globalAlpha=Math.min(1,a); g.drawImage(sprite(col),x-size,y-size,size*2,size*2); }
+function burst(x,y,col,n,speed){
+  if(RM) return;
+  for(var i=0;i<n;i++){ var a=Math.random()*Math.PI*2, v=(0.35+Math.random()*0.65)*(speed||180);
+    PARTS.push({x:x,y:y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,life:0,max:0.45+Math.random()*0.5,col:col,s:3+Math.random()*5}); }
+  if(PARTS.length>260) PARTS.splice(0,PARTS.length-260);
+}
+function along(p,q,col,n){ if(RM) return; for(var i=0;i<n;i++){ var t=Math.random(); burst(p[0]+(q[0]-p[0])*t,p[1]+(q[1]-p[1])*t,col,1,70); } }
+function ring(col){ if(!RM) RINGS.push({t:performance.now(),col:col}); }
+function stepParts(dt){
+  for(var i=PARTS.length-1;i>=0;i--){ var P=PARTS[i]; P.life+=dt; if(P.life>P.max){ PARTS.splice(i,1); continue; }
+    var dr=Math.pow(0.08,dt); P.vx*=dr; P.vy*=dr; P.x+=P.vx*dt; P.y+=P.vy*dt; }
+}
+function drawParts(){
+  for(var i=0;i<PARTS.length;i++){ var P=PARTS[i], k=1-P.life/P.max; glow(P.x,P.y,P.s*(0.6+k*0.8),P.col,k); }
+}
+var bg=null;
+function background(){
+  if(bg) return bg;
+  bg=document.createElement("canvas"); bg.width=W; bg.height=H; var b=bg.getContext("2d");
+  b.fillStyle="#000"; b.fillRect(0,0,W,H);
+  var gr=b.createRadialGradient(CX,CY,30,CX,CY,400); gr.addColorStop(0,"rgba(38,56,112,.30)"); gr.addColorStop(0.6,"rgba(14,18,40,.18)"); gr.addColorStop(1,"rgba(0,0,0,0)");
+  b.fillStyle=gr; b.fillRect(0,0,W,H);
+  for(var m=CFG.tonraum[0]; m<=CFG.tonraum[1]; m+=2){ b.beginPath(); b.arc(CX,CY,rad(m),0,Math.PI*2); b.strokeStyle="rgba(255,255,255,"+(m%12===2?0.075:0.03)+")"; b.lineWidth=1; b.stroke(); }
+  for(var s=0;s<CFG.lap;s++){ var a=ang(s), r1=rad(CFG.tonraum[1])+10, r2=r1+(s%8===0?14:6);
+    b.beginPath(); b.moveTo(CX+Math.cos(a)*r1,CY+Math.sin(a)*r1); b.lineTo(CX+Math.cos(a)*r2,CY+Math.sin(a)*r2);
+    b.strokeStyle="rgba(255,255,255,"+(s%8===0?0.38:0.14)+")"; b.lineWidth=s%8===0?2:1; b.stroke(); }
+  // die drei Einsätze: kleine Marken in den Farben der Stimmen
+  var cols=[CFG.farben.gold,CFG.farben.blau,CFG.farben.rose];
+  for(var j=0;j<3;j++){ var aa=ang(j*CFG.versatz), rr=rad(CFG.tonraum[1])+34; b.fillStyle=cols[j]; b.globalAlpha=0.7; b.beginPath(); b.arc(CX+Math.cos(aa)*rr,CY+Math.sin(aa)*rr,3.5,0,7); b.fill(); b.globalAlpha=1; }
+  return bg;
+}
+function dust(pn){
+  if(!DUST){ DUST=[]; var r=777; for(var i=0;i<70;i++){ r=(r*16807)%2147483647; var a=r/2147483647*7; r=(r*16807)%2147483647; var d=60+r/2147483647*300;
+    r=(r*16807)%2147483647; DUST.push([CX+Math.cos(a)*d,CY+Math.sin(a)*d,r/2147483647*6.28,0.4+((i*37)%10)/12]); } }
+  g.fillStyle="#fff";
+  for(var j=0;j<DUST.length;j++){ var D=DUST[j], tw=RM?0.25:(0.15+0.35*(0.5+0.5*Math.sin(pn/1000*D[3]+D[2]))); g.globalAlpha=tw; g.fillRect(D[0],D[1],1.6,1.6); }
+  g.globalAlpha=1;
+}
+function draw(){
+  var pn=performance.now(), dt=Math.min(0.05,(pn-lastT)/1000); lastT=pn;
+  g.globalCompositeOperation="source-over"; g.globalAlpha=1;
+  g.drawImage(background(),0,0);
+  dust(pn);
+  var playing=S.phase==="play";
+  var h=heard()-S.offset, pos=playing?(h-S.t0)/S.dur:-1, ps=Math.floor(pos);
+  drawBass(pos);
+  if(!playing){
+    if(S.phase==="wait"){ banner(T.lvShort[Math.min(2,S.li+1)],"",1); }
+    else drawIdle(pn);
+    stepParts(dt); g.globalCompositeOperation="lighter"; drawParts(); g.globalCompositeOperation="source-over"; g.globalAlpha=1;
+    return;
+  }
+  // ---- die Melodie als Lichtspur: frisch Gold, von Blau gespielt Blau, auch von Rosé gespielt Rosé ----
+  var from=Math.max(0,ps-CFG.lap+1), to=Math.min(CFG.eingabe-1,ps), cols=[CFG.farben.gold,CFG.farben.blau,CFG.farben.rose];
+  g.lineCap="round"; g.lineJoin="round";
+  g.globalCompositeOperation="lighter";
+  for(var s=from;s<to;s++){
+    var a=S.notes[s], b=S.notes[s+1]; if(a==null||b==null) continue;
+    var age=pos-(s+1), col=age<CFG.versatz?cols[0]:(age<2*CFG.versatz?cols[1]:cols[2]);
+    var fade=age>19?Math.max(0,1-(age-19)/4):1; if(fade<=0) continue;
+    var p1=pt(s,a), p2=pt(s+1,b);
+    g.strokeStyle=col; g.globalAlpha=0.10*fade; g.lineWidth=16; line(p1,p2);
+    g.globalAlpha=0.22*fade; g.lineWidth=7; line(p1,p2);
+    g.globalAlpha=0.95*fade; g.lineWidth=2.2; line(p1,p2);
+  }
+  // Perlen: jeder Ton ein Lichtpunkt; er flammt auf, wenn eine Stimme ihn gerade spielt
+  for(var q=from;q<=to;q++){
+    var m=S.notes[q]; if(m==null) continue;
+    var ag=pos-q, c2=ag<CFG.versatz?cols[0]:(ag<2*CFG.versatz?cols[1]:cols[2]), fd=ag>19?Math.max(0,1-(ag-19)/4):1, P=pt(q,m);
+    var fl=0; for(var v=0;v<3;v++){ var d=pos-(q+v*CFG.versatz); if(d>=0&&d<0.6) fl=Math.max(fl,1-d/0.6); }
+    glow(P[0],P[1],7+fl*16,c2,(0.55+fl*0.45)*fd);
+  }
+  // ---- die drei Köpfe, mit Kometenschweif, und das Dreieck ----
+  var heads=[], vv=voicesAt(Math.max(0,ps)), vals=[vv.g,vv.b,vv.r], keys=["g","b","r"];
+  for(var j=0;j<3;j++){
+    var sp=pos-j*CFG.versatz; if(sp<-0.5 || sp>CFG.eingabe+0.5){ heads.push(null); COMET[keys[j]]=[]; continue; }
+    var mm=vals[j]; if(mm==null){ var back=Math.floor(sp); for(var z=back;z>=Math.max(0,back-3);z--) if(S.notes[z]!=null){ mm=S.notes[z]; break; } }
+    if(mm==null) mm=72;
+    var aa=-Math.PI/2+(((sp%CFG.lap)+CFG.lap)%CFG.lap)/CFG.lap*Math.PI*2, rr=rad(mm);
+    var hx=CX+Math.cos(aa)*rr, hy=CY+Math.sin(aa)*rr;
+    heads.push([hx,hy,cols[j],vals[j]!=null]);
+    var cm=COMET[keys[j]]; cm.push([hx,hy]); if(cm.length>14) cm.shift();
+  }
+  S.triGlow*=RM?0.9:0.93; S.triFlash=(S.triFlash||0)*0.9;
+  var act=heads.filter(function(x){ return x; });
+  g.globalCompositeOperation="source-over";
+  if(act.length>=2){
+    g.lineWidth=1.4+S.triGlow*2.6; g.strokeStyle="rgba(255,255,255,"+(0.14+S.triGlow*0.7)+")";
+    g.beginPath(); g.moveTo(act[0][0],act[0][1]); for(var u=1;u<act.length;u++) g.lineTo(act[u][0],act[u][1]); if(act.length===3) g.closePath(); g.stroke();
+    if(act.length===3 && S.triGlow>0.03){
+      var tg=g.createLinearGradient(act[0][0],act[0][1],act[2][0],act[2][1]);
+      tg.addColorStop(0,hexA(CFG.farben.gold,0.22*S.triGlow)); tg.addColorStop(0.5,hexA(CFG.farben.blau,0.12*S.triGlow)); tg.addColorStop(1,hexA(CFG.farben.rose,0.18*S.triGlow));
+      g.fillStyle=tg; g.fill();
+      g.globalCompositeOperation="lighter"; g.strokeStyle=hexA(CFG.farben.gold,0.35*S.triGlow); g.lineWidth=10; g.stroke(); g.globalCompositeOperation="source-over";
+    }
+  }
+  // Ringe nach außen (voller Akkord)
+  for(var ri=RINGS.length-1; ri>=0; ri--){ var R=RINGS[ri], rt=(pn-R.t)/1000; if(rt>1.1){ RINGS.splice(ri,1); continue; }
+    g.beginPath(); g.arc(CX,CY,100+rt*330,0,Math.PI*2); g.strokeStyle=hexA(R.col,0.5*(1-rt/1.1)); g.lineWidth=3*(1-rt/1.1)+1; g.stroke(); }
+  // Kandidaten der nächsten Schritte
+  if(!S.replay){
+    var k0=nextInput();
+    for(var k=k0; k>=0 && k<CFG.eingabe && k<=ps+2; k++){ if(S.done[k]) continue; drawCands(k, k===k0, pos); }
+  }
+  g.globalCompositeOperation="lighter";
+  for(var w=0;w<heads.length;w++){ var H2=heads[w]; if(!H2) continue;
+    var cm2=COMET[keys[w]]; if(!RM) for(var ci=0;ci<cm2.length-1;ci++){ var f=ci/cm2.length; glow(cm2[ci][0],cm2[ci][1],6+f*10,H2[2],f*0.35*(H2[3]?1:0.4)); }
+    glow(H2[0],H2[1],H2[3]?30+S.triGlow*14:18,H2[2],H2[3]?0.95:0.4);
+  }
+  stepParts(dt); drawParts();
+  g.globalCompositeOperation="source-over"; g.globalAlpha=1;
+  // Wertung
+  if(S.flash){ var age2=(pn-S.flash.t)/1000; if(age2<0.9){
+    var col2=S.flash.kind==="tri"?CFG.farben.gold:(S.flash.kind==="p"?"#fff":(S.flash.kind==="g"?"rgba(255,255,255,.85)":"rgba(255,255,255,.6)"));
+    var y=S.flash.kind==="tri"?CY:64, sc=S.flash.kind==="tri"&&!RM?1+0.25*Math.max(0,1-age2*4):1;
+    label(S.flash.text, CX, y - (RM||S.flash.kind==="tri"?0:age2*14), col2, Math.round((S.flash.kind==="tri"?24:20)*sc), 1-age2/0.9); } }
+  // Levelname am Anfang, langsam ein- und ausgeblendet
+  var lb=(pn-S.lvBanner)/1000; if(lb<3.2){ var al=Math.min(1,lb/0.5)*Math.min(1,(3.2-lb)/0.8); banner(T.lv[S.li], S.replay?T.replay:T.lvTip[S.li], al); }
+}
+function banner(t,sub,al){
+  g.globalAlpha=al*0.55; g.fillStyle="#000"; g.fillRect(0,H-118,W,96); g.globalAlpha=al;
+  g.font="600 30px "+BALLET; g.textAlign="center"; g.textBaseline="middle"; g.fillStyle=CFG.farben.gold; g.fillText(t,CX,H-86);
+  if(sub){ g.font="500 13px "+MONO; g.fillStyle="rgba(255,255,255,.85)"; g.fillText(sub,CX,H-50); }
+  g.globalAlpha=1;
+}
+function line(a,b){ g.beginPath(); g.moveTo(a[0],a[1]); g.lineTo(b[0],b[1]); g.stroke(); }
+function drawBass(pos){
+  var n=8, R=92, cur=pos>=-CFG.einzaehlen ? chordIndex(Math.floor(pos)) : -1, on=S.phase==="play";
+  // der Multiplikator als pinker Hof um den Bass (Pink = was der Takt zahlt)
+  if(on && S.mult>1){ var fr0=pos-Math.floor(pos), pulse=RM?0.5:Math.max(0,1-fr0*1.8);
+    g.globalCompositeOperation="lighter"; glow(CX,CY,R+30+(S.mult-1)*10,CFG.farben.pink,0.10*(S.mult-1)*(0.6+0.4*pulse)); g.globalCompositeOperation="source-over"; g.globalAlpha=1; }
+  g.lineWidth=1.5; g.strokeStyle="rgba(255,255,255,.35)"; g.beginPath();
+  for(var i=0;i<=n;i++){ var a=-Math.PI/2+i/n*Math.PI*2, x=CX+Math.cos(a)*R, y=CY+Math.sin(a)*R; if(i===0) g.moveTo(x,y); else g.lineTo(x,y); }
+  g.stroke();
+  for(var j=0;j<n;j++){ var a2=-Math.PI/2+j/n*Math.PI*2, x2=CX+Math.cos(a2)*R, y2=CY+Math.sin(a2)*R, here=(j===cur&&on);
+    if(here){ var fr=pos-Math.floor(pos); g.strokeStyle="rgba(255,255,255,.45)"; g.lineWidth=1.5; g.beginPath(); g.moveTo(CX,CY); g.lineTo(x2,y2); g.stroke();
+      g.globalCompositeOperation="lighter"; glow(x2,y2,26-(RM?0:fr*8),"#FFFFFF",0.8); g.globalCompositeOperation="source-over"; g.globalAlpha=1; }
+    else { g.beginPath(); g.arc(x2,y2,3.5,0,Math.PI*2); g.fillStyle="rgba(255,255,255,.5)"; g.fill(); } }
+  if(on){ var fr2=pos-Math.floor(pos), pl=RM?0.6:Math.max(0,1-fr2*2.2);
+    g.globalCompositeOperation="lighter"; glow(CX,CY,10+pl*12,CFG.farben.pink,0.6+pl*0.4); g.globalCompositeOperation="source-over"; g.globalAlpha=1; }
+}
+function drawCands(k,isNext,pos){
+  var C=cands(k), lv=L(), a=ang(k), comp=(lv.voll?completer(k):-1), tgt=lv.hint?PACHELBEL[k%CFG.lap]:null;
+  var dt=k-pos;
+  for(var i=0;i<3;i++){
+    var r=rad(C[i]), x=CX+Math.cos(a)*r, y=CY+Math.sin(a)*r, base=isNext?12:7;
+    if(isNext && !RM){ var close=Math.max(0,Math.min(1.2,dt)), ringR=base+close*26; g.globalAlpha=1;
+      g.beginPath(); g.arc(x,y,ringR,0,Math.PI*2); g.strokeStyle="rgba(255,255,255,"+(0.15+0.35*(1-close/1.2))+")"; g.lineWidth=1.5; g.stroke(); }
+    g.globalCompositeOperation="lighter"; glow(x,y,base*2.4,tgt===C[i]?CFG.farben.gold:"#FFFFFF",isNext?0.55:0.25); g.globalCompositeOperation="source-over";
+    g.globalAlpha=isNext?1:0.45;
+    g.beginPath(); g.arc(x,y,base,0,Math.PI*2); g.fillStyle="rgba(255,255,255,.92)"; g.fill();
+    if(tgt===C[i]){ g.beginPath(); g.arc(x,y,base+6,0,Math.PI*2); g.strokeStyle=CFG.farben.gold; g.lineWidth=3; g.stroke(); }
+    if(comp===i){ tri(x,y-base-11,7,CFG.farben.gold); }
+    if(lv.voraus && isNext){
+      var fb=k+CFG.versatz<CFG.eingabe+CFG.nachklang && fits(C[i],k+CFG.versatz), fr=k+2*CFG.versatz<CFG.eingabe+CFG.nachklang && fits(C[i],k+2*CFG.versatz);
+      dot(x+base+6,y-4,4,fb?CFG.farben.blau:"rgba(111,208,255,.18)"); dot(x+base+6,y+6,4,fr?CFG.farben.rose:"rgba(247,198,221,.18)"); }
+    if(isNext){ g.globalAlpha=1; g.fillStyle="#000"; g.font="600 11px "+MONO; g.textAlign="center"; g.textBaseline="middle"; g.fillText(T.lanes[i].charAt(0),x,y+0.5); }
+  }
+  g.globalAlpha=1;
+}
+function tri(x,y,s,col){ g.beginPath(); g.moveTo(x,y-s); g.lineTo(x+s*0.9,y+s*0.6); g.lineTo(x-s*0.9,y+s*0.6); g.closePath(); g.fillStyle=col; g.fill(); }
+function dot(x,y,r,col){ g.beginPath(); g.arc(x,y,r,0,Math.PI*2); g.fillStyle=col; g.fill(); }
+var MONO='"IBM Plex Mono",ui-monospace,Menlo,monospace', BALLET='"Ballet Mecanique","Chivo","Helvetica Neue",Helvetica,sans-serif';
+function label(t,x,y,col,size,alpha){
+  g.globalAlpha=Math.max(0,Math.min(1,alpha==null?1:alpha)); g.font="600 "+size+"px "+MONO; g.textAlign="center"; g.textBaseline="middle";
+  g.lineWidth=5; g.strokeStyle="#000"; g.strokeText(t,x,y); g.fillStyle=col; g.fillText(t,x,y); g.globalAlpha=1;
+}
+function centerText(t,col,size){ g.font="600 "+size+"px "+BALLET; g.textAlign="center"; g.textBaseline="middle"; g.fillStyle=col; g.fillText(t,CX,CY); }
+/* vor dem Start: Pachelbels Melodie dreht sich als leuchtendes Dreieck, ganz ruhig */
+function drawIdle(pn){
+  var t=RM?0:pn/1000*0.16, cols=[CFG.farben.gold,CFG.farben.blau,CFG.farben.rose], pts=[];
+  g.lineCap="round"; g.lineJoin="round";
+  g.globalCompositeOperation="lighter";
+  for(var j=0;j<3;j++){
+    var path=[];
+    for(var s=0;s<=CFG.lap;s++){ var m=PACHELBEL[(s+j*CFG.versatz)%CFG.lap], a=-Math.PI/2+(s/CFG.lap)*Math.PI*2+t+j*Math.PI*2/3, r=rad(m);
+      path.push([CX+Math.cos(a)*r, CY+Math.sin(a)*r]); }
+    pts.push(path[0]);
+    [[14,0.08],[6,0.2],[2,0.75]].forEach(function(L2){ g.strokeStyle=cols[j]; g.globalAlpha=L2[1]; g.lineWidth=L2[0]; g.beginPath();
+      for(var q=0;q<path.length;q++){ if(q===0) g.moveTo(path[q][0],path[q][1]); else g.lineTo(path[q][0],path[q][1]); } g.stroke(); });
+  }
+  g.globalCompositeOperation="source-over";
+  g.globalAlpha=0.8; g.strokeStyle="rgba(255,255,255,.6)"; g.lineWidth=1.5; g.beginPath(); g.moveTo(pts[0][0],pts[0][1]); g.lineTo(pts[1][0],pts[1][1]); g.lineTo(pts[2][0],pts[2][1]); g.closePath(); g.stroke();
+  g.globalCompositeOperation="lighter";
+  for(var q2=0;q2<3;q2++) glow(pts[q2][0],pts[q2][1],26,cols[q2],0.95);
+  if(!RM && Math.random()<0.08){ var w=Math.floor(Math.random()*3); burst(pts[w][0],pts[w][1],cols[w],2,60); }
+  g.globalCompositeOperation="source-over"; g.globalAlpha=1;
+}
+
+/* ===================== Oberfläche ===================== */
+function hud(){
+  if(scoreT) scoreT.textContent=S.score;
+  if(multT) multT.textContent="×"+S.mult;
+}
+function setPads(on){ PADS.forEach(function(b){ b.disabled=!on; }); }
+function padFlash(i){ var b=PADS[i]; if(!b) return; b.classList.add("press"); setTimeout(function(){ b.classList.remove("press"); },110); }
+function btn(id,text){ return '<button type="button" class="g6-btn'+(id==="go"?" g6-go":"")+'" data-g6="'+id+'">'+text+'</button>'; }
+function panel(html){ ovBox.innerHTML=html; ov.classList.remove("hide"); }
+function hidePanel(){ ov.classList.add("hide"); }
+function bindPanel(){
+  var b=ovBox.querySelector('[data-g6="go"]'); if(b) b.onclick=function(){ hidePanel(); startGame(); };
+  var l=ovBox.querySelector('[data-g6="listen"]'); if(l) l.onclick=listen;
+  var c=ovBox.querySelector('[data-g6="cont"]'); if(c) c.onclick=resume;
+}
+
+/* ===================== Test-Griff ===================== */
+var api = { S:S, CFG:CFG, LEVELS:LEVELS, PACHELBEL:PACHELBEL, cands:cands, completer:completer, fits:fits, voicesAt:voicesAt,
+  press:press, pause:pause, resume:resume, wake:wake, start:function(){ hidePanel(); startGame(); }, listen:listen,
+  heard:heard, stepTime:stepTime, nextInput:nextInput, trackLoaded:function(){ return !!trackBuf; },
+  skipTo:function(li){ S.running=false; startLevel(li); } };
+try{ if(opt.debugName) window[opt.debugName]=api; }catch(e){}
+
+cv.setAttribute("aria-label",T.cv);
+panel(T.title(S.best)+btn("go",T.start)); bindPanel();
+setPads(false); hud();
+mqT.textContent="Canon in Gold"; mqS.textContent="Game 06";
+wake();
+return api;
+};
+(function(){
+  var sec=document.getElementById("nCanon"); if(!sec||!window.CanonInGold) return;
+  var root=sec.querySelector('[data-g6="root"]');
+  var inView=false, engaged=false, api=null;
+  function running(){ return !!(api && api.S.running && !api.S.paused); }
+  api=window.CanonInGold(root,{
+    lang:"en", trackSrc:"audio/createuniverse.mp3",
+    visible:function(){ return inView && !document.hidden; },
+    // keys only while the game is in view and in use, so Space still scrolls the page everywhere else
+    keysActive:function(){ return inView && !document.hidden && (engaged || running()); },
+    onStart:function(){ engaged=true; try{ document.dispatchEvent(new CustomEvent("ss:audio",{detail:"game6"})); }catch(e){} },
+    debugName:"__ssCanon"
+  });
+  root.addEventListener("pointerdown",function(){ engaged=true; },true);
+  root.addEventListener("focusin",function(){ engaged=true; });
+  function away(){ if(api.S.running && !api.S.paused) api.pause(); }
+  if("IntersectionObserver" in window){
+    new IntersectionObserver(function(es){
+      var e=es[es.length-1];
+      inView = e.isIntersecting && e.intersectionRatio>=0.3;
+      if(inView) api.wake(); else { engaged=false; away(); }
+    },{threshold:[0,0.3,0.6]}).observe(root);
+  } else { inView=true; api.wake(); }
+  document.addEventListener("visibilitychange",function(){ if(document.hidden) away(); else if(inView) api.wake(); });
+  document.addEventListener("ss:audio",function(ev){ if(ev.detail!=="game6") away(); });   // another sound source took over
+})();
+</script>
+<script>
+/* Game 06: the section goes in under the arcade at once (it is only markup); the game itself runs when the section
+   comes within about two screens, or when it is touched, or when the address ends in #nCanon. */
+(function(){
+  var tpl=document.getElementById("g6Tpl"), arc=document.getElementById("nArcade");
+  if(!tpl||!arc||document.getElementById("nCanon")) return;
+  arc.parentNode.insertBefore(tpl.content.cloneNode(true), arc.nextSibling);
+  var sec=document.getElementById("nCanon");
+  function run(){ var b=document.getElementById("lazy-game6"); if(!b||b.getAttribute("data-ran")) return;
+    b.setAttribute("data-ran","1"); var s=document.createElement("script"); s.text=b.textContent; b.parentNode.insertBefore(s,b.nextSibling); }
+  if(!("IntersectionObserver" in window)){ run(); return; }
+  var io=new IntersectionObserver(function(es){ for(var i=0;i<es.length;i++) if(es[i].isIntersecting){ io.disconnect(); run(); return; } },{rootMargin:"1400px 0px"});
+  io.observe(sec);
+  sec.addEventListener("pointerdown",function(){ io.disconnect(); run(); },true);
+  sec.addEventListener("focusin",function(){ io.disconnect(); run(); },true);
+  if(location.hash==="#nCanon"){ run(); setTimeout(function(){ sec.scrollIntoView(); },0); }
+})();
+</script>
+<!-- game6: end -->
 <!-- phoenix: start -->
 <style>
 /* hidden game "Phoenix Rising" (built 20 Nov 2026 after Martin's concept answers and "go 69"). Source: source/phoenix/phoenix.html.
