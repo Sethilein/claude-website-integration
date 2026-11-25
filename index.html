@@ -898,8 +898,8 @@ main.panel.sw-inR{animation:swipeInR .42s cubic-bezier(.16,1,.3,1) backwards}
 #bowfx .led{fill:#fff;opacity:.15}
 html.bowfx-on,html.bowfx-on *{cursor:none !important}
 /* items 110 and 111: the page draws the stethoscope and the lit bow; the plain cursors stay wherever it does not */
-#stethfx{position:fixed;left:0;top:0;width:24px;height:24px;pointer-events:none;z-index:2147483646;opacity:0;will-change:transform}
-#stethfx svg{display:block;overflow:visible;transform-origin:3px 3px;will-change:transform}
+#stethfx{position:fixed;left:0;top:0;width:176px;height:176px;pointer-events:none;z-index:2147483646;opacity:0;will-change:transform}
+#stethfx canvas{display:block;width:176px;height:176px}
 html.ptr-live.ptr-live.ptr-live body{cursor:none}
 html.ptr-live dialog{cursor:var(--cursor-day)}
 html.ptr-live[data-side="night"] dialog{cursor:var(--cursor-night)}
@@ -3014,8 +3014,9 @@ html[lang="hsb"] .kits ul.kits-en{display:none}
 
 (function(){
   /* items 110 and 111: the stethoscope hangs from the pointer, the LED bow is always lit */
-  // Day:   the stethoscope is drawn by the page and hangs from the pointer like a pendulum. A quick hand swings it,
-  //        it settles when the hand rests, and a click sends one ring out of the chest piece.
+  // Day:   the page draws the stethoscope (item 113, design B "Listening"): the chest piece is the pointer, as if you
+  //        listen to the page with it. The tube is a soft rope that trails and whips behind the hand and hangs down
+  //        when the hand rests; the ear pieces swing at its end. A click sends rings out of the chest piece.
   // Night: the bow's LEDs are always on. Five effects (rainbow scanner, beat pulse, twin comets, sparkle, colour wipe);
   //        a click moves on to the next one, and so does every twelfth second. window.__ssLed(i,n) gives the colour
   //        of LED i of n right now, so the bows in the games show the same light.
@@ -3043,15 +3044,36 @@ html[lang="hsb"] .kits ul.kits-en{display:none}
   if(calm||!fine||off||!window.requestAnimationFrame) return;
 
   var bow=document.getElementById("bowfx"), leds=bow?bow.querySelectorAll(".led"):[], N=leds.length;
+  /* item 113: the tube is a rope */
   var st=document.createElement("div"); st.id="stethfx"; st.setAttribute("aria-hidden","true");
-  var P="<path d='M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6a6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3'/><path d='M8 15v1a6 6 0 0 0 6 6a6 6 0 0 0 6-6v-4'/><circle cx='20' cy='10' r='2'/>";
-  st.innerHTML="<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke-linecap='round' stroke-linejoin='round'>"+
-    "<circle class='ring' cx='20' cy='10' r='2' stroke='#DFC166' stroke-width='1' opacity='0'/><g stroke='#ffffff' stroke-width='4'>"+P+"</g><g stroke='#8E6F1A' stroke-width='2'>"+P+"</g></svg>";
+  var sc2=document.createElement("canvas"), SZ=176, HF=SZ/2, DPR=Math.min(2,window.devicePixelRatio||1); sc2.width=SZ*DPR; sc2.height=SZ*DPR; st.appendChild(sc2);
   document.body.appendChild(st);
-  var sv=st.firstChild, ring=st.querySelector(".ring");
+  var g2=sc2.getContext("2d"); g2.setTransform(DPR,0,0,DPR,0,0);
+  var RN=15, SEG=3.1, RG=0.16, RD=0.955, RP=[], rings2=[], GOLD2="#8E6F1A", PALE2="#DFC166";
+  function rope0(){ RP.length=0; for(var i=0;i<RN;i++) RP.push({x:x,y:y+i*SEG,ox:x,oy:y+i*SEG}); }
+  function ropeStep(){ var i,j,p,q,vx,vy,dx,dy,d,f,w,e=0;
+    for(i=1;i<RN;i++){ p=RP[i]; vx=(p.x-p.ox)*RD; vy=(p.y-p.oy)*RD; p.ox=p.x; p.oy=p.y; p.x+=vx; p.y+=vy+RG*(i===RN-1?1.5:1); }
+    for(j=0;j<8;j++){ RP[0].x=x; RP[0].y=y;
+      for(i=1;i<RN;i++){ p=RP[i-1]; q=RP[i]; dx=q.x-p.x; dy=q.y-p.y; d=Math.sqrt(dx*dx+dy*dy)||0.001; f=(d-SEG)/d;
+        if(i===1){ q.x-=dx*f; q.y-=dy*f; } else { w=(i===RN-1)?0.25:0.5; p.x+=dx*f*(1-w); p.y+=dy*f*(1-w); q.x-=dx*f*w; q.y-=dy*f*w; } } }
+    for(i=1;i<RN;i++){ p=RP[i]; e+=Math.abs(p.x-p.ox)+Math.abs(p.y-p.oy); } return e; }
+  function ropePath(wd){ var i,ox=x-HF,oy=y-HF; g2.beginPath(); g2.moveTo(RP[0].x-ox,RP[0].y-oy);
+    for(i=1;i<RN-1;i++) g2.quadraticCurveTo(RP[i].x-ox,RP[i].y-oy,(RP[i].x+RP[i+1].x)/2-ox,(RP[i].y+RP[i+1].y)/2-oy);
+    g2.lineTo(RP[RN-1].x-ox,RP[RN-1].y-oy); g2.lineWidth=wd; g2.stroke(); }
+  function earPath(wd){ g2.beginPath(); g2.moveTo(0,0); g2.bezierCurveTo(-1.5,6,1,12,6,13); g2.bezierCurveTo(11,12,13.5,6,12,0); g2.lineWidth=wd; g2.stroke(); }
+  function stethDraw(now){ var e=RP[RN-1], q=RP[RN-3], ox=x-HF, oy=y-HF, i, r, k, a, pr=5.2*(1+0.16*pop);
+    g2.clearRect(0,0,SZ,SZ); g2.lineCap="round"; g2.lineJoin="round";
+    g2.strokeStyle="#fff"; ropePath(4.2); g2.strokeStyle=GOLD2; ropePath(2);
+    a=Math.atan2(e.y-q.y,e.x-q.x)+Math.PI/2; g2.save(); g2.translate(e.x-ox,e.y-oy); g2.rotate(a); g2.translate(-6,-13);      // the ear pieces at the end of the tube
+    g2.strokeStyle="#fff"; earPath(4.4); g2.strokeStyle=GOLD2; earPath(2.2);
+    g2.fillStyle="#fff"; g2.beginPath(); g2.arc(0,0,2.6,0,7); g2.arc(12,0,2.6,0,7); g2.fill(); g2.fillStyle=GOLD2; g2.beginPath(); g2.arc(0,0,1.7,0,7); g2.fill(); g2.beginPath(); g2.arc(12,0,1.7,0,7); g2.fill(); g2.restore();
+    g2.fillStyle="#fff"; g2.beginPath(); g2.arc(HF,HF,pr+1.6,0,7); g2.fill(); g2.fillStyle=GOLD2; g2.beginPath(); g2.arc(HF,HF,pr,0,7); g2.fill();   // the chest piece is the pointer
+    g2.fillStyle=PALE2; g2.beginPath(); g2.arc(HF,HF,pr*0.55,0,7); g2.fill(); g2.fillStyle=GOLD2; g2.beginPath(); g2.arc(HF,HF,pr*0.2,0,7); g2.fill();
+    for(i=rings2.length-1;i>=0;i--){ k=Math.max(0,(now-rings2[i])/620); if(k>=1){ rings2.splice(i,1); continue; } r=1-Math.pow(1-k,3);
+      g2.strokeStyle=PALE2; g2.lineWidth=1.4; g2.globalAlpha=0.85*(1-k); g2.beginPath(); g2.arc(HF,HF,5+26*r,0,7); g2.stroke(); g2.globalAlpha=0.5*(1-k); g2.beginPath(); g2.arc(HF,HF,5+14*r,0,7); g2.stroke(); g2.globalAlpha=1; } }
 
   var x=-99, y=-99, has=false, tgt=null, free=false, raf=0, lastMove=0, idleT=0;
-  var accx=0, accy=0, pvx=0, pvy=0, th=0, om=0, rt=0, pop=0, stOn=false, bowOn=false;
+  var pop=0, stOn=false, bowOn=false, moving=0;
   function night(){ return root.getAttribute("data-side")==="night"; }
   function look(el){ if(el===tgt) return; tgt=el; free=false; try{ free=!!el&&getComputedStyle(el).cursor==="none"; }catch(e){} }
   function vis(){
@@ -3059,18 +3081,13 @@ html[lang="hsb"] .kits ul.kits-en{display:none}
     if(s!==stOn){ stOn=s; st.style.opacity=s?"1":"0"; }
     if(b!==bowOn){ bowOn=b; bow.style.opacity=b?"1":"0"; if(!b) bow.style.transform=""; }
   }
-  function place(){ st.style.transform="translate3d("+(x-3)+"px,"+(y-3)+"px,0)"; if(bow){ bow.style.left=(x-27)+"px"; bow.style.top=(y-3)+"px"; } }
+  function place(){ st.style.transform="translate3d("+(x-HF)+"px,"+(y-HF)+"px,0)"; if(bow){ bow.style.left=(x-27)+"px"; bow.style.top=(y-3)+"px"; } }
   function frame(now){
     raf=0; if(document.hidden) return;
-    var i, q, c, ax, ay, k, keep=false;
-    if(stOn||Math.abs(th)>0.003||Math.abs(om)>0.003){
-      ax=accx-pvx; ay=accy-pvy; pvx=accx; pvy=accy;
-      om+=-0.05*Math.sin(th)+(0.011*ax+0.0016*accx)*Math.cos(th)-0.008*ay*Math.sin(th);
-      om*=0.95; th+=om; if(th>1.25){ th=1.25; om*=-0.3; } if(th<-1.25){ th=-1.25; om*=-0.3; }
-      accx=0; accy=0;
-      sv.style.transform="rotate("+(th*57.2958).toFixed(2)+"deg) scale("+(1+0.18*pop).toFixed(3)+")";
-      if(rt>0){ k=(now-rt)/520; if(k>=1){ rt=0; ring.setAttribute("opacity","0"); } else { ring.setAttribute("r",(2+9*(1-Math.pow(1-k,3))).toFixed(2)); ring.setAttribute("opacity",(0.9*(1-k)).toFixed(3)); } }
-      if(Math.abs(th)>0.003||Math.abs(om)>0.003||rt>0||pop>0.01||now-lastMove<300) keep=true;
+    var i, q, c, k, keep=false;
+    if(stOn&&RP.length){
+      moving=ropeStep(); stethDraw(now);
+      if(moving>0.25||rings2.length||pop>0.01||now-lastMove<300) keep=true;
     }
     if(bowOn){
       k=now-lastMove>4000?0.6:1;
@@ -3088,13 +3105,13 @@ html[lang="hsb"] .kits ul.kits-en{display:none}
 
   window.addEventListener("pointermove",function(ev){
     if(ev.pointerType!=="mouse") return;
-    if(has){ accx+=ev.clientX-x; accy+=ev.clientY-y; }
-    x=ev.clientX; y=ev.clientY; has=true; lastMove=performance.now();
+    var jump=!has||!RP.length||Math.abs(ev.clientX-x)+Math.abs(ev.clientY-y)>400;
+    x=ev.clientX; y=ev.clientY; has=true; lastMove=performance.now(); if(jump) rope0();
     live(); look(ev.target); place(); vis(); wake();
   },{passive:true,capture:true});
   window.addEventListener("pointerdown",function(ev){
     if(ev.pointerType!=="mouse") return;
-    pop=1; if(night()) window.__ssLedNext(); else { rt=performance.now(); om+=(th>=0?-1:1)*0.1+0.06; }
+    pop=1; if(night()) window.__ssLedNext(); else rings2.push(performance.now());
     lastMove=performance.now(); wake();
   },{passive:true,capture:true});
   function again(){ if(!has) return; tgt=null; look(document.elementFromPoint(x,y)); vis(); wake(); }
@@ -3102,7 +3119,7 @@ html[lang="hsb"] .kits ul.kits-en{display:none}
   document.addEventListener("mouseleave",function(){ has=false; vis(); });
   document.addEventListener("mouseenter",function(){ tgt=null; });
   document.addEventListener("visibilitychange",function(){ if(!document.hidden) wake(); });
-  new MutationObserver(function(){ th=0; om=0; again(); }).observe(root,{attributes:true,attributeFilter:["data-side"]});
+  new MutationObserver(function(){ if(has) rope0(); again(); }).observe(root,{attributes:true,attributeFilter:["data-side"]});
 })();
 
 (function(){
