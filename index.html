@@ -43,6 +43,42 @@
 @font-face{font-family:"Bodoni Moda";font-style:normal;font-weight:600;font-display:swap;src:url("fonts/bodoni-moda-latin-600-normal.woff2") format("woff2")}
 @font-face{font-family:"Bodoni Moda";font-style:italic;font-weight:400;font-display:swap;src:url("fonts/bodoni-moda-latin-400-italic.woff2") format("woff2")}
 @font-face{font-family:"Bodoni Moda";font-style:italic;font-weight:900;font-display:swap;src:url("fonts/bodoni-moda-latin-900-italic.woff2") format("woff2")}
+
+/* ---- cover wall ---- */
+#nCovers{padding:clamp(44px,6vw,72px) 0}
+.cv-head{display:flex;flex-wrap:wrap;align-items:flex-end;gap:14px 1.2em;margin-bottom:clamp(20px,3vw,36px)}.cv-head .eyebrow{flex-basis:100%}
+.cv-head h3{font-family:var(--display);font-size:clamp(28px,4.4vw,52px);font-weight:500;line-height:1.04;letter-spacing:-.02em;color:var(--fg)}
+.cv-filter{display:flex;gap:.5em;flex-wrap:wrap;margin-left:auto}
+.cv-filter button{font:600 .72rem/1 'IBM Plex Mono',monospace;letter-spacing:.06em;padding:.35em .75em;border:1px solid var(--mg);border-radius:2em;background:transparent;color:var(--fg);cursor:pointer;transition:background .2s,color .2s}
+.cv-filter button.on,.cv-filter button:hover{background:var(--fg);color:var(--bg)}
+.cv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(clamp(100px,22vw,180px),1fr));gap:clamp(6px,1.2vw,14px)}
+.cv-tile{position:relative;aspect-ratio:1/1;overflow:hidden;border-radius:4px;cursor:pointer;background:#111}
+.cv-tile img{position:relative;width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s cubic-bezier(.2,.7,.2,1),filter .3s}
+.cv-tile:hover img{transform:scale(1.08);filter:brightness(.55)}
+.cv-tile .cv-info{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:.6em .7em;opacity:0;transition:opacity .25s;background:linear-gradient(0deg,rgba(0,0,0,.82) 0%,transparent 55%)}
+.cv-tile:hover .cv-info{opacity:1}
+.cv-info b{font:500 .95rem/1.15 var(--display);color:#fff;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.cv-info span{font:.6rem/1.2 'IBM Plex Mono',monospace;color:rgba(255,255,255,.65);margin-top:.2em}
+/* vinyl overlay on hover */
+.cv-tile::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,transparent 28%,rgba(0,0,0,.55) 100%) no-repeat center;opacity:0;transition:opacity .3s;pointer-events:none}
+.cv-tile:hover::after{opacity:1}
+/* generated placeholder */
+.cv-ph{display:flex;align-items:center;justify-content:center;padding:.5em;text-align:center;font:.6rem/1.3 'IBM Plex Mono',monospace;color:rgba(255,255,255,.45);background:var(--cv-ph-bg,#1a1a1a);width:100%;height:100%;position:absolute;inset:0}
+
+/* ---- modal ---- */
+#cvModal{display:none;position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.88);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);align-items:center;justify-content:center;padding:1.5rem}
+#cvModal.open{display:flex}
+#cvModal .cv-m-wrap{position:relative;max-width:min(520px,92vw);width:100%}
+#cvModal img{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;border-radius:6px;box-shadow:0 24px 64px rgba(0,0,0,.7)}
+#cvModal .cv-m-ph{width:100%;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;border-radius:6px;background:#222;font:500 1.4rem/1.2 var(--display);color:rgba(255,255,255,.5);text-align:center;padding:1.5rem}
+#cvModal .cv-m-info{padding:1rem .2rem 0;display:flex;flex-direction:column;gap:.3em}
+#cvModal .cv-m-t{font:500 1.6rem/1.1 var(--display);color:#fff}
+#cvModal .cv-m-sub{font:.72rem/1.4 'IBM Plex Mono',monospace;color:rgba(255,255,255,.55)}
+#cvModal .cv-m-close{position:absolute;top:-2.2rem;right:0;background:none;border:none;color:#fff;font-size:1.5rem;cursor:pointer;line-height:1;opacity:.7}
+#cvModal .cv-m-close:hover{opacity:1}
+#cvModal .cv-m-links{display:flex;gap:.6em;margin-top:.6em;flex-wrap:wrap}
+#cvModal .cv-m-links a{font:.65rem/1 'IBM Plex Mono',monospace;letter-spacing:.05em;padding:.35em .8em;border:1px solid rgba(255,255,255,.25);border-radius:2em;color:rgba(255,255,255,.7);text-decoration:none;transition:border-color .2s,color .2s}
+#cvModal .cv-m-links a:hover{border-color:#fff;color:#fff}
 </style>
 <!-- polish head: end -->
 <style>html{-webkit-text-size-adjust:100%}*,*::before,*::after{box-sizing:border-box}body{margin:0}img{max-width:100%}[hidden]{display:none!important}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style>
@@ -1442,7 +1478,7 @@ html[lang="hsb"] .kits ul.kits-en{display:none}
   </div></div>
 
   <nav class="subnav" aria-label="On this page"><div class="col">
-    <button type="button" data-go="nWatch">Watch</button><button type="button" data-go="nListen">Listen</button><button type="button" data-go="nWorld">189 cities</button><button type="button" data-go="nLab">Frequency lab</button><button type="button" data-go="nPlaya">The playa</button><button type="button" data-go="nMusic">Releases</button><button type="button" data-go="nStems">Stems</button><button type="button" data-go="nArcade">Arcade</button><button type="button" data-go="nStory">Story</button><!-- kits:nav:start --><button type="button" data-go="nDownloads">Downloads</button><!-- kits:nav:end --><button type="button" class="cta" data-go="book">Book</button>
+    <button type="button" data-go="nWatch">Watch</button><button type="button" data-go="nListen">Listen</button><button type="button" data-go="nWorld">189 cities</button><button type="button" data-go="nLab">Frequency lab</button><button type="button" data-go="nPlaya">The playa</button><button type="button" data-go="nMusic">Releases</button><button type="button" data-go="nCovers">Covers</button><button type="button" data-go="nStems">Stems</button><button type="button" data-go="nArcade">Arcade</button><button type="button" data-go="nStory">Story</button><!-- kits:nav:start --><button type="button" data-go="nDownloads">Downloads</button><!-- kits:nav:end --><button type="button" class="cta" data-go="book">Book</button>
   </div></nav>
 
   <section class="blk col">
@@ -1828,6 +1864,76 @@ html[lang="hsb"] .kits ul.kits-en{display:none}
       <p class="ac-live" id="acLive" aria-live="polite"></p>
     </div>
   </div></section>
+
+<!-- coverwall: start -->
+<section id="nCovers">
+  <div class="col">
+    <div class="cv-head">
+      <div class="eyebrow">Cover wall · 44 releases</div><h3>Discography</h3>
+      <div class="cv-filter"><button data-era="all" class="on">All</button><button data-era="early" class="">2011–14</button><button data-era="peak" class="">2015–18</button><button data-era="collab" class="">2019–22</button><button data-era="now" class="">2023+</button></div>
+    </div>
+    <div class="cv-grid"><div class="cv-tile" data-era="early" data-src="img/covers/big-mama.jpg" data-title="Balkonia" data-sub="2011 · Jackmode" data-bp="" data-sc=""><div class="cv-ph">Balkonia</div><img src="img/covers/big-mama.jpg" alt="Balkonia" loading="lazy" onerror="this.closest('.cv-tile').dataset.src='';this.remove()"><div class="cv-info"><b>Balkonia</b><span>2011 · Jackmode</span></div></div><div class="cv-tile" data-era="early" data-src="img/covers/magnolia-ep.jpg" data-title="Magnolia EP" data-sub="2012 · What!What!" data-bp="" data-sc=""><div class="cv-ph">Magnolia EP</div><img src="img/covers/magnolia-ep.jpg" alt="Magnolia EP" loading="lazy" onerror="this.closest('.cv-tile').dataset.src='';this.remove()"><div class="cv-info"><b>Magnolia EP</b><span>2012 · What!What!</span></div></div><div class="cv-tile" data-era="early" data-src="img/covers/happy-body-music.jpg" data-title="Room Service" data-sub="2012 · Mambo" data-bp="" data-sc=""><div class="cv-ph">Room Service</div><img src="img/covers/happy-body-music.jpg" alt="Room Service" loading="lazy" onerror="this.closest('.cv-tile').dataset.src='';this.remove()"><div class="cv-info"><b>Room Service</b><span>2012 · Mambo</span></div></div><div class="cv-tile" data-era="early" data-src="img/covers/follow.jpg" data-title="Children Of The Revolution" data-sub="2013 · Breakbeat Paradise" data-bp="" data-sc=""><div class="cv-ph">Children Of The Revolution</div><img src="img/covers/follow.jpg" alt="Children Of The Revolution" loading="lazy" onerror="this.closest('.cv-tile').dataset.src='';this.remove()"><div class="cv-info"><b>Children Of The Revolution</b><span>2013 · Breakbeat Paradise</span></div></div><div class="cv-tile" data-era="early" data-src="img/covers/tv-loves-you-back-remixes.jpg" data-title="Panic Shopper (remix)" data-sub="2013 · Self-released" data-bp="" data-sc=""><div class="cv-ph">Panic Shopper (remix)</div><img src="img/covers/tv-loves-you-back-remixes.jpg" alt="Panic Shopper (remix)" loading="lazy" onerror="this.closest('.cv-tile').dataset.src='';this.remove()"><div class="cv-info"><b>Panic Shopper (remix)</b><span>2013 · Self-released</span></div></div><div class="cv-tile" data-era="early" data-src="img/covers/wop-wop-weep-ep.jpg" data-title="Wop Wop Weep EP" data-sub="2014 · KDB" data-bp="" data-sc=""><div class="cv-ph">Wop Wop Weep EP</div><img src="img/covers/wop-wop-weep-ep.jpg" alt="Wop Wop Weep EP" loading="lazy" onerror="this.closest('.cv-tile').dataset.src='';this.remove()"><div class="cv-info"><b>Wop Wop Weep EP</b><span>2014 · KDB</span></div></div><div class="cv-tile" data-era="early" data-src="img/covers/rotterdachs.jpg" data-title="Rotterdub (remix)" data-sub="2014 · Acker Dub" data-bp="" data-sc=""><div class="cv-ph">Rotterdub (remix)</div><img src="img/covers/rotterdachs.jpg" alt="Rotterdub (remix)" loading="lazy" onerror="this.closest('.cv-tile').dataset.src='';this.remove()"><div class="cv-info"><b>Rotterdub (remix)</b><span>2014 · Acker Dub</span></div></div><div class="cv-tile" data-era="early" data-src="img/covers/jabel.jpg" data-title="Jabel EP" data-sub="2014 · Acker Records" data-bp="" data-sc=""><div class="cv-ph">Jabel EP</div><img src="img/covers/jabel.jpg" alt="Jabel EP" loading="lazy" onerror="this.closest('.cv-tile').dataset.src='';this.remove()"><div class="cv-info"><b>Jabel EP</b><span>2014 · Acker Records</span></div></div><div class="cv-tile" data-era="peak" data-src="img/covers/the-bar-tender.jpg" data-title="The Bar Tender" data-sub="2015 · All Day I Dream" data-bp="" data-sc=""><div class="cv-ph">The Bar Tender</div><img src="img/covers/the-bar-tender.jpg" alt="The Bar Tender" loading="lazy" onerror="this.closest('.cv-tile').dataset.src='';this.remove()"><div class="cv-info"><b>The Bar Tender</b><span>2015 · All Day I Dream</span></div></div><div class="cv-tile" data-era="peak" data-src="img/covers/the-blue-phoenix-ep.jpg" data-title="The Blue Phoenix EP" data-sub="2015 · 3000 Grad" data-bp="" data-sc=""><div class="cv-ph">The Blue Phoenix EP</div><img src="img/covers/the-blue-phoenix-ep.jpg" alt="The Blue Phoenix EP" loading="lazy" onerror="this.closest('.cv-tile').dataset.src='';this.remove()"><div class="cv-info"><b>The Blue Phoenix EP</b><span>2015 · 3000 Grad</span></div></div><div class="cv-tile" data-era="peak" data-src="img/covers/salto-mortale.jpg" data-title="Fly Bar" data-sub="2015 · 3000 Grad" data-bp="" data-sc=""><div class="cv-ph">Fly Bar</div><img src="img/covers/salto-mortale.jpg" alt="Fly Bar" loading="lazy" onerror="this.closest('.cv-tile').dataset.src='';this.remove()"><div class="cv-info"><b>Fly Bar</b><span>2015 · 3000 Grad</span></div></div><div class="cv-tile" data-era="peak" data-src="img/covers/friends-part-2.jpg" data-title="Darkness" data-sub="2015 · 3000 Grad" data-bp="" data-sc=""><div class="cv-ph">Darkness</div><img src="img/covers/friends-part-2.jpg" alt="Darkness" loading="lazy" onerror="this.closest('.cv-tile').dataset.src='';this.remove()"><div class="cv-info"><b>Darkness</b><span>2015 · 3000 Grad</span></div></div><div class="cv-tile" data-era="peak" data-src="img/covers/as-you-will.jpg" data-title="As You Will (remix)" data-sub="2016 · Ton liebt Klang" data-bp="" data-sc=""><div class="cv-ph">As You Will (remix)</div><img src="img/covers/as-you-will.jpg" alt="As You Will (remix)" loading="lazy" onerror="this.closest('.cv-tile').dataset.src='';this.remove()"><div class="cv-info"><b>As You Will (remix)</b><span>2016 · Ton liebt Klang</span></div></div><div class="cv-tile" data-era="peak" data-src="img/covers/aphelion.jpg" data-title="Aphelion" data-sub="2017 · 3000 Grad" data-bp="" data-sc=""><div class="cv-ph">Aphelion</div><img src="img/covers/aphelion.jpg" alt="Aphelion" loading="lazy" onerror="this.closest('.cv-tile').dataset.src='';this.remove()"><div class="cv-info"><b>Aphelion</b><span>2017 · 3000 Grad</span></div></div><div class="cv-tile" data-era="peak" data-src="img/covers/zodiac.jpg" data-title="Zodiac" data-sub="2017 · Lost Diaries" data-bp="" data-sc=""><div class="cv-ph">Zodiac</div><img src="img/covers/zodiac.jpg" alt="Zodiac" loading="lazy" onerror="this.closest('.cv-tile').dataset.src='';this.remove()"><div class="cv-info"><b>Zodiac</b><span>2017 · Lost Diaries</span></div></div><div class="cv-tile" data-era="peak" data-src="img/covers/kadanza.jpg" data-title="Kadanza" data-sub="2018 · Love Matters" data-bp="" data-sc=""><div class="cv-ph">Kadanza</div><img src="img/covers/kadanza.jpg" alt="Kadanza" loading="lazy" onerror="this.closest('.cv-tile').dataset.src='';this.remove()"><div class="cv-info"><b>Kadanza</b><span>2018 · Love Matters</span></div></div><div class="cv-tile" data-era="peak" data-src="img/covers/eden.jpg" data-title="Eden" data-sub="2018 · 3000 Grad" data-bp="" data-sc=""><div class="cv-ph">Eden</div><img src="img/covers/eden.jpg" alt="Eden" loading="lazy" onerror="this.closest('.cv-tile').dataset.src='';this.remove()"><div class="cv-info"><b>Eden</b><span>2018 · 3000 Grad</span></div></div><div class="cv-tile" data-era="peak" data-src="img/covers/mondfinsternis.jpg" data-title="Mondfinsternis (remix)" data-sub="2018 · Keller" data-bp="" data-sc=""><div class="cv-ph">Mondfinsternis (remix)</div><img src="img/covers/mondfinsternis.jpg" alt="Mondfinsternis (remix)" loading="lazy" onerror="this.closest('.cv-tile').dataset.src='';this.remove()"><div class="cv-info"><b>Mondfinsternis (remix)</b><span>2018 · Keller</span></div></div><div class="cv-tile" data-era="peak" data-src="img/covers/eisheimer.jpg" data-title="Eisheimer" data-sub="2018 · Katermukke" data-bp="" data-sc=""><div class="cv-ph">Eisheimer</div><img src="img/covers/eisheimer.jpg" alt="Eisheimer" loading="lazy" onerror="this.closest('.cv-tile').dataset.src='';this.remove()"><div class="cv-info"><b>Eisheimer</b><span>2018 · Katermukke</span></div></div><div class="cv-tile" data-era="peak" data-src="img/covers/darjeeling-train.jpg" data-title="Darjeeling Train" data-sub="2018 · Bar 25 Music" data-bp="" data-sc=""><div class="cv-ph">Darjeeling Train</div><img src="img/covers/darjeeling-train.jpg" alt="Darjeeling Train" loading="lazy" onerror="this.closest('.cv-tile').dataset.src='';this.remove()"><div class="cv-info"><b>Darjeeling Train</b><span>2018 · Bar 25 Music</span></div></div><div class="cv-tile" data-era="peak" data-src="img/covers/road-to-montenegro.jpg" data-title="Nothing Happens By Chance" data-sub="2018 · Einmusika Recordings" data-bp="" data-sc=""><div class="cv-ph">Nothing Happens By Chance</div><img src="img/covers/road-to-montenegro.jpg" alt="Nothing Happens By Chance" loading="lazy" onerror="this.closest('.cv-tile').dataset.src='';this.remove()"><div class="cv-info"><b>Nothing Happens By Chance</b><span>2018 · Einmusika Recordings</span></div></div><div class="cv-tile" data-era="peak" data-src="img/covers/x-beatamines.jpg" data-title="Third Eye" data-sub="2018 · Lauter." data-bp="" data-sc=""><div class="cv-ph">Third Eye</div><img src="img/covers/x-beatamines.jpg" alt="Third Eye" loading="lazy" onerror="this.closest('.cv-tile').dataset.src='';this.remove()"><div class="cv-info"><b>Third Eye</b><span>2018 · Lauter.</span></div></div><div class="cv-tile" data-era="peak" data-src="img/covers/odyssee.jpg" data-title="Enchanted Voyages of the Odyssee" data-sub="2018 · In Depth Tunes" data-bp="" data-sc=""><div class="cv-ph">Enchanted Voyages of the Odyssee</div><img src="img/covers/odyssee.jpg" alt="Enchanted Voyages of the Odyssee" loading="lazy" onerror="this.closest('.cv-tile').dataset.src='';this.remove()"><div class="cv-info"><b>Enchanted Voyages of the Odyssee</b><span>2018 · In Depth Tunes</span></div></div><div class="cv-tile" data-era="collab" data-src="img/covers/melodies-from-the-dust.jpg" data-title="Melodies From The Dust" data-sub="2019 · Do Not Sit On The Furniture" data-bp="" data-sc=""><div class="cv-ph">Melodies From The Dust</div><img src="img/covers/melodies-from-the-dust.jpg" alt="Melodies From The Dust" loading="lazy" onerror="this.closest('.cv-tile').dataset.src='';this.remove()"><div class="cv-info"><b>Melodies From The Dust</b><span>2019 · Do Not Sit On The Furniture</span></div></div><div class="cv-tile" data-era="collab" data-src="img/covers/patience.jpg" data-title="Patience" data-sub="2019 · Self-released" data-bp="" data-sc=""><div class="cv-ph">Patience</div><img src="img/covers/patience.jpg" alt="Patience" loading="lazy" onerror="this.closest('.cv-tile').dataset.src='';this.remove()"><div class="cv-info"><b>Patience</b><span>2019 · Self-released</span></div></div><div class="cv-tile" data-era="collab" data-src="img/covers/un-reve-etrange.jpg" data-title="Un Rêve Étrange" data-sub="2020 · Plaisirs Sonores" data-bp="" data-sc=""><div class="cv-ph">Un Rêve Étrange</div><img src="img/covers/un-reve-etrange.jpg" alt="Un Rêve Étrange" loading="lazy" onerror="this.closest('.cv-tile').dataset.src='';this.remove()"><div class="cv-info"><b>Un Rêve Étrange</b><span>2020 · Plaisirs Sonores</span></div></div><div class="cv-tile" data-era="collab" data-src="img/covers/mezclado-pt-1.jpg" data-title="Mezclado Pt. 1" data-sub="2020 · Einmusika Recordings" data-bp="" data-sc=""><div class="cv-ph">Mezclado Pt. 1</div><img src="img/covers/mezclado-pt-1.jpg" alt="Mezclado Pt. 1" loading="lazy" onerror="this.closest('.cv-tile').dataset.src='';this.remove()"><div class="cv-info"><b>Mezclado Pt. 1</b><span>2020 · Einmusika Recordings</span></div></div><div class="cv-tile" data-era="collab" data-src="img/covers/nasaja.jpg" data-title="Nasaja" data-sub="2021 · Labo T." data-bp="" data-sc=""><div class="cv-ph">Nasaja</div><img src="img/covers/nasaja.jpg" alt="Nasaja" loading="lazy" onerror="this.closest('.cv-tile').dataset.src='';this.remove()"><div class="cv-info"><b>Nasaja</b><span>2021 · Labo T.</span></div></div><div class="cv-tile" data-era="collab" data-src="img/covers/human-nature-day.jpg" data-title="Cloud 9 (Living On)" data-sub="2021 · Abracadabra" data-bp="" data-sc=""><div class="cv-ph">Cloud 9 (Living On)</div><img src="img/covers/human-nature-day.jpg" alt="Cloud 9 (Living On)" loading="lazy" onerror="this.closest('.cv-tile').dataset.src='';this.remove()"><div class="cv-info"><b>Cloud 9 (Living On)</b><span>2021 · Abracadabra</span></div></div><div class="cv-tile" data-era="collab" data-src="img/covers/10-years-hive-audio-pt-3.jpg" data-title="Marco Polo" data-sub="2022 · Hive Audio" data-bp="" data-sc=""><div class="cv-ph">Marco Polo</div><img src="img/covers/10-years-hive-audio-pt-3.jpg" alt="Marco Polo" loading="lazy" onerror="this.closest('.cv-tile').dataset.src='';this.remove()"><div class="cv-info"><b>Marco Polo</b><span>2022 · Hive Audio</span></div></div><div class="cv-tile" data-era="collab" data-src="img/covers/amman.jpg" data-title="Amman" data-sub="2022 · Katermukke" data-bp="" data-sc=""><div class="cv-ph">Amman</div><img src="img/covers/amman.jpg" alt="Amman" loading="lazy" onerror="this.closest('.cv-tile').dataset.src='';this.remove()"><div class="cv-info"><b>Amman</b><span>2022 · Katermukke</span></div></div><div class="cv-tile" data-era="collab" data-src="img/covers/girls-in-boise.jpg" data-title="Girls In Boise" data-sub="2022 · Self-released" data-bp="" data-sc=""><div class="cv-ph">Girls In Boise</div><img src="img/covers/girls-in-boise.jpg" alt="Girls In Boise" loading="lazy" onerror="this.closest('.cv-tile').dataset.src='';this.remove()"><div class="cv-info"><b>Girls In Boise</b><span>2022 · Self-released</span></div></div><div class="cv-tile" data-era="now" data-src="img/covers/dialuna.jpg" data-title="Dialuna" data-sub="2023 · YION" data-bp="" data-sc=""><div class="cv-ph">Dialuna</div><img src="img/covers/dialuna.jpg" alt="Dialuna" loading="lazy" onerror="this.closest('.cv-tile').dataset.src='';this.remove()"><div class="cv-info"><b>Dialuna</b><span>2023 · YION</span></div></div><div class="cv-tile" data-era="now" data-src="img/covers/nothing-can-compare.jpg" data-title="Nothing Can Compare" data-sub="2023 · All Day I Dream" data-bp="" data-sc=""><div class="cv-ph">Nothing Can Compare</div><img src="img/covers/nothing-can-compare.jpg" alt="Nothing Can Compare" loading="lazy" onerror="this.closest('.cv-tile').dataset.src='';this.remove()"><div class="cv-info"><b>Nothing Can Compare</b><span>2023 · All Day I Dream</span></div></div><div class="cv-tile" data-era="now" data-src="img/covers/leap-of-faith.jpg" data-title="Leap of Faith (Follow Your Heart)" data-sub="2024 · NASAJA" data-bp="" data-sc=""><div class="cv-ph">Leap of Faith (Follow Your Heart)</div><img src="img/covers/leap-of-faith.jpg" alt="Leap of Faith (Follow Your Heart)" loading="lazy" onerror="this.closest('.cv-tile').dataset.src='';this.remove()"><div class="cv-info"><b>Leap of Faith (Follow Your Heart)</b><span>2024 · NASAJA</span></div></div><div class="cv-tile" data-era="now" data-src="img/covers/a-winter-sampler-vi.jpg" data-title="Create The Universe" data-sub="2024 · All Day I Dream" data-bp="" data-sc=""><div class="cv-ph">Create The Universe</div><img src="img/covers/a-winter-sampler-vi.jpg" alt="Create The Universe" loading="lazy" onerror="this.closest('.cv-tile').dataset.src='';this.remove()"><div class="cv-info"><b>Create The Universe</b><span>2024 · All Day I Dream</span></div></div><div class="cv-tile" data-era="now" data-src="img/covers/who-we-are.jpg" data-title="Who We Are" data-sub="2024 · NASAJA" data-bp="" data-sc=""><div class="cv-ph">Who We Are</div><img src="img/covers/who-we-are.jpg" alt="Who We Are" loading="lazy" onerror="this.closest('.cv-tile').dataset.src='';this.remove()"><div class="cv-info"><b>Who We Are</b><span>2024 · NASAJA</span></div></div><div class="cv-tile" data-era="now" data-src="img/covers/radiate-love.jpg" data-title="Radiate Love" data-sub="2024 · NASAJA" data-bp="" data-sc=""><div class="cv-ph">Radiate Love</div><img src="img/covers/radiate-love.jpg" alt="Radiate Love" loading="lazy" onerror="this.closest('.cv-tile').dataset.src='';this.remove()"><div class="cv-info"><b>Radiate Love</b><span>2024 · NASAJA</span></div></div><div class="cv-tile" data-era="now" data-src="img/covers/matter-of-time.jpg" data-title="Matter of Time (Stars Align)" data-sub="2024 · NASAJA" data-bp="" data-sc=""><div class="cv-ph">Matter of Time (Stars Align)</div><img src="img/covers/matter-of-time.jpg" alt="Matter of Time (Stars Align)" loading="lazy" onerror="this.closest('.cv-tile').dataset.src='';this.remove()"><div class="cv-info"><b>Matter of Time (Stars Align)</b><span>2024 · NASAJA</span></div></div><div class="cv-tile" data-era="now" data-src="img/covers/dab.jpg" data-title="New Life" data-sub="2024 · Sprout Music" data-bp="" data-sc=""><div class="cv-ph">New Life</div><img src="img/covers/dab.jpg" alt="New Life" loading="lazy" onerror="this.closest('.cv-tile').dataset.src='';this.remove()"><div class="cv-info"><b>New Life</b><span>2024 · Sprout Music</span></div></div><div class="cv-tile" data-era="now" data-src="img/covers/change.jpg" data-title="Change" data-sub="2025 · Songspire Records" data-bp="" data-sc=""><div class="cv-ph">Change</div><img src="img/covers/change.jpg" alt="Change" loading="lazy" onerror="this.closest('.cv-tile').dataset.src='';this.remove()"><div class="cv-info"><b>Change</b><span>2025 · Songspire Records</span></div></div><div class="cv-tile" data-era="now" data-src="img/covers/illuminate-reworld.jpg" data-title="Illuminate Reworld" data-sub="2025 · NASAJA" data-bp="" data-sc=""><div class="cv-ph">Illuminate Reworld</div><img src="img/covers/illuminate-reworld.jpg" alt="Illuminate Reworld" loading="lazy" onerror="this.closest('.cv-tile').dataset.src='';this.remove()"><div class="cv-info"><b>Illuminate Reworld</b><span>2025 · NASAJA</span></div></div><div class="cv-tile" data-era="now" data-src="img/covers/mr-big-shot.jpg" data-title="Mr. Big Shot" data-sub="2026 · NASAJA" data-bp="" data-sc=""><div class="cv-ph">Mr. Big Shot</div><img src="img/covers/mr-big-shot.jpg" alt="Mr. Big Shot" loading="lazy" onerror="this.closest('.cv-tile').dataset.src='';this.remove()"><div class="cv-info"><b>Mr. Big Shot</b><span>2026 · NASAJA</span></div></div><div class="cv-tile" data-era="now" data-src="img/covers/constant-unfolding.jpg" data-title="Constant Unfolding" data-sub="Out 8 Jan 2027 · Darkest Hour" data-bp="" data-sc=""><div class="cv-ph">Constant Unfolding</div><img src="img/covers/constant-unfolding.jpg" alt="Constant Unfolding" loading="lazy" onerror="this.closest('.cv-tile').dataset.src='';this.remove()"><div class="cv-info"><b>Constant Unfolding</b><span>Out 8 Jan 2027 · Darkest Hour</span></div></div></div>
+  </div>
+</section>
+<div id="cvModal" role="dialog" aria-modal="true" aria-label="Release cover">
+  <div class="cv-m-wrap">
+    <button id="cvMClose" class="cv-m-close" aria-label="Close">✕</button>
+    <img id="cvMImg" src="" alt="" style="display:none">
+    <div id="cvMPh" class="cv-m-ph" style="display:none"></div>
+    <div class="cv-m-info">
+      <div id="cvMT" class="cv-m-t"></div>
+      <div id="cvMSub" class="cv-m-sub"></div>
+      <div id="cvMLinks" class="cv-m-links"></div>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var modal=document.getElementById('cvModal'),
+      mImg=document.getElementById('cvMImg'),
+      mPh=document.getElementById('cvMPh'),
+      mT=document.getElementById('cvMT'),
+      mSub=document.getElementById('cvMSub'),
+      mLinks=document.getElementById('cvMLinks');
+
+  function open(tile){
+    var src=tile.dataset.src,t=tile.dataset.title,sub=tile.dataset.sub,bp=tile.dataset.bp,sc=tile.dataset.sc;
+    mT.textContent=t; mSub.textContent=sub;
+    mLinks.innerHTML='';
+    if(bp){var a=document.createElement('a');a.href=bp;a.target='_blank';a.rel='noopener';a.textContent='Beatport ↗';mLinks.appendChild(a);}
+    if(sc){var a=document.createElement('a');a.href=sc;a.target='_blank';a.rel='noopener';a.textContent='SoundCloud ↗';mLinks.appendChild(a);}
+    var spA=document.createElement('a');
+    spA.href='https://open.spotify.com/artist/0zUt9PboFsELRcvO7UWarr';
+    spA.target='_blank';spA.rel='noopener';spA.textContent='Spotify ↗';mLinks.appendChild(spA);
+    if(src){mImg.src=src;mImg.style.display='block';mPh.style.display='none';}
+    else{mImg.style.display='none';mPh.style.display='flex';mPh.textContent=t;}
+    modal.classList.add('open');
+    document.body.style.overflow='hidden';
+  }
+  function close(){modal.classList.remove('open');document.body.style.overflow='';}
+
+  document.getElementById('cvMClose').addEventListener('click',close);
+  modal.addEventListener('click',function(e){if(e.target===modal)close();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close();});
+
+  document.querySelectorAll('.cv-tile').forEach(function(t){
+    t.addEventListener('click',function(){open(t);});
+  });
+
+  // filter buttons
+  document.querySelectorAll('.cv-filter button').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      document.querySelectorAll('.cv-filter button').forEach(function(b){b.classList.remove('on');});
+      btn.classList.add('on');
+      var era=btn.dataset.era;
+      document.querySelectorAll('.cv-tile').forEach(function(tile){
+        tile.style.display=(era==='all'||tile.dataset.era===era)?'':'none';
+      });
+    });
+  });
+})();
+</script>
+<!-- coverwall: end -->
 
 
   <section class="blk col">
@@ -2245,7 +2351,18 @@ html[lang="hsb"] .kits ul.kits-en{display:none}
     } else if(t<T6){ var k2=easeIn((t-T5)/LEAVE); if(!u.lx){ u.lx=u.x; u.ly=u.y; }
       u.x=u.lx-u.from*(W*0.9)*k2; u.y=u.ly-(u.ly+40*dpr)*k2*0.9; tilt=u.from*0.35*Math.min(1,k2*3); }
     else { ufo=null; parts=[]; ufoNext=now+22000+Math.random()*26000; return; }
-    saucer(ctx,u.x,u.y+bob,s,now,tilt,light);
+    // wobble on click
+    var wobT=now-ufoWobble, wobA=(wobT<600&&ufoWobble>0)?Math.sin(wobT/40)*0.28*Math.max(0,1-wobT/600):0;
+    saucer(ctx,u.x+Math.sin(wobT/22)*wobA*20*dpr,u.y+bob,s,now,tilt+wobA,light);
+    // "3 clicks" hint message
+    if(ufoHint>now){ var ha=Math.min(1,(ufoHint-now)/400,(now-(ufoHint-5000))/300);
+      ctx.save(); ctx.globalAlpha=Math.max(0,ha);
+      ctx.font="bold "+(10*dpr)+"px 'IBM Plex Mono',monospace"; ctx.textAlign="center";
+      var htxt="Your violin was beamed aboard. Find it in the arcade.";
+      var hw=ctx.measureText(htxt).width+20*dpr;
+      ctx.fillStyle="rgba(0,0,0,.72)"; var hx2=Math.max(hw/2+6*dpr,Math.min(W-hw/2-6*dpr,u.x)), hy2=u.y-52*dpr;
+      ctx.beginPath(); ctx.roundRect(hx2-hw/2,hy2-14*dpr,hw,20*dpr,6*dpr); ctx.fill();
+      ctx.fillStyle="#ffb347"; ctx.fillText(htxt,hx2,hy2+1*dpr); ctx.restore(); }
   }
   // ---- disco easter egg, "after midnight" edition (14 Nov 2026): 7 globe clicks unlock, 10 clicks or "Lights on" leave ----
   // An 80s neon sunset (striped sun, skyline, palms, neon grid floor) under a mirror ball, a pulp-paperback title card,
@@ -2431,7 +2548,48 @@ html[lang="hsb"] .kits ul.kits-en{display:none}
     dzSting(); try{ if(navigator.vibrate) navigator.vibrate([60,30,60,30,120]); }catch(e){}
   }
   function discoOff(){ discoMode=false; discoClicks=0; document.documentElement.classList.remove("dz-on"); if(dz.el){ dz.el.remove(); dz.el=null; } if(dz.btn&&dz.btn.parentNode) dz.btn.remove(); }
+  // ---- UFO easter egg click counter ----
+  var ufoClicks=0, ufoClickT=0, ufoWobble=0, ufoHint=0;
+  function ufoHitTest(ev){ if(!ufo) return false; var r=cv.getBoundingClientRect(), scl=cv.width/r.width;
+    var mx=(ev.clientX-r.left)*scl, my=(ev.clientY-r.top)*scl, dpr=window.devicePixelRatio||1;
+    var dx=mx-ufo.x, dy=my-(ufo.y+(Math.sin(Date.now()/300)*2.2*dpr));
+    return dx*dx+dy*dy < (38*dpr)*(38*dpr); }
   cv.addEventListener("click",function(ev){
+    if(!(drag&&drag.moved>=6)){
+    if(ufoHitTest(ev)){
+      var now=Date.now(); ufoClicks++; ufoWobble=now; ufoClickT=now;
+      // 1× click: UFO wackelt + kurzes Alien-Soundchen
+      (function(){ try{ var ac=new(window.AudioContext||window.webkitAudioContext)();
+        var o=ac.createOscillator(), g=ac.createGain(); o.connect(g); g.connect(ac.destination);
+        o.type="sine"; g.gain.setValueAtTime(0.18,ac.currentTime); g.gain.exponentialRampToValueAtTime(0.001,ac.currentTime+0.55);
+        var t=ac.currentTime; o.frequency.setValueAtTime(880,t); o.frequency.linearRampToValueAtTime(440,t+0.1);
+        o.frequency.linearRampToValueAtTime(1760,t+0.22); o.frequency.linearRampToValueAtTime(660,t+0.55);
+        o.start(t); o.stop(t+0.6); setTimeout(function(){ try{ac.close();}catch(e){} },800); }catch(e){} })();
+      // 3× clicks: UFO "entführt" den Runner — text message blinkt
+      if(ufoClicks===3){ ufoHint=Date.now()+5000;
+        try{if(navigator.vibrate) navigator.vibrate([40,20,80]);}catch(e){}
+        // trigger chase sequence if not already running
+        if(!ufo.cs && ufo){ ufo.chase=true; }
+      }
+      // 5× clicks: the arcade opens by itself on zone 4 (Violin Chaser)
+      if(ufoClicks>=5){ ufoClicks=0;
+        try{if(navigator.vibrate) navigator.vibrate([60,30,60,30,180]);}catch(e){}
+        // scroll to the arcade and start Violin Chaser directly
+        var arcEl=document.getElementById("nArcade"); if(arcEl) arcEl.scrollIntoView({behavior:"smooth",block:"center"});
+        setTimeout(function(){
+          try{
+            var btn=document.querySelector(".ac-game[data-game='2']"); if(btn) btn.click();
+            setTimeout(function(){
+              try{
+                if(window.SS&&SS.arcade){ SS.arcade.cheat(); SS.arcade.cheat(); SS.arcade.cheat(); }
+              }catch(e){}
+            },800);
+          }catch(e){}
+        },900);
+      }
+      return;
+    }
+    }
     if(!drag||drag.moved<6){
       discoClicks++;
       if(!discoMode&&discoClicks>=7) discoOn();
@@ -10255,5 +10413,31 @@ html[lang="ar"] :is(p,h1,h2,h3,h4,h5,li,blockquote,figcaption,dd,dt,label){unico
 })();
 </script>
 <!-- i18n:end -->
+<!-- previewdownloads: start -->
+<script>
+(function(){
+  var links=[].slice.call(document.querySelectorAll('a[href^="kits/"][download]'));
+  if(!links.length) return;
+  function plain(){ links.forEach(function(a){ a.removeAttribute('download'); a.target='_blank'; a.rel='noopener'; }); }
+  if(!(window.claude&&claude.use)) return;   /* the real site: plain download links stay as they are */
+  claude.use("downloads").then(function(dl){
+    if(!dl){ plain(); return; }
+    links.forEach(function(a){
+      a.addEventListener('click',function(ev){
+        ev.preventDefault(); if(a.dataset.busy) return; a.dataset.busy='1';
+        var lab=a.querySelector('span'), old=lab?lab.textContent:'';
+        if(lab) lab.textContent='Loading …';
+        var name=a.getAttribute('href').split('/').pop();
+        fetch(a.getAttribute('href')).then(function(r){ if(!r.ok) throw new Error(r.status); return r.blob(); })
+          .then(function(b){ return dl.save({filename:name,data:b}); })
+          .then(function(){ if(lab) lab.textContent='Saved ✓'; setTimeout(function(){ if(lab) lab.textContent=old; },2500); },
+                function(e){ if(lab) lab.textContent=old; if(e&&e.code&&e.code!=='declined'&&e.code!=='rate_limited'){ window.open(a.href,'_blank','noopener'); } })
+          .then(function(){ delete a.dataset.busy; });
+      });
+    });
+  },plain);
+})();
+</script>
+<!-- previewdownloads: end -->
 </body>
 </html>
