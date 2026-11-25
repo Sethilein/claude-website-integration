@@ -3887,6 +3887,9 @@ html[lang="hsb"] .kits ul.kits-en{display:none}
       case "sub": glow(x,y,30,"rgba(228,0,124,.3)"); c.strokeStyle="#E4007C"; c.lineWidth=3; c.beginPath(); for(var s2=-22;s2<=22;s2+=2){ var sy=y+Math.sin(s2/7+t*10)*4; s2===-22?c.moveTo(x+s2,sy):c.lineTo(x+s2,sy); } c.stroke();
         c.fillStyle="#fff"; c.font="600 8px 'IBM Plex Mono',monospace"; c.textAlign="center"; c.fillText("SUB",x,y-8); break;
       case "clip": glow(x,y,22,"rgba(255,30,30,.4)"); c.fillStyle="#d61f1f"; c.fillRect(x-12,y-9,24,18); c.fillStyle="#fff"; c.font="700 8px 'IBM Plex Mono',monospace"; c.textAlign="center"; c.fillText("CLIP",x,y+3); break; } }
+  /* item 112: a bow stick with LEDs between two points */
+  function ledLine(x0,y0,x1,y1,n,r){ var f=window.__ssLed, i, q, u; c.save(); c.strokeStyle="#2a1608"; c.lineWidth=Math.max(1,r*0.9); c.lineCap="round"; c.beginPath(); c.moveTo(x0,y0); c.lineTo(x1,y1); c.stroke();
+    if(f){ c.globalCompositeOperation="lighter"; for(i=0;i<n;i++){ q=f(i,n,calm?1000:0); u=0.06+0.88*i/(n-1); c.globalAlpha=0.2+0.8*q.b; c.fillStyle="hsl("+q.h+",100%,"+q.l+"%)"; c.beginPath(); c.arc(x0+(x1-x0)*u,y0+(y1-y0)*u,r*(0.7+0.8*q.b),0,6.2832); c.fill(); } } c.restore(); }
   function ledBow(x,y,half){ var f=window.__ssLed, n=14, i, q; if(!f||calm) return; c.save(); c.globalCompositeOperation="lighter";
     for(i=0;i<n;i++){ q=f(i,n); c.globalAlpha=0.14+0.86*q.b; c.fillStyle="hsl("+q.h+",100%,"+q.l+"%)"; c.beginPath(); c.arc(x-half+i*(2*half/(n-1)),y-3,1.1+1.4*q.b,0,6.2832); c.fill(); } c.restore(); }
   function bow(t){ var y=GH-44, x=bx, L=46, hot=Math.max(0,Math.min(1,demo));
@@ -4125,13 +4128,13 @@ html[lang="hsb"] .kits ul.kits-en{display:none}
   function runner0(x,y,z,t,air){ var a=Math.sin((R?R.foot:t*90)/9), ink=INK[z];
     if(R&&R.superT>0) waxWings(x,y,t);
     if(R&&R.inv>0&&((t*12)|0)%2) c.globalAlpha=0.3;
-    var ro=art("g2.runner"); if(ro){ var rn=ro.n, rf=air?(rn>2?(R&&R.vy>0?rn-1:rn-2):0):Math.floor((R?R.foot:t*90)/11)%Math.max(1,rn>2?rn-2:rn); spr("g2.runner",x,y+2,46,t,0,rf); c.globalAlpha=1; return; }
+    var ro=art("g2.runner"); if(ro){ var rn=ro.n, rf=air?(rn>2?(R&&R.vy>0?rn-1:rn-2):0):Math.floor((R?R.foot:t*90)/11)%Math.max(1,rn>2?rn-2:rn); spr("g2.runner",x,y+2,46,t,0,rf); ledLine(x+2,y-14,x+18,y-31,7,1.3); c.globalAlpha=1; return; }
     c.strokeStyle=ink; c.lineWidth=3; c.lineCap="round"; c.beginPath();
     if(air){ c.moveTo(x-1,y-12); c.lineTo(x-6,y-5); c.moveTo(x+1,y-12); c.lineTo(x+7,y-7); } else { c.moveTo(x,y-12); c.lineTo(x-6*a,y-1); c.moveTo(x,y-12); c.lineTo(x+6*a,y-1); } c.stroke(); c.lineCap="butt";
     c.fillStyle=ink; c.fillRect(x-5,y-27,10,16); c.fillStyle="#E4007C"; c.fillRect(x-5,y-27,10,3); c.fillRect(x-10-2*a,y-26,5,2);                 // coat and pink scarf
     c.fillStyle="#f0d2c0"; c.beginPath(); c.arc(x,y-31,4,0,7); c.fill(); if(R&&R.superT>0){ c.fillStyle="#f2d27a"; c.beginPath(); c.arc(x,y-33,5.5,Math.PI,0); c.fill(); c.fillRect(x-5.5,y-33,2,6); c.fillRect(x+3.5,y-33,2,6); } else { c.fillStyle=ink; c.fillRect(x-6,y-35,12,2); c.fillRect(x-3.5,y-39,7,4); }  // head and hat
     c.fillStyle="#b0602a"; c.beginPath(); c.ellipse(x+6,y-23,3,4.6,0.6,0,7); c.fill(); c.strokeStyle="#5a2a0e"; c.lineWidth=1.3; c.beginPath(); c.moveTo(x+8,y-26); c.lineTo(x+13,y-32); c.stroke();   // the violin
-    c.strokeStyle=z===2?"#ffd9ec":"#f7f2e6"; c.lineWidth=1; c.beginPath(); c.moveTo(x+1,y-17-2*a); c.lineTo(x+14,y-27-2*a); c.stroke(); c.globalAlpha=1; }
+    c.strokeStyle=z===2?"#ffd9ec":"#f7f2e6"; c.lineWidth=1; c.beginPath(); c.moveTo(x+1,y-17-2*a); c.lineTo(x+14,y-27-2*a); c.stroke(); ledLine(x+1,y-17-2*a,x+15,y-28-2*a,6,1.1); c.globalAlpha=1; }
   function hudR(){ c.fillStyle="rgba(0,0,0,.55)"; c.fillRect(0,0,GW,30); c.textAlign="left"; c.font="500 11px 'IBM Plex Mono',monospace"; c.fillStyle="#fff";
     c.fillText(String(score).padStart(6,"0"),10,19); c.fillStyle="#E4007C"; c.fillText("x"+mult(),70,19);
     c.textAlign="center"; c.fillStyle="rgba(255,255,255,.7)"; c.font="500 9px 'IBM Plex Mono',monospace"; c.fillText((R.fly>0?"SAKHALIN MODE II · "+Math.ceil(R.fly)+" s":R.superT>0?"SAKHALIN MODE · "+Math.ceil(R.superT)+" s":"Z"+(R.zone+1)+" · "+ZN[R.zone].n+" · "+Math.floor(R.dist/10)+" m"+(R.zone===3&&rRamp()>1.04?" · ×"+rRamp().toFixed(1):"")).toUpperCase(),GW/2,19);
@@ -4451,7 +4454,7 @@ html[lang="hsb"] .kits ul.kits-en{display:none}
     c.globalAlpha=1; }
   function vViolin(px,py,inv,t){ var p=vProj(px,py,VZC), tilt=Math.max(-1,Math.min(1,(keys.r?1:0)-(keys.l?1:0)+hold))*0.22;
     var blink=inv>0&&((t*12)|0)%2, sc=1+0.04*Math.sin(t*5);
-    c.save(); c.translate(p[0],p[1]); c.rotate(tilt); c.scale(sc,sc); if(art("g3.violin")){ if(blink) c.globalAlpha=0.35; spr("g3.violin",0,0,78,t,1); c.restore(); return; }
+    c.save(); c.translate(p[0],p[1]); c.rotate(tilt); c.scale(sc,sc); if(blink) c.globalAlpha=0.35; ledLine(-34,26,34,-8,11,1.7); c.globalAlpha=1; if(art("g3.violin")){ if(blink) c.globalAlpha=0.35; spr("g3.violin",0,0,78,t,1); c.restore(); return; }
     glow(0,0,52,"rgba(255,211,107,.22)");
     // speed lines and notes trailing behind the violin
     for(var i=0;i<5;i++){ c.globalAlpha=(blink?0.15:0.5)*(1-i/5); c.strokeStyle="#ffd36b"; c.lineWidth=Math.max(0.8,2-i*0.3); var sx=(i-2)*5+Math.sin(t*7+i)*1.5; c.beginPath(); c.moveTo(sx,22); c.lineTo(sx*1.3,30+i*4); c.stroke(); }
@@ -7709,6 +7712,9 @@ function draw(){
       g.lineWidth=4*K; g.strokeStyle=CFG.spuren[k]; g.globalAlpha=0.85*a;
       g.beginPath(); g.arc(x,hitY,30*K,0,7); g.stroke(); g.globalAlpha=1;
     }
+    /* item 112: the LED bow lies across the three rings */
+    if(window.__ssLed){ var bx0=laneX[0]-58*K, bx1=laneX[2]+58*K, bn=22, bi, bq; g.save(); g.globalAlpha=0.9*a; g.strokeStyle="rgba(20,12,8,.85)"; g.lineWidth=7*K; g.lineCap="round"; g.beginPath(); g.moveTo(bx0,hitY); g.lineTo(bx1,hitY); g.stroke();
+      for(bi=0;bi<bn;bi++){ bq=window.__ssLed(bi,bn,RM?1000:0); g.globalAlpha=(0.3+0.7*bq.b)*a; g.fillStyle="hsl("+bq.h+",100%,"+bq.l+"%)"; g.beginPath(); g.arc(bx0+(bx1-bx0)*(bi+0.5)/bn,hitY,(3+3.2*bq.b)*K,0,7); g.fill(); } g.restore(); }
     // der Takt: ein pinker Punkt auf jedem Schlag am Ring der Mitte
     var ph=((t-beat0)/spb())%1; if(ph<0) ph+=1;
     if(!RM && S.phase!=="rest"){ g.fillStyle=PINK; g.globalAlpha=Math.max(0,1-ph*2.2); g.beginPath(); g.arc(laneX[1],hitY,8*K,0,7); g.fill(); g.globalAlpha=1; }
@@ -8893,6 +8899,10 @@ function draw(){
     heads.push([hx,hy,cols[j],vals[j]!=null]);
     var cm=COMET[keys[j]]; cm.push([hx,hy]); if(cm.length>14) cm.shift();
   }
+  /* item 112: the LED bow points from the middle to the gold voice */
+  if(heads[0]&&window.__ssLed){ var bh=heads[0], bd=Math.sqrt((bh[0]-CX)*(bh[0]-CX)+(bh[1]-CY)*(bh[1]-CY))||1, ux=(bh[0]-CX)/bd, uy=(bh[1]-CY)/bd, b0=104, b1=Math.max(b0+30,bd-14), bn=12, bi, bq, br;
+    g.globalCompositeOperation="source-over"; g.globalAlpha=0.8; g.strokeStyle="rgba(60,36,14,.9)"; g.lineWidth=3; g.lineCap="round"; g.beginPath(); g.moveTo(CX+ux*b0,CY+uy*b0); g.lineTo(CX+ux*b1,CY+uy*b1); g.stroke();
+    g.globalCompositeOperation="lighter"; for(bi=0;bi<bn;bi++){ bq=window.__ssLed(bi,bn,RM?1000:0); br=b0+(b1-b0)*(bi+0.5)/bn; g.globalAlpha=0.25+0.75*bq.b; g.fillStyle="hsl("+bq.h+",100%,"+bq.l+"%)"; g.beginPath(); g.arc(CX+ux*br,CY+uy*br,1.6+1.8*bq.b,0,7); g.fill(); } g.globalAlpha=1; }
   S.triGlow*=RM?0.9:0.93; S.triFlash=(S.triFlash||0)*0.9;
   var act=heads.filter(function(x){ return x; });
   g.globalCompositeOperation="source-over";
@@ -9144,7 +9154,7 @@ var CFG={
   hitMs:[40,160], liftLow:0.55,       // within 40 ms full lift, falling to 55 % at 160 ms
   beatPts:[15,120,100],               // "On the beat": 100 within 15 ms, 0 at 120 ms (as in Sweat Heartz)
   ember:10, emberE:2, hitE:25, rebornE:60, zoneBonus:1000, sunBonus:2500,
-  seeds:[3500,9000,12000], crystals:[15000,18500],
+  seeds:[3500,9000,12000], crystals:[15000,18500], bows:[6000,13500],
   track:{k:"leapoffaith", t:"Leap of Faith (Follow Your Heart)", bpm:123, ph:0.3422, at:4, beats:32, lm:[0.3745,0.4594,0.6966,0.8421,1.0354]},
   fMin:300, fMax:20000,               // the track opens from 300 Hz to 20 kHz on the way up
   autoDay:12                          // seconds on the sunrise card before the page turns to day
@@ -9210,10 +9220,11 @@ function spawn(){ // fill the sky ahead of the camera
     S.nextA+=h; }
   CFG.seeds.forEach(function(sa,i){ if(!S["sd"+i]&&sa<S.camA+CFG.H+200){ S["sd"+i]=1; S.objs.push({t:"seed", a:sa, x:rnd(60,300), r:12}); } });
   CFG.crystals.forEach(function(sa,i){ if(!S["cr"+i]&&sa<S.camA+CFG.H+200){ S["cr"+i]=1; S.objs.push({t:"crystal", a:sa, x:rnd(60,300), r:12}); } });
+  CFG.bows.forEach(function(sa,i){ if(!S["bw"+i]&&sa<S.camA+CFG.H+200){ S["bw"+i]=1; S.objs.push({t:"bow", a:sa, x:rnd(60,300), r:13}); } });   /* item 112 */
   for(var j=S.objs.length-1;j>=0;j--) if(S.objs[j].a<S.camA-80||S.objs[j].dead) S.objs.splice(j,1); }
 function reset(){ S.mode="play"; S.a=120; S.x=180; S.vy=0; S.camA=0; S.energy=100; S.seeds=0; S.crystal=0; S.score=0; S.mult=1; S.streak=0; S.flaps=0; S.onSum=0;
   S.zone=-1; S.banner=0; S.rebirths=0; S.lastFlap=-9; S.wing=1; S.inv=0; S.ash=0; S.objs=[]; S.nextA=420; S.sun=0; S.end=0; S.started=0; S.tx=null;
-  for(var k in S) if(/^(sd|cr)\d$/.test(k)) delete S[k]; parts=[]; }
+  for(var k in S) if(/^(sd|cr|bw)\d$/.test(k)) delete S[k]; S.bow=0; parts=[]; }
 
 // ---------- input ----------
 function flap(){ if(S.mode!=="play"||S.ash) return; var now=clock(); if(now-S.lastFlap<CFG.minFlap) return;
@@ -9252,7 +9263,7 @@ function step(dt){
   S.x=Math.max(18,Math.min(cfg.W-18,S.x));
   // flight
   if(S.started){ S.vy+=cfg.g*dt; S.a-=S.vy*dt; }
-  S.wing=Math.min(1,S.wing+dt*3.2); if(S.inv>0) S.inv-=dt;
+  S.wing=Math.min(1,S.wing+dt*3.2); if(S.inv>0) S.inv-=dt; if(S.bow>0) S.bow-=dt;
   S.camA=Math.max(S.camA,S.a-cfg.H*0.36);
   z=zoneOf(S.a); if(z!==S.zone){ if(S.zone>=0){ S.score+=cfg.zoneBonus*S.mult; tone(note(5+z*2),0.6,0.12,"sine"); } S.zone=z; S.banner=3.2; }
   if(S.banner>0) S.banner-=dt;
@@ -9266,6 +9277,7 @@ function step(dt){
     if(!rr) continue;
     if(o.t==="e"){ o.dead=1; S.score+=cfg.ember*S.mult; S.energy=Math.min(100,S.energy+cfg.emberE); tone(note(5+((S.flaps+i)%5)),0.18,0.05); }
     else if(o.t==="seed"){ o.dead=1; S.seeds++; tone(note(7),0.4,0.1,"sine"); tone(note(9),0.5,0.08,"sine",AC?AC.currentTime+0.1:0); puff(o.x,o.a,10,GOLD,60,0.6); }
+    else if(o.t==="bow"){ o.dead=1; S.bow=14; tone(note(9),0.5,0.09,"sine"); tone(note(10),0.6,0.07,"sine",AC?AC.currentTime+0.12:0); puff(o.x,o.a,12,PINK,70,0.6); }
     else if(o.t==="crystal"){ o.dead=1; S.crystal=1; tone(note(10),0.6,0.09,"sine"); puff(o.x,o.a,12,GOLD,70,0.6); }
     else if(S.inv<=0){ // devil or cold
       if(o.t==="cold"&&S.crystal){ S.crystal=0; S.inv=1; o.dead=1; puff(S.x,S.a,14,GOLD,90,0.5); tone(note(4),0.3,0.08); }
@@ -9319,6 +9331,8 @@ function draw(t){
     else if(o.t==="seed"){ c.save(); c.translate(o.x,y); c.rotate(calm?0:Math.sin(t*0.003)*0.25); c.fillStyle=GOLD; c.beginPath(); c.moveTo(0,-12); c.bezierCurveTo(9,-4,8,8,0,11); c.bezierCurveTo(-8,8,-9,-4,0,-12); c.fill();
       c.strokeStyle="#7a4708"; c.lineWidth=1.2; c.beginPath(); c.moveTo(0,-8); c.lineTo(0,8); c.stroke(); c.restore(); }
     else if(o.t==="crystal"){ crystal(o.x,y,11,t,1); }
+    else if(o.t==="bow"){ c.save(); c.translate(o.x,y); c.rotate(-0.7+(calm?0:Math.sin(t*0.003)*0.15)); c.fillStyle="rgba(228,0,124,.22)"; c.beginPath(); c.arc(0,0,20,0,7); c.fill(); c.strokeStyle="#f7f2e6"; c.lineWidth=1.6; c.lineCap="round"; c.beginPath(); c.moveTo(-15,0); c.lineTo(15,0); c.stroke();
+      if(window.__ssLed) for(var lb=0;lb<8;lb++){ var lq=window.__ssLed(lb,8,calm?1000:0); c.globalAlpha=0.3+0.7*lq.b; c.fillStyle="hsl("+lq.h+",100%,"+lq.l+"%)"; c.beginPath(); c.arc(-12+lb*3.43,0,1.2+1.3*lq.b,0,7); c.fill(); } c.restore(); }
     else if(o.t==="devil"){ c.strokeStyle=RED; c.lineWidth=1.6; for(var j=0;j<5;j++){ var rw=6+j*4, yy=y+14-j*7; c.beginPath(); c.ellipse(o.x+(calm?0:Math.sin(t*0.01+j)*3),yy,rw,3.2,0,0,7); c.stroke(); } }
     else if(o.t==="cold"){ c.strokeStyle=RED; c.lineWidth=1.6; c.beginPath(); var x0=o.x-o.w/2; c.moveTo(x0,y); for(var q=1;q<=8;q++) c.lineTo(x0+q*o.w/8,y+(q%2?-6:6)); c.stroke();
       c.fillStyle=RED; c.beginPath(); c.moveTo(o.x+(o.vx>0?o.w/2+8:-o.w/2-8),y); c.lineTo(o.x+(o.vx>0?o.w/2:-o.w/2),y-5); c.lineTo(o.x+(o.vx>0?o.w/2:-o.w/2),y+5); c.fill(); } });
@@ -9362,6 +9376,8 @@ function bird(x,y,t){ var c=cx, wg=S.wing, flapA=calm?0.2:(wg<0.25?lerp(-0.9,0.7
   c.fillStyle="rgba(255,120,40,.7)"; c.beginPath(); c.moveTo(-3,10); c.quadraticCurveTo(-4,24,0,32); c.quadraticCurveTo(4,24,3,10); c.fill();
   // wings
   c.fillStyle="#fff"; [-1,1].forEach(function(sd){ c.save(); c.scale(sd,1); c.rotate(-flapA); c.beginPath(); c.moveTo(3,-2); c.quadraticCurveTo(18,-14,34,-10); c.quadraticCurveTo(26,-4,30,0); c.quadraticCurveTo(20,0,24,5); c.quadraticCurveTo(12,4,3,6); c.closePath(); c.fill(); c.restore(); });
+  if(S.bow>0&&window.__ssLed){ var bwA=Math.min(1,S.bow/2); [-1,1].forEach(function(sd){ c.save(); c.scale(sd,1); c.rotate(-flapA); for(var wi=0;wi<7;wi++){ var wu=(wi+0.5)/7, wq=window.__ssLed(wi,7,calm?1000:0), wx=(1-wu)*(1-wu)*3+2*(1-wu)*wu*18+wu*wu*34, wy=(1-wu)*(1-wu)*-2+2*(1-wu)*wu*-14+wu*wu*-10;
+      c.globalAlpha=(0.3+0.7*wq.b)*bwA; c.fillStyle="hsl("+wq.h+",100%,"+wq.l+"%)"; c.beginPath(); c.arc(wx,wy+1,1.3+1.3*wq.b,0,7); c.fill(); } c.restore(); }); c.globalAlpha=blink?0.45:1; c.fillStyle="#fff"; }   /* item 112: the bow lights the feathers */
   // body and head
   c.beginPath(); c.ellipse(0,2,6,11,0,0,7); c.fill(); c.beginPath(); c.arc(0,-11,4.6,0,7); c.fill();
   c.fillStyle=DEEP; c.beginPath(); c.moveTo(0,-15); c.lineTo(2.2,-9); c.lineTo(-2.2,-9); c.closePath(); c.fill();
