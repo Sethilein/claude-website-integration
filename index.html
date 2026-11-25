@@ -6259,7 +6259,7 @@ html[lang="hsb"] .kits ul.kits-en{display:none}
 </script>
 <style>
 /* ===== cursorfx.css ===== */
-/* Cursor dust (16 Nov 2026): sand that draws Chladni figures by day, a trail that kicks with the beat by night.
+/* Cursor dust (16 Nov 2026; day side new with item 108): silk strings and one sand figure by day, a trail that kicks with the beat by night.
    One canvas above the page and below the player (.mp) and the disco lights. Mouse only. */
 #ssCursorFx{position:fixed;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:65}
 @media (prefers-reduced-motion:reduce){#ssCursorFx{display:none}}
@@ -6268,8 +6268,8 @@ html[lang="hsb"] .kits ul.kits-en{display:none}
 <script>
 /* ===== cursorfx.js ===== */
 // Cursor dust (Martin, 16 Nov 2026). Mouse only: nothing on touch, nothing with "reduce motion".
-//   Day:   grains of sand fall off the stethoscope and settle on the still lines of a small Chladni plate,
-//          by the same rule as the plate in the frequency lab. A faster hand picks a finer figure.
+//   Day:   five fine strings follow the stethoscope and swing like the strings at the top of the day side;
+//          where the hand rests, fine sand opens into one Chladni figure, by the same rule as the plate in the lab.
 //   Night: a pink trail behind the bow that kicks with the beat: the radio's bass while the radio plays,
 //          the tempo shown in the release player while an excerpt plays, otherwise 124 BPM in step with the mandala.
 // One canvas above the page and below the player. It sleeps when the pointer rests or the tab is hidden, and keeps
@@ -6298,46 +6298,81 @@ html[lang="hsb"] .kits ul.kits-en{display:none}
     cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr); c.setTransform(dpr,0,0,dpr,0,0);
   }
 
-  // ---- day: sand on a small plate (square-plate rule, as in the lab; the corners are faded out) ----
-  // The grains fly off the cursor into a disc and settle on the still lines while they fly. Plates keep their
-  // distance from each other, so a figure stays readable; a scribble in one place does not pile them up.
-  var SQ=[[1,2],[1,3],[2,3],[1,4],[3,4]], plates=[], PMAX=6, GN=200, LIFE=2800, STEP=100, APART=74;
+  // ---- day: silk strings behind the cursor, and one sand figure where the hand rests ----
+  /* item 108: silk strings */
+  // A chain of points follows the pointer, each one easing after the one before, so the path is always a soft curve.
+  // Five fine strings run along it. They meet at the cursor and at the tail and swing in between, like the strings
+  // at the top of the day side; a quicker hand plucks them harder, and they ring down when the hand slows.
+  // Where the hand comes to rest, fine sand opens into one Chladni figure (same rule as the plate in the lab).
+  var SQ=[[1,2],[1,3],[2,3],[1,4],[3,4]], plates=[], GN=260, LIFE=3000;
+  var CN=36, LN=5, CH=[], XS=new Float32Array(CN), YS=new Float32Array(CN), hx=0, hy=0, en=0, tl=0, wt=0, pk=0;
+  function chain(){ CH.length=0; for(var i=0;i<CN;i++) CH.push({x:hx,y:hy}); }
   function plate(x,y){
-    var now=performance.now(), i, p, a, r, g, k, R;
-    for(i=0;i<plates.length;i++){ p=plates[i]; if(now-p.t0<1300&&Math.abs(p.x-x)<APART&&Math.abs(p.y-y)<APART) return false; }
-    k=Math.max(0,Math.min(SQ.length-1,Math.floor(spd/9))); R=62+Math.min(16,spd*0.6);
+    var now=performance.now(), i, a, r, g, k;
+    for(i=0;i<plates.length;i++) plates[i].t0=Math.min(plates[i].t0,now-(LIFE-700));   // the figure before leaves as the new one opens
+    if(plates.length>=3) plates.shift();
+    k=Math.max(0,Math.min(SQ.length-1,Math.floor(pk/9)));                               // a quicker hand leaves a finer figure
     g=new Float32Array(GN*2);
     for(i=0;i<GN;i++){ a=Math.random()*6.283; r=Math.sqrt(Math.random())*0.96; g[2*i]=Math.cos(a)*r; g[2*i+1]=Math.sin(a)*r; }
-    for(i=0;i<=plates.length-PMAX;i++) plates[i].t0=Math.min(plates[i].t0,now-(LIFE-420));   // the oldest plates leave early
-    if(plates.length>=PMAX+4) plates.shift();                                                  // and a racing hand never carries more than ten
-    plates.push({x:x,y:y,R:R,n:SQ[k][0],m:SQ[k][1],g:g,t0:now});
+    plates.push({x:x,y:y,R:52+Math.min(16,pk*0.5),n:SQ[k][0],m:SQ[k][1],g:g,t0:now}); pk=0;
     return true;
   }
   var spG=null, spH=null;
   function fld(n,m,x,y){ var X=(x+1)*1.5708, Y=(y+1)*1.5708, v=Math.cos(n*X)*Math.cos(m*Y)-Math.cos(m*X)*Math.cos(n*Y); return v*v; }
-  // Smoother since 17 Nov 2026 (Martin: less pointy). The grains are soft round dots, and they glide down to the still
-  // lines instead of being shaken there, so nothing flickers once the figure has formed.
   function drawDay(now){
-    var i, j, p, age, env, fly, g, x, y, gx, gy, sp, rr, q, a, R, E=0.012, k, sz;
+    var i, j, l, p, age, env, fly, g, x, y, gx, gy, sp, rr, q, a, R, E=0.012, k, sz;
+    var dx, dy, d, nx=0, ny=1, s, tp, o, w, amp, a0, fade, gold, ax, ay, bx, by;
     if(!spG){ spG=puff("rgba(142,111,26,1)","rgba(142,111,26,.42)"); spH=puff("rgba(245,226,160,1)","rgba(235,212,137,.35)"); }
-    if(now-moved>150&&path>34){ path=0; plate(px,py); }          // the hand has stopped: one more figure where it rests
+    if(!CH.length) chain();
+    if(now-moved>170&&path>60){ path=0; plate(hx,hy); }          // the hand has stopped: the figure opens where it rests
+
+    // the chain eases after the pointer
+    CH[0].x+=(hx-CH[0].x)*0.5; CH[0].y+=(hy-CH[0].y)*0.5;
+    for(i=1;i<CN;i++){ CH[i].x+=(CH[i-1].x-CH[i].x)*0.29; CH[i].y+=(CH[i-1].y-CH[i].y)*0.29; }
+    tl=0; for(i=1;i<CN;i++){ dx=CH[i].x-CH[i-1].x; dy=CH[i].y-CH[i-1].y; tl+=Math.sqrt(dx*dx+dy*dy); }
+    en*=0.955; wt+=0.10+en*0.16;
+
+    if(tl>10){
+      a0=Math.min(1,(tl-10)/80); amp=1.1+7.5*en;
+      c.lineCap="butt"; c.lineJoin="round";
+      for(l=0;l<LN;l++){
+        o=(l-(LN-1)/2)*2.5*(0.6+1.5*en); gold=l%2===0;
+        for(i=0;i<CN;i++){
+          p=CH[i>0?i-1:0]; q=CH[i<CN-1?i+1:CN-1]; dx=q.x-p.x; dy=q.y-p.y; d=Math.sqrt(dx*dx+dy*dy);
+          if(d>0.05){ nx=-dy/d; ny=dx/d; }
+          s=i/(CN-1); tp=Math.sin(3.1416*s);
+          w=Math.sin(s*3.1416*(2+l*0.7)-wt*(1+l*0.13)+l*1.7)*amp;
+          XS[i]=CH[i].x+nx*tp*(o+w); YS[i]=CH[i].y+ny*tp*(o+w);
+        }
+        c.strokeStyle=gold?"rgb(150,116,24)":"rgb(232,206,128)"; c.lineWidth=gold?1.25:0.9;
+        for(i=1;i<CN-1;i++){
+          s=i/(CN-1); fade=Math.min(1,s*7)*Math.pow(1-s,1.25); a=a0*fade*(gold?0.78:0.7); if(a<0.012) continue;
+          ax=(XS[i-1]+XS[i])*0.5; ay=(YS[i-1]+YS[i])*0.5; bx=(XS[i]+XS[i+1])*0.5; by=(YS[i]+YS[i+1])*0.5;
+          c.globalAlpha=a; c.beginPath(); c.moveTo(ax,ay); c.quadraticCurveTo(XS[i],YS[i],bx,by); c.stroke();
+        }
+      }
+    }
+
+    // the sand figure: fine grains glide out of the cursor and settle on the still lines
     for(i=plates.length-1;i>=0;i--){
       p=plates[i]; age=now-p.t0;
       if(age>=LIFE){ plates.splice(i,1); continue; }
-      env=age<260?age/260:(age>LIFE-1200?(LIFE-age)/1200:1); env=env*env*(3-2*env);   // eased in and out
-      fly=age<420?1-Math.pow(1-age/420,3):1; R=p.R*fly; g=p.g;                         // out of the cursor, into the disc
-      k=age<900?0.016:0.006;                                                           // quick while the figure forms, then almost still
+      env=age<420?age/420:(age>LIFE-1300?(LIFE-age)/1300:1); env=env*env*(3-2*env);   // eased in and out
+      fly=age<700?1-Math.pow(1-age/700,4):1; R=p.R*fly; g=p.g;
+      k=age<1100?0.014:0.004;
+      c.globalAlpha=env*0.16; c.strokeStyle="rgb(170,134,40)"; c.lineWidth=0.8;       // the rim of the plate, a hairline
+      c.beginPath(); c.arc(p.x,p.y,R*1.04+1,0,6.2832); c.stroke();
       for(j=0;j<GN;j++){
         x=g[2*j]; y=g[2*j+1];
         gx=(fld(p.n,p.m,x+E,y)-fld(p.n,p.m,x-E,y))/(2*E); gy=(fld(p.n,p.m,x,y+E)-fld(p.n,p.m,x,y-E))/(2*E);
         sp=Math.sqrt(gx*gx+gy*gy); if(sp>1.6){ gx*=1.6/sp; gy*=1.6/sp; }
-        if(fld(p.n,p.m,x,y)>0.004+0.06*((j*13)%17)/16){ x-=gx*k; y-=gy*k; }                   // each grain stops a little short of the line, so the figure is a soft band, not a wire
+        if(fld(p.n,p.m,x,y)>0.003+0.04*((j*13)%17)/16){ x-=gx*k; y-=gy*k; }
         rr=x*x+y*y; if(rr>1){ q=0.99/Math.sqrt(rr); x*=q; y*=q; rr=0.98; }
         g[2*j]=x; g[2*j+1]=y;
         a=env*(1-rr*rr*rr); if(a<0.03) continue;
-        sz=3.1+1.5*((j*7)%5)/4;
-        c.globalAlpha=a*0.85; c.drawImage(spG,p.x+x*R-sz,p.y+y*R-sz,sz*2,sz*2);                    // the grain: the day side's gold, soft at the edge ...
-        c.globalAlpha=a*0.7; c.drawImage(spH,p.x+x*R-sz*0.45,p.y+y*R-sz*0.45,sz*0.9,sz*0.9);       // ... with a glint, so it also shows on the dark hero
+        sz=1.7+0.9*((j*7)%5)/4;
+        c.globalAlpha=a*0.8; c.drawImage(spG,p.x+x*R-sz,p.y+y*R-sz,sz*2,sz*2);
+        c.globalAlpha=a*0.6; c.drawImage(spH,p.x+x*R-sz*0.45,p.y+y*R-sz*0.45,sz*0.9,sz*0.9);
       }
     }
     c.globalAlpha=1;
@@ -6392,7 +6427,7 @@ html[lang="hsb"] .kits ul.kits-en{display:none}
     c.globalAlpha=1; c.globalCompositeOperation="source-over";
   }
 
-  function clear(){ plates.length=0; P.length=0; rings.length=0; }
+  function clear(){ plates.length=0; P.length=0; rings.length=0; CH.length=0; en=0; tl=0; }
   function frame(now){
     raf=0; if(!cv) return;
     var s=side(), y0=window.pageYOffset||0, dy=y0-sy, i; sy=y0;
@@ -6401,7 +6436,7 @@ html[lang="hsb"] .kits ul.kits-en{display:none}
     c.clearRect(0,0,W,H);
     if(off||document.hidden){ clear(); return; }
     if(s==="night") drawNight(now); else drawDay(now);
-    if(plates.length||P.length||rings.length||now-moved<1400) raf=requestAnimationFrame(frame);
+    if(plates.length||P.length||rings.length||now-moved<1400||(s==="day"&&(tl>6||en>0.02))) raf=requestAnimationFrame(frame);
   }
   function wake(){ if(!raf){ sy=window.pageYOffset||0; raf=requestAnimationFrame(frame); } }
 
@@ -6422,7 +6457,7 @@ html[lang="hsb"] .kits ul.kits-en{display:none}
         P.push({x:px-dx*f+(Math.random()-0.5)*7,y:py-dy*f+(Math.random()-0.5)*7,vx:dx*0.04+(Math.random()-0.5)*0.4,vy:dy*0.04+(Math.random()-0.5)*0.4,
                 r:4.5+Math.random()*8,g:0.26+Math.random()*0.48,life:1,dec:0.007+Math.random()*0.006,hot:Math.random()<0.22}); }
     } else {
-      path+=d; if(path>=STEP||!plates.length){ if(plate(px,py)) path=0; else path=Math.min(path,STEP); }
+      hx=px; hy=py; path+=d; pk=Math.max(pk,spd); en=Math.min(1,en+d*0.011);
     }
     wake();
   },{passive:true});
