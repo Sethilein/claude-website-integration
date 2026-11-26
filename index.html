@@ -9982,7 +9982,7 @@ function startSet(i){
   if(l.xlv===1)S.bank=0;   // a Christmas run starts at level 1; level 2 adds to it
   S.li=i;S.ev=build(i);S.spb=spb;S.Tc=now()+.35;S.T0=S.Tc+4*spb;S.nextH=0;
   S.tEnd=S.ev[S.ev.length-1].t+2*spb;S.heat=20;S.love=55;S.combo=0;S.coins=0;S.ni=0;
-  S.st={p:0,g:0,m:0,w:0,wm:0,a:0,o:0};S.lastOff=null;S.hats=0;parts=[];fx=[];S.mode="play";
+  S.st={p:0,g:0,m:0,w:0,wm:0,a:0,o:0};S.lastOff=null;S.hats=0;MOON.taps=0;MOON.egg=0;MOON.got=0;parts=[];fx=[];S.mode="play";
   $("shgOv").className="shg-off";$("shgMute").style.display="";$("shgHud").className="shg-on";$("shgCtrl").className="shg-on";
   var dk=$("shgDrink");dk.firstChild.nodeValue=l.xmas?"ICE":"DRINK";dk.classList.toggle("shg-ice",!!l.xmas);if(!(window.matchMedia&&matchMedia("(pointer:fine)").matches))$("shgKD").textContent=l.xmas?"on the ice flake":"on the blue drop";
   $("shgSetLbl").textContent=l.xmas?"Christmas level "+l.xlv+"/3 · "+l.slot:"Set "+(i+1)+"/8 · "+l.day+" "+l.slot;$("shgSetName").textContent=l.name;
@@ -10094,11 +10094,57 @@ function flake(x,y,r,col,a){cx.save();cx.globalAlpha=a==null?1:a;cx.strokeStyle=
  for(var i=0;i<6;i++){cx.rotate(Math.PI/3);cx.beginPath();cx.moveTo(0,0);cx.lineTo(0,-r);cx.moveTo(0,-r*.55);cx.lineTo(r*.28,-r*.8);cx.moveTo(0,-r*.55);cx.lineTo(-r*.28,-r*.8);cx.stroke()}cx.restore()}
 function drop(x,y,r,col,a){cx.save();cx.globalAlpha=a==null?1:a;cx.fillStyle=col;cx.beginPath();cx.moveTo(x,y-r*1.4);
  cx.bezierCurveTo(x+r*1.2,y,x+r,y+r,x,y+r);cx.bezierCurveTo(x-r,y+r,x-r*1.2,y,x,y-r*1.4);cx.fill();cx.restore()}
+// item 126 (Martin, 26 Nov 2026: "the moon should rise and go down again into twilight ... hide an easter egg in the moon").
+// On a night set the moon rises from behind the hills when the set starts, crosses the sky and sets again at its end;
+// the sky turns to twilight at both ends and the stars fade. Easter egg: tap the moon three times. It turns full and
+// shows a heart, a little chime plays, the set gets 25 Sweat Heartz (50 at Christmas), once per set.
+var MOON={x:-99,y:-99,r:0,p:.5,tw:0,taps:0,lt:0,egg:0,got:0};
+function moonP(tms){
+ if(S.mode==="play"&&S.tEnd){var lead=4*S.spb,p=(now()-S.T0+lead)/(S.tEnd+lead);MOON.p=Math.max(0,Math.min(1,p));return MOON.p}
+ if(S.mode==="title")return .5+.05*Math.sin(tms/9000);
+ return MOON.p;
+}
+function moonSky(tms,g,xm){
+ var p=moonP(tms),tw=S.mode==="title"?0:Math.max(0,Math.min(1,Math.max(1-p/.16,(p-.8)/.2))),gr;MOON.tw=tw;
+ if(tw<=.01)return;
+ gr=cx.createLinearGradient(0,g.hy*.2,0,g.hy);
+ gr.addColorStop(0,"rgba(0,0,0,0)");
+ gr.addColorStop(.55,xm?"rgba(110,150,230,"+(.35*tw).toFixed(3)+")":"rgba(130,80,170,"+(.4*tw).toFixed(3)+")");
+ gr.addColorStop(1,xm?"rgba(190,215,255,"+(.55*tw).toFixed(3)+")":"rgba(255,150,120,"+(.6*tw).toFixed(3)+")");
+ cx.fillStyle=gr;cx.fillRect(0,0,W,g.hy+2);
+}
+function moonDraw(tms,g){
+ var p=MOON.p,r=13*g.s,x=W*(.1+.8*p),y=g.hy+r*1.3-Math.sin(Math.PI*p)*g.hy*.56,gr,e=MOON.egg?Math.min(1,(tms-MOON.egg)/600):0;
+ if(S.mode==="title"){x=W*.8;y=g.hy*.5}
+ MOON.x=x;MOON.y=y;MOON.r=r;
+ gr=cx.createRadialGradient(x,y,r*.6,x,y,r*(3.2+2*e));gr.addColorStop(0,"rgba(246,233,200,"+(.22+.3*e).toFixed(3)+")");gr.addColorStop(1,"rgba(246,233,200,0)");
+ cx.fillStyle=gr;cx.beginPath();cx.arc(x,y,r*(3.2+2*e),0,6.3);cx.fill();
+ var R=Math.ceil(r+2),mc=MOON.cv||(MOON.cv=document.createElement("canvas")),mg,sz=Math.ceil(2*R*DPR);
+ if(mc.width!==sz){mc.width=sz;mc.height=sz}mg=mc.getContext("2d");mg.setTransform(DPR,0,0,DPR,0,0);mg.clearRect(0,0,2*R,2*R);
+ mg.globalCompositeOperation="source-over";mg.fillStyle="#f6e9c8";mg.beginPath();mg.arc(R,R,r,0,6.3);mg.fill();
+ if(e<1){var cut=r*.5*(1-e);mg.globalCompositeOperation="destination-out";mg.beginPath();mg.arc(R+cut*1.3,R-cut*.65,r*.92,0,6.3);mg.fill();mg.globalCompositeOperation="source-over"}
+ cx.drawImage(mc,x-R,y-R,2*R,2*R);
+ if(e>0){heart(x,y+r*.1,r*.42,"#ff5d8f",e);
+  var u=(tms-MOON.egg)/5200;if(u<1){cx.save();cx.globalAlpha=u<.1?u/.1:u>.75?(1-u)/.25:1;cx.fillStyle="#f6e9c8";cx.font="500 "+Math.round(10*g.s+3)+"px "+FONT;
+   var tx="* on other planets also known as Seth Schwarz",tw2=cx.measureText(tx).width;cx.textAlign="left";cx.textBaseline="top";
+   cx.fillText(tx,Math.max(10,Math.min(W-10-tw2,x-tw2/2)),y+r*1.6);cx.restore()}}
+}
+function moonTap(ev){
+ var lv=LV[S.li];if(S.mode!=="play"||!lv||!SKY[lv.sky].stars||MOON.got)return false;
+ var b=cv.getBoundingClientRect(),dx=ev.clientX-b.left-MOON.x,dy=ev.clientY-b.top-MOON.y;
+ if(dx*dx+dy*dy>Math.pow(Math.max(36,MOON.r*3.2),2))return false;
+ var t=performance.now();MOON.taps=t-MOON.lt<2000?MOON.taps+1:1;MOON.lt=t;
+ if(MOON.taps<3){say(MOON.taps===1?"the moon?":"the moon...","#f6e9c8");return true}
+ MOON.got=1;MOON.egg=t;var n=lv.xmas?50:25;S.coins+=n;say("moon heartz  +"+n,"#f6e9c8");
+ if(useAC){var a=AC.currentTime;tick(a,1318.5);tick(a+.12,1760);tick(a+.24,2093);tick(a+.36,2637)}
+ wr("ss-sweatheart-moon","1");
+ return true;
+}
 function scene(tms,bp){
  var l=LV[S.mode==="title"?4:S.li],k=SKY[l.sky],g=geo(),i,gr;
  gr=cx.createLinearGradient(0,0,0,g.hy);gr.addColorStop(0,k.g[0]);gr.addColorStop(.6,k.g[1]);gr.addColorStop(1,k.g[2]);cx.fillStyle=gr;cx.fillRect(0,0,W,g.hy+2);
- if(k.stars){cx.fillStyle="#fff";for(i=0;i<stars.length;i++){var s=stars[i];cx.globalAlpha=.35+.45*Math.abs(Math.sin(tms/900+s.p));cx.fillRect(s.x*W,s.y*g.hy,s.s,s.s)}cx.globalAlpha=1;
-  cx.fillStyle="#f6e9c8";cx.beginPath();cx.arc(W*.8,g.hy*.5,13*g.s,0,6.3);cx.fill();cx.fillStyle=k.g[1];cx.beginPath();cx.arc(W*.8+6*g.s,g.hy*.5-3*g.s,12*g.s,0,6.3);cx.fill()}
+ if(k.stars){moonSky(tms,g,!!k.snow);cx.fillStyle="#fff";for(i=0;i<stars.length;i++){var s=stars[i];cx.globalAlpha=(.35+.45*Math.abs(Math.sin(tms/900+s.p)))*(1-.7*MOON.tw);cx.fillRect(s.x*W,s.y*g.hy,s.s,s.s)}cx.globalAlpha=1;
+  moonDraw(tms,g)}
  if(k.sun){var sr=Math.min(W,g.sh)*.24,sy=g.hy-(l.sky==="sunrise"?sr*.15:sr*.3);gr=cx.createRadialGradient(W*.5,sy,sr*.2,W*.5,sy,sr*2.3);gr.addColorStop(0,"rgba(255,240,196,.75)");gr.addColorStop(1,"rgba(255,240,196,0)");cx.fillStyle=gr;cx.fillRect(0,0,W,g.hy);
   cx.fillStyle=k.sun;cx.beginPath();cx.arc(W*.5,sy,sr,0,6.3);cx.fill()}
  cx.fillStyle=k.mt;cx.beginPath();cx.moveTo(0,g.hy+1);for(i=0;i<mts.length;i++)cx.lineTo(i/(mts.length-1)*W,g.hy-mts[i]*g.sh);cx.lineTo(W,g.hy+1);cx.fill();
@@ -10204,7 +10250,7 @@ function close(){
 
 // ---------- input ----------
 function bind(el,kind){el.addEventListener("pointerdown",function(ev){ev.preventDefault();press(kind)})}
-bind($("shgPlay"),"n");bind($("shgDrink"),"w");bind(cv,"n");
+bind($("shgPlay"),"n");bind($("shgDrink"),"w");cv.addEventListener("pointerdown",function(ev){ev.preventDefault();if(moonTap(ev))return;press("n")});
 window.addEventListener("keydown",function(ev){
  if(!isOpen)return;var c=ev.code,used=true;
  var tg=ev.target;if(tg&&tg.tagName==="INPUT"&&c!=="Escape"&&c!=="Enter"&&c!=="NumpadEnter"){ev.stopPropagation();return}
