@@ -27,10 +27,16 @@ Two sessions change `index.html` at the same time and one overwrites the other. 
 - Write once: the full story of a change stands in its own `source/<topic>/README.md`; START_HERE and README get one
   line each. Finished items go to `START_HERE_archive.md`, live drafts and their notes to `99_Archiv/`.
 
+## Martin's rule of 26 Nov 2026 (START_HERE.md, rule 14; regelwerk C13)
+- Every text in all languages, in the same pass: a new or changed text never goes live in English only. It goes into
+  `i18n/source-en.json` and every language file at the same position (model: `source/i18n131/`), then
+  `source/i18n/apply.py`. `source/check_site.py` calls `source/i18n/check_lang.py` and is not OK while any readable
+  text of the page stands in English only; names stay English on purpose in `i18n/keep-en.json`.
+
 ## Before publishing
 These run in the working folder (`sethschwarz-site/`); `source/` is deliberately not in this repository.
 - `python3 source/check_site.py` prints OK (it also checks that every picture, font and sound file the page names is there,
-  and since 19 Nov that no code hides behind a `//` comment, where it never runs).
+  since 19 Nov that no code hides behind a `//` comment, where it never runs, and since 26 Nov that every text is in all languages).
 - `python3 source/tests/check_merged.py <url>` passes (46 checks; since 19 Nov every cabinet game three times in a row).
 - `python3 source/check_facts.py` prints OK (the page, the scripts and the documents carry what the facts say; see below).
 - The page loads without script errors on both sides, at desktop and phone width. Tests: `source/tests/` (Playwright).
