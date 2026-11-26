@@ -347,27 +347,48 @@ html.bowon,html.bowon *{cursor:none !important}
     scan(); go();
   }, flakes: function(){ return flakes.length; } };
 
-  /* the LED bow: the same bow as on the night side of sethschwarz.com (source/_bow.py, _bowfx.py) */
+  /* item 125: the light of the LED bow, the same as on sethschwarz.com (source/pointerfx/pointerfx.js, items 110/111).
+     Five effects (rainbow scanner, beat pulse at 124 BPM, twin comets, sparkle, colour wipe); a click moves on to the
+     next one, and so does every twelfth second. Defined only where the page has not got it already. */
+  if(!window.__ssLed){ (function(){
+    var MODES=5, mode=0, tm=performance.now();
+    function frac(v){ return v-Math.floor(v); }
+    function beatLv(now){ var v=0; try{ if(typeof window.__ssRadioLevel==="function") v=+window.__ssRadioLevel()||0; }catch(e){}
+      if(v>0.05) return Math.min(1,v); return Math.exp(-frac(now/1000*2.0667)*5); }
+    window.__ssLed=function(i,n,now){
+      now=now||performance.now(); if(now-tm>12000){ tm=now; mode=(mode+1)%MODES; }
+      var t=now/1000, u=n>1?i/(n-1):0, b=0, h=0, ph, pos, d, k;
+      if(mode===0){ ph=(t*0.9)%2; pos=(ph<1?ph:2-ph); d=Math.abs(u-pos)*(n-1); b=Math.max(0.1,1-d/3.2); h=(u*300+t*90)%360; }
+      else if(mode===1){ k=beatLv(now); b=0.18+0.82*k*(0.55+0.45*Math.sin(u*9.42-t*6)); h=318+22*Math.sin(u*6.283+t*2); }
+      else if(mode===2){ pos=frac(t*0.55); d=Math.min(Math.abs(u-pos),1-Math.abs(u-pos))*(n-1); b=Math.max(0,1-d/3);
+        pos=frac(t*0.55+0.5); k=Math.min(Math.abs(u-pos),1-Math.abs(u-pos))*(n-1); k=Math.max(0,1-k/3); h=b>=k?190:45; b=Math.max(0.1,b,k); }
+      else if(mode===3){ k=Math.floor(t*7); ph=frac(Math.sin(i*12.9898+k*78.233)*43758.5453); b=ph>0.7?1-frac(t*7)*0.6:0.14; h=frac(Math.sin(i*3.17+k*1.3)*917.3)*360; }
+      else { k=Math.floor(t*0.8); ph=frac(t*0.8); b=u<=ph?1:0.16; h=((u<=ph?k:k-1)*67+u*30+3600)%360; }
+      return {h:Math.round((h+360)%360), l:Math.round(52+26*b), b:b};
+    };
+    window.__ssLedNext=function(){ tm=performance.now(); mode=(mode+1)%MODES; return mode; };
+  })(); }
+  /* the LED bow: the same bow as on the night side of sethschwarz.com; since item 125 always lit, five effects */
   var fx = document.getElementById("bowfx"), root = document.documentElement, leds = fx ? fx.querySelectorAll(".led") : [], NL = leds.length;
   var bx = -100, by = -100, shown = false, scanT = -9, braf = 0, tapHide = 0;
   function place(){ fx.style.left = (bx - 27) + "px"; fx.style.top = (by - 3) + "px"; }
-  function scan(){ scanT = performance.now(); if (!braf) braf = requestAnimationFrame(bow); }
+  var pop = 0, lastMove = 0, idleT = 0;
+  function scan(){ pop = 1; lastMove = performance.now(); if (window.__ssLedNext) window.__ssLedNext(); if (!braf) braf = requestAnimationFrame(bow); }
   function bow(now){
-    braf = 0; if (!shown || calm) return;
-    var k = (now - scanT) / 1100, hot = k >= 0 && k < 1;
-    var pop = hot ? (k < .15 ? k / .15 : (k > .8 ? (1 - k) / .2 : 1)) : 0;
-    fx.style.transform = "scale(" + (1 + .55 * pop).toFixed(3) + ")";
-    var pos = hot ? ((k * 2) % 2 < 1 ? (k * 2) % 2 : 2 - (k * 2) % 2) * (NL - 1) : -9, drift = now / 22;
+    braf = 0; if (!shown || calm || document.hidden) return;
+    var k = now - lastMove > 4000 ? .6 : 1;
     for (var i = 0; i < NL; i++){
-      var b = hot ? Math.max(0, 1 - Math.abs(i - pos) / 3.2) : 0, hue = (i / (NL - 1) * 300 + drift) % 360;
-      var c = leds[i]; c.style.fill = "hsl(" + hue.toFixed(0) + ",100%," + (58 + 22 * b).toFixed(0) + "%)";
-      c.style.opacity = (hot ? .25 + .75 * b : .55).toFixed(3); c.setAttribute("r", (0.62 + 0.7 * b).toFixed(2));
+      var q = window.__ssLed(i, NL, now), c = leds[i];
+      c.style.fill = "hsl(" + q.h + ",100%," + q.l + "%)";
+      c.style.opacity = ((.16 + .84 * q.b) * k).toFixed(3); c.setAttribute("r", (0.6 + 0.75 * q.b).toFixed(2));
     }
-    braf = requestAnimationFrame(bow);
+    fx.style.transform = "scale(" + (1 + .7 * pop).toFixed(3) + ")"; pop *= .86; if (pop < .01) pop = 0;
+    if (now - lastMove > 4000 && pop === 0){ clearTimeout(idleT); idleT = setTimeout(function(){ if (!braf) braf = requestAnimationFrame(bow); }, 70); }
+    else braf = requestAnimationFrame(bow);
   }
   if (fx && !calm){
     document.addEventListener("pointermove", function(ev){
-      if (ev.pointerType === "mouse"){ bx = ev.clientX; by = ev.clientY; mx = bx; my = by; place();
+      if (ev.pointerType === "mouse"){ lastMove = performance.now(); bx = ev.clientX; by = ev.clientY; mx = bx; my = by; place();
         if (!shown){ shown = true; fx.style.opacity = "1"; root.className += " bowon"; } if (!braf) braf = requestAnimationFrame(bow); }
     }, true);
     document.addEventListener("pointerdown", function(ev){
