@@ -1,0 +1,54 @@
+/* ===== ux148.css ===== */
+/* Item 148 (source/ux148): a view of the wave atlas and the frequency lab can be shared as a link, the labs'
+   sound has one master, long notes fold away, and the two ways to book point at each other. */
+
+/* --- wave atlas: a picture can be chosen; its equation and source open below the grid --- */
+#dWaves{scroll-margin-top:calc(var(--hdr,49px) + 44px)}
+.wa-c.wa-can{position:relative;cursor:pointer;transition:box-shadow .2s}
+.wa-pick{position:absolute;top:4px;inset-inline-end:4px;width:44px;height:44px;margin:0;padding:0;border:0;background:none;color:#fff;cursor:pointer;display:grid;place-items:center;-webkit-tap-highlight-color:transparent}
+.wa-pick span{display:grid;place-items:center;width:26px;height:26px;border:1px solid rgba(255,255,255,.72);border-radius:50%;background:rgba(10,9,24,.6);font:400 15px/1 "IBM Plex Mono",ui-monospace,Menlo,monospace}
+.wa-pick span::before{content:"+"}
+.wa-pick[aria-pressed="true"] span{background:#DFC166;border-color:#DFC166;color:#0A0918}
+.wa-pick[aria-pressed="true"] span::before{content:"\2212"}
+.wa-pick:focus-visible{outline:2px solid #DFC166;outline-offset:-5px}
+.wa-c.wa-on{box-shadow:0 0 0 2px #DFC166}
+.wa.wa-has .wa-c:not(.wa-on) canvas{opacity:.5;transition:opacity .2s}
+.wa.wa-has .wa-c:not(.wa-on):hover canvas{opacity:.8}
+details.wa-fold{margin-top:clamp(16px,2.4vw,24px);border-bottom:1px solid var(--line)}
+.wa-more{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 32px;padding:4px 0 18px}
+.wa.wa-has .wa-more{grid-template-columns:minmax(0,1fr)}
+.wa-m[hidden]{display:none}
+.wa-m h3{margin:0;font-family:var(--display);font-weight:600;font-size:17px;line-height:1.25;color:var(--fg)}
+.wa-eq{margin:8px 0 0;font-family:var(--mono);font-size:13px;line-height:1.5;color:var(--fg);overflow-wrap:anywhere;unicode-bidi:isolate;direction:ltr;text-align:start}
+.wa-m p.wa-see{margin:8px 0 0;max-width:62ch;font-size:14.5px;line-height:1.55;color:var(--muted)}
+.wa-src{margin:8px 0 0;font-family:var(--mono);font-size:11px;line-height:1.6;letter-spacing:.02em}
+.wa-src a{color:var(--accent);text-underline-offset:3px}
+.wa-src a:focus-visible,.ux-share:focus-visible,.ux-cross:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.wa-foot{grid-column:1/-1;margin:0}
+@media (max-width:640px){.wa-more{grid-template-columns:minmax(0,1fr)}}
+@media (prefers-reduced-motion: reduce){.wa-c.wa-can,.wa.wa-has .wa-c canvas{transition:none}}
+
+/* --- a link to this view, and one quiet line for what just happened --- */
+.ux-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;margin-top:14px}
+.ux-share{min-height:44px;margin:0;padding:0 16px;border:1px solid var(--line);border-radius:2px;background:none;color:var(--fg);font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;cursor:pointer}
+.ux-share:hover{border-color:var(--accent)}
+.ux-st{margin:0;min-width:0;flex:1 1 220px;font-size:12.5px;line-height:1.5;color:var(--muted);overflow-wrap:anywhere}
+.ux-st:empty{display:none}
+.hr-card>.ux-st{margin-top:10px}
+.brn-b.ux-armed{outline:1px dashed var(--accent);outline-offset:2px}
+html[lang="ar"] .ux-share,html[lang="ar"] .ux-cross,html[lang="ar"] details.wa-fold>summary{letter-spacing:0}   /* Arabic letters join: no spacing between them */
+
+/* --- the device note folds; its first line stays in sight --- */
+details.ux-biofold{margin-top:18px}
+details.ux-biofold>summary{text-transform:none;letter-spacing:.02em;font-size:12px;color:var(--muted)}
+details.ux-biofold>.bio-note{margin:2px 0 12px;padding-top:0;border-top:0}
+
+/* --- the two ways to book point at each other --- */
+.ux-cross{display:inline-flex;align-items:center;min-height:44px;margin:10px 0 0;padding:0 16px;border:1px solid currentColor;border-radius:2px;background:none;color:inherit;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;cursor:pointer}
+.ux-cross:hover{border-color:var(--accent);color:var(--accent)}
+#dAsk .ux-cross{color:#fff;border-color:rgba(255,255,255,.5)}
+#dAsk .ux-cross:hover{border-color:#fff;color:#fff}
+#book .contact .ux-copy{margin-top:10px;padding:10px 14px;user-select:none}
+
+/* --- pictures carry their size: the height always follows the width --- */
+:where(img[width][height]){height:auto}

@@ -24,7 +24,8 @@
 
     function audio() {
       if (!AC) return null;
-      if (!ac) { try { ac = new AC(); } catch (e) { return null; } }
+      var SSA = window.SSAudio, shared = SSA ? SSA.ctx() : null;
+      if (!ac) { if (shared) ac = shared; else { try { ac = new AC(); } catch (e) { return null; } } }
       try { if (navigator.audioSession) navigator.audioSession.type = "playback"; } catch (e) {}
       if (ac.state === "suspended") { try { ac.resume(); } catch (e) {} }
       return ac;
@@ -209,7 +210,7 @@
           g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(P[0][1], t0 + .35);
           for (var i = 1; i < P.length; i++) g.gain.linearRampToValueAtTime(P[i][1], t0 + T * Math.log(P[i][0] / F0) / LN);
           g.gain.linearRampToValueAtTime(0, t0 + T + .25);
-          o.connect(g); g.connect(c.destination); o.start(t0); o.stop(t0 + T + .35);
+          o.connect(g); g.connect(window.SSAudio ? window.SSAudio.out(c) : c.destination); o.start(t0); o.stop(t0 + T + .35);
           st.osc = o; st.g = g; st.a0 = t0;
         }
         sweepStart = performance.now();
@@ -224,7 +225,7 @@
       }
       function stop(silent) {
         if (!st) return;
-        if (st.c && st.g) { try { var n = st.c.currentTime; st.g.gain.cancelScheduledValues(n); st.g.gain.setTargetAtTime(0, n, .03); st.osc.stop(n + .2); } catch (e) {} }
+        if (st.c && st.g) { try { var n = st.c.currentTime; if (st.g.gain.cancelAndHoldAtTime) st.g.gain.cancelAndHoldAtTime(n); else st.g.gain.cancelScheduledValues(n); st.g.gain.setTargetAtTime(0, n, .03); st.osc.stop(n + .2); } catch (e) {} }
         st = null; parts = [];
         go.hidden = false; golb.textContent = result ? "Try again" : "Start the sweep"; stopB.hidden = true;
         if (!silent) draw(performance.now());
@@ -412,7 +413,7 @@
           var os = [], H = [[130.81, 1, "sine"], [261.63, .32, "sine"], [392.0, .1, "triangle"]];
           for (var i = 0; i < H.length; i++) { var o = c.createOscillator(), g = c.createGain(); o.type = H[i][2]; o.frequency.value = H[i][0]; g.gain.value = H[i][1]; o.connect(g); g.connect(lp); o.start(); os.push(o); }
           var lfo = c.createOscillator(), lg = c.createGain(); lfo.frequency.value = 4.6; lg.gain.value = 1.4; lfo.connect(lg); lg.connect(os[0].frequency); lfo.start(); os.push(lfo);
-          lp.connect(m); m.connect(c.destination); st.nodes = { m: m, os: os };
+          lp.connect(m); m.connect(window.SSAudio ? window.SSAudio.out(c) : c.destination); st.nodes = { m: m, os: os };
         }
         if (st.nodes) { st.nodes.m.gain.cancelScheduledValues(n); st.nodes.m.gain.setTargetAtTime(want, n, want ? .35 : .25); }
       }
