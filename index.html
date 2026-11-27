@@ -5131,14 +5131,14 @@ html[lang="hsb"] .kits ul.kits-en{display:none}
 .bk[data-mode="night"]{--bk-bg:#060506;--bk-fg:#fff;--bk-muted:var(--n-muted,#A39AA0);--bk-line:var(--n-line,rgba(255,255,255,.17));--bk-accent:var(--n-accent,#E4007C);--bk-hot:var(--n-accent,#E4007C);--bk-well:#0E0C0D;--bk-on:#fff;--bk-head:#000;--bk-err:#FF7A9C;color-scheme:dark}
 .bk::backdrop{background:rgba(5,4,16,.66);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
 .bk[open]{display:flex;flex-direction:column}
-.bk .bk-form{display:flex;flex-direction:column;flex-wrap:nowrap;gap:0;min-height:0;flex:1;margin:0}   /* the page styles every form as a wrapping row */
+.bk .bk-form{display:flex;flex-direction:column;flex-wrap:nowrap;gap:0;min-height:0;flex:1 1 auto;margin:0}   /* the page styles every form as a wrapping row */
 .bk-hd{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding:24px 26px 20px;background:var(--bk-head);color:#fff;border-bottom:1px solid var(--bk-line)}
 .bk[data-mode="night"] .bk-hd{background:radial-gradient(120% 140% at 0% 0%,rgba(228,0,124,.22),rgba(0,0,0,0) 62%),#000}
 .bk-eyebrow{margin:0;font-family:var(--mono,monospace);font-size:10.5px;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--bk-hot)}
 .bk .bk-title{margin:10px 0 0;max-width:none;font-family:var(--display,serif);font-weight:500;font-size:clamp(28px,4.4vw,42px);line-height:1.04;letter-spacing:-.01em;color:#fff}
 .bk-sub{margin:10px 0 0;max-width:56ch;font-size:14.5px;line-height:1.5;color:rgba(255,255,255,.78)}
 .bk-x{flex:none;width:40px;height:40px;border:1px solid rgba(255,255,255,.35);border-radius:2px;background:none;color:#fff;font:400 22px/1 var(--body,sans-serif);cursor:pointer}
-.bk-body{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:18px 26px 20px}
+.bk-body{flex:1 1 auto;min-height:0;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:18px 26px 20px}
 .bk-modes{display:inline-flex;border:1px solid var(--bk-line);border-radius:2px}
 .bk-modes button{background:none;border:0;padding:10px 14px;font-family:var(--mono,monospace);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--bk-muted);cursor:pointer}
 .bk-modes button[aria-pressed="true"]{background:var(--bk-accent);color:#fff}
@@ -5148,6 +5148,7 @@ html[lang="hsb"] .kits ul.kits-en{display:none}
 .bk-fields label i{font-style:normal;color:var(--bk-accent)}
 .bk-fields input,.bk-fields select,.bk-fields textarea{box-sizing:border-box;flex:0 0 auto;width:100%;min-width:0;min-height:44px;margin:0;padding:11px 12px;font:400 15px/1.3 var(--body,sans-serif);letter-spacing:0;text-transform:none;color:var(--bk-fg);background:var(--bk-well);border:1px solid var(--bk-line);border-radius:2px}
 .bk-fields textarea{min-height:96px;resize:vertical}
+.bk-fields input.bk-empty::-webkit-datetime-edit{opacity:.42}   /* fix133: Safari shows today's date in an empty date field */
 .bk-fields input::placeholder,.bk-fields textarea::placeholder{color:var(--bk-muted);opacity:.75}
 .bk-fields input:focus,.bk-fields select:focus,.bk-fields textarea:focus,.bk-x:focus-visible,.bk-modes button:focus-visible,.bk-pri:focus-visible,.bk-sec:focus-visible{outline:2px solid var(--bk-accent);outline-offset:1px}
 .bk-fields [aria-invalid="true"]{border-color:var(--bk-err);box-shadow:inset 0 0 0 1px var(--bk-err)}
@@ -5767,7 +5768,7 @@ html[lang="hsb"] .kits ul.kits-en{display:none}
     var c = f.opts ? "<select " + a + ">" + f.opts.map(function (o) { return "<option>" + esc(o) + "</option>"; }).join("") + "</select>" : f.type === "area" ? "<textarea " + a + ' rows="3"></textarea>' : '<input type="' + f.type + '" ' + a + ">";
     return "<label" + (f.wide ? ' class="bk-wide"' : "") + "><span>" + esc(f.label) + (f.req ? ' <i aria-hidden="true">*</i>' : "") + "</span>" + c + "</label>";
   }
-  function read() { each.call(q.fields.querySelectorAll("input,select,textarea"), function (n) { vals[n.name] = n.value; }); }
+  function read() { each.call(q.fields.querySelectorAll("input,select,textarea"), function (n) { vals[n.name] = n.value; if (n.type === "date") n.classList.toggle("bk-empty", !n.value); }); }
   function note(html, err) { q.note.className = "bk-note" + (err ? " err" : ""); q.note.innerHTML = html; }
   function refresh() {
     read();
