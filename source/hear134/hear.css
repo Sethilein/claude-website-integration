@@ -1,0 +1,54 @@
+/* ===== hear134.css ===== */
+/* Items 134 and 136 (27 Nov 2026): the listening lab on the day side, after the frequency lab.
+   134 hearing sweep (cochlea and brain), 136 one minute of humming (head, sinuses, brain). */
+.hear{border-bottom:1px solid var(--line);background:var(--well)}
+.hear > .col{padding-block:clamp(48px,7vw,90px)}
+#dHear{scroll-margin-top:110px}
+.hr-card{margin-top:30px;border:1px solid var(--line);background:var(--bg);padding:clamp(16px,2.6vw,28px)}
+.hr-k{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)}
+.hr-card h3{margin:10px 0 0;font-family:var(--display);font-weight:600;font-size:clamp(22px,2.6vw,30px);line-height:1.12;letter-spacing:-.01em;color:var(--fg)}
+.hr-p{margin:10px 0 0;max-width:64ch;font-size:15px;line-height:1.55;color:var(--muted)}
+.hr-fig{position:relative;margin:18px 0 0;border:1px solid var(--line);background:linear-gradient(180deg,#FFFEFA,#F7F4EA)}
+.hr-cv,.hm-cv{display:block;width:100%;height:auto;aspect-ratio:1000/480}
+.hm-cv{aspect-ratio:1000/560}
+.hr-leg{display:flex;flex-wrap:wrap;gap:6px 18px;padding:10px 14px 12px;border-top:1px solid var(--line);font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;color:var(--muted)}
+.hr-leg span{display:inline-flex;align-items:center;gap:8px}
+.hr-leg i{flex:none;width:10px;height:10px;border-radius:50%}
+.hr-d1{background:var(--d-hot,#DFC166);box-shadow:0 0 0 2px rgba(142,111,26,.35)}
+.hr-d2{background:transparent;border:2px dotted var(--d-accent,#8E6F1A)}
+.hr-d3{background:var(--d-accent,#8E6F1A)}
+.hr-row{display:flex;flex-wrap:wrap;align-items:center;gap:12px 16px;margin-top:16px}
+.hr-btn{display:inline-flex;align-items:center;gap:10px;min-height:46px;padding:12px 20px;border:1px solid var(--accent);border-radius:2px;background:var(--accent);color:#fff;font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;cursor:pointer}
+.hr-btn.hr-stop{background:var(--fg);border-color:var(--fg)}
+.hr-btn[aria-pressed="true"]{background:transparent;color:var(--accent)}
+.hr-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.hr-ic{width:0;height:0;border-style:solid;border-width:6px 0 6px 10px;border-color:transparent transparent transparent currentColor}
+.hr-btn[aria-pressed="true"] .hr-ic{width:10px;height:12px;border:0;border-left:3px solid currentColor;border-right:3px solid currentColor}
+.hr-read{margin:0;font-family:var(--mono);font-size:clamp(20px,2.4vw,26px);font-weight:500;letter-spacing:.02em;color:var(--fg);font-variant-numeric:tabular-nums;min-width:7ch}
+.hr-res{margin:14px 0 0;font-family:var(--display);font-size:clamp(18px,2vw,22px);font-weight:600;color:var(--fg)}
+.hr-res[hidden],.hr-more[hidden],.hr-btn[hidden]{display:none}
+.hr-tip{margin:12px 0 0;max-width:70ch;font-size:12.5px;line-height:1.5;color:var(--muted)}
+.hr-more{margin:10px 0 0;max-width:70ch;font-size:14px;line-height:1.55;color:var(--fg)}
+.hm-tone{min-height:46px}
+.hm-tone .fl-schl b{font-family:var(--mono);font-weight:500;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase}
+.hm-phase{margin:0;display:flex;flex-direction:column;gap:2px;min-width:12ch}
+.hm-ph{font-family:var(--display);font-size:clamp(17px,1.9vw,21px);font-weight:600;color:var(--fg)}
+.hm-rd{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.hm-meter{position:absolute;right:14px;top:14px;display:flex;flex-direction:column;align-items:flex-end;gap:6px;width:min(190px,34%);pointer-events:none}
+.hm-ml{font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);text-align:right}
+.hm-bar{position:relative;display:block;width:100%;height:8px;border-radius:999px;background:rgba(18,16,43,.08);overflow:hidden}
+.hm-bar i{position:absolute;left:0;top:0;bottom:0;width:6.7%;border-radius:999px;background:linear-gradient(90deg,var(--d-accent,#8E6F1A),var(--d-hot,#DFC166));transition:width .25s linear}
+.hm-mx{font-family:var(--mono);font-size:10px;color:var(--accent)}
+.hm-fact{color:var(--fg)}
+.hr-note{margin-top:22px}
+.hr-src{margin-top:8px}
+.hr-src p{margin:8px 0 0;font-size:13px;line-height:1.5;color:var(--muted)}
+.hr-src a{color:var(--accent);text-decoration:underline;text-underline-offset:2px}
+@media (max-width:640px){
+  .hr-cv{aspect-ratio:600/760}
+  .hm-cv{aspect-ratio:600/700}
+  .hm-meter{left:14px;right:auto;top:12px;align-items:flex-start;width:min(170px,46%)}
+  .hm-ml{text-align:left}
+  .hr-btn{flex:1 1 100%;justify-content:center}
+  .hm-tone{flex:1 1 100%}
+}
