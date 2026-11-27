@@ -5861,6 +5861,18 @@ html[lang="hsb"] .kits ul.kits-en{display:none}
     ]
   };
   var mode = "night", vals = {}, dlg, q = {}, sent = false;
+  /* item 142: the dialog asks in four short steps; every field stays, only the starred ones are needed */
+  var STEP = { night: { date: 1, alt: 1, place: 1, type: 2, set: 2, len: 2, size: 2, budget: 3, brief: 3, name: 4, mail: 4, tel: 4 },
+    day: { event: 1, date: 1, place: 1, org: 1, format: 2, lang: 2, aud: 2, budget: 3, brief: 3, name: 4, mail: 4 } };
+  var STEPS = { night: ["Date and place", "The night", "Budget", "Contact"], day: ["Event and date", "Format", "Budget", "Contact"] }, step = 1;
+  function stepOf(id) { return (STEP[mode] && STEP[mode][id]) || 4; }
+  function go(n, focus) {
+    step = Math.max(1, Math.min(4, n)); dlg.setAttribute("data-step", String(step));
+    each.call(q.fields.children, function (l) { l.hidden = +l.getAttribute("data-step") !== step; });
+    each.call(q.steps.querySelectorAll("button"), function (b, i) { b.setAttribute("aria-current", i + 1 === step ? "step" : "false"); b.classList.toggle("done", i + 1 < step); });
+    q.back.hidden = step === 1; q.next.hidden = step === 4; q.ft.hidden = step !== 4 || !q.done.hidden;
+    if (focus) { var l = q.fields.querySelector(':scope > [data-step="' + step + '"]'), f = l && l.querySelector("input,select,textarea"); if (f) f.focus(); }
+  }
 
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
   function side() { return root.getAttribute("data-side") === "night" ? "night" : "day"; }
@@ -5883,7 +5895,7 @@ html[lang="hsb"] .kits ul.kits-en{display:none}
   function field(f) {
     var a = 'id="bk_' + f.id + '" name="' + f.id + '"' + (f.req ? ' required aria-required="true"' : "") + ' autocomplete="' + (f.ac || "off") + '"' + (f.ph ? ' placeholder="' + esc(f.ph) + '"' : "") + (f.im ? ' inputmode="' + f.im + '"' : "");
     var c = f.opts ? "<select " + a + ">" + f.opts.map(function (o) { return "<option>" + esc(o) + "</option>"; }).join("") + "</select>" : f.type === "area" ? "<textarea " + a + ' rows="3"></textarea>' : '<input type="' + f.type + '" ' + a + ">";
-    return "<label" + (f.wide ? ' class="bk-wide"' : "") + "><span>" + esc(f.label) + (f.req ? ' <i aria-hidden="true">*</i>' : "") + "</span>" + c + "</label>";
+    return "<label" + (f.wide ? ' class="bk-wide"' : "") + ' data-step="' + stepOf(f.id) + '"><span>' + esc(f.label) + (f.req ? ' <i aria-hidden="true">*</i>' : "") + "</span>" + c + "</label>";
   }
   function read() { each.call(q.fields.querySelectorAll("input,select,textarea"), function (n) { vals[n.name] = n.value; if (n.type === "date") n.classList.toggle("bk-empty", !n.value); }); }
   function note(html, err) { q.note.className = "bk-note" + (err ? " err" : ""); q.note.innerHTML = html; }
@@ -5903,7 +5915,7 @@ html[lang="hsb"] .kits ul.kits-en{display:none}
       var n = q.fields.querySelector('[name="' + f.id + '"]'), okv = !f.req || (f.type === "email" ? /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v(f.id)) : !!v(f.id));
       if (okv) n.removeAttribute("aria-invalid"); else { n.setAttribute("aria-invalid", "true"); bad = bad || n; }
     });
-    if (bad) { note(esc(COPY[mode].need), true); bad.focus(); return false; }
+    if (bad) { go(stepOf(bad.name)); note(esc(COPY[mode].need), true); bad.focus(); return false; }
     note(COPY[mode].note); return true;
   }
   function setMode(m) {
@@ -5911,13 +5923,14 @@ html[lang="hsb"] .kits ul.kits-en{display:none}
     mode = m === "day" ? "day" : "night"; sent = false; dlg.setAttribute("data-mode", mode);
     var c = COPY[mode];
     q.eyebrow.textContent = c.eyebrow; q.title.textContent = c.title; q.sub.textContent = c.sub;
-    q.fields.innerHTML = FIELDS[mode].map(field).join(""); q.fields.hidden = false; q.ft.hidden = false; q.modes.hidden = false; q.done.hidden = true; q.out.hidden = true;
+    q.fields.innerHTML = FIELDS[mode].map(field).join(""); q.fields.hidden = false; q.ft.hidden = false; q.modes.hidden = false; q.steps.hidden = false; q.snav.hidden = false;
+    each.call(q.steps.querySelectorAll("span"), function (s, i) { s.textContent = STEPS[mode][i]; }); q.done.hidden = true; q.out.hidden = true;
     each.call(q.fields.querySelectorAll("input,select,textarea"), function (n) { if (vals[n.name] != null && (n.tagName !== "SELECT" || [].some.call(n.options, function (o) { return o.value === vals[n.name]; }))) n.value = vals[n.name]; });
     each.call(q.modes.querySelectorAll("button"), function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-mode") === mode)); });
     q.mail.textContent = c.mail; q.send.textContent = c.send;
     var ep = endpoint(); q.send.hidden = !ep; q.mail.className = ep ? "bk-sec" : "bk-pri";
     q.gcal.hidden = q.ocal.hidden = mode !== "night";
-    note(c.note); refresh();
+    note(c.note); refresh(); go(1);
   }
   function open(m) {
     setMode(m || side());
@@ -5935,19 +5948,21 @@ html[lang="hsb"] .kits ul.kits-en{display:none}
     var ep = endpoint(); if (!ep) return;
     note("Sending…"); sent = true;
     fetch(ep, { method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" }, body: JSON.stringify({ kind: mode === "night" ? "show" : "talk", to: TO[mode], subject: subject(), message: brief(), replyTo: v("mail"), fields: vals }) })
-      .then(function (r) { if (!r.ok) throw new Error(String(r.status)); q.fields.hidden = true; q.ft.hidden = true; q.modes.hidden = true; q.done.hidden = false; q.done.querySelector("p").textContent = COPY[mode].done; q.note.innerHTML = ""; })
+      .then(function (r) { if (!r.ok) throw new Error(String(r.status)); q.fields.hidden = true; q.ft.hidden = true; q.modes.hidden = true; q.steps.hidden = true; q.snav.hidden = true; q.done.hidden = false; q.done.querySelector("p").textContent = COPY[mode].done; q.note.innerHTML = ""; })
       .catch(function () { sent = false; note("That did not go through. Use the email button, or copy the text and send it to " + esc(TO[mode]) + ".", true); });
   }
   function build() {
     dlg = document.createElement("dialog"); dlg.className = "bk"; dlg.id = "ssBook"; dlg.setAttribute("aria-labelledby", "bkTitle");
     dlg.innerHTML = '<form class="bk-form" novalidate><header class="bk-hd"><div><p class="bk-eyebrow"></p><h2 class="bk-title" id="bkTitle"></h2><p class="bk-sub"></p></div><button type="button" class="bk-x" data-bk="x" aria-label="Close">×</button></header>'
       + '<div class="bk-body"><div class="bk-modes" role="group" aria-label="What would you like to book?"><button type="button" data-mode="night">A show · Seth Schwarz</button><button type="button" data-mode="day">A talk · Dr. Martin Zschornak</button></div>'
-      + '<div class="bk-fields"></div><div class="bk-done" hidden><p></p><span>You can close this window.</span></div><p class="bk-note" role="status" aria-live="polite"></p><textarea class="bk-out" readonly hidden aria-label="The request as text"></textarea></div>'
+      + '<ol class="bk-steps" aria-label="Steps"><li><button type="button" data-bk="step" data-n="1"><b>1</b><span></span></button></li><li><button type="button" data-bk="step" data-n="2"><b>2</b><span></span></button></li><li><button type="button" data-bk="step" data-n="3"><b>3</b><span></span></button></li><li><button type="button" data-bk="step" data-n="4"><b>4</b><span></span></button></li></ol>'
+      + '<div class="bk-fields"></div><div class="bk-stepnav"><button type="button" class="bk-sec" data-bk="back">Back</button><button type="button" class="bk-pri" data-bk="next">Next</button></div><div class="bk-done" hidden><p></p><span>You can close this window.</span></div><p class="bk-note" role="status" aria-live="polite"></p><textarea class="bk-out" readonly hidden aria-label="The request as text"></textarea></div>'
       + '<footer class="bk-ft"><button type="button" class="bk-pri" data-bk="send" hidden></button><a class="bk-pri" data-bk="mail" href="#"></a><a class="bk-sec" data-bk="gcal" href="#" target="_blank" rel="noopener">Google Calendar invite</a><a class="bk-sec" data-bk="ocal" href="#" target="_blank" rel="noopener">Outlook invite</a><button type="button" class="bk-sec" data-bk="copy">Copy text</button></footer></form>';
     document.body.appendChild(dlg);
-    ["eyebrow", "title", "sub", "modes", "fields", "done", "note", "out", "ft"].forEach(function (k) { q[k] = dlg.querySelector(".bk-" + k); });
+    ["eyebrow", "title", "sub", "modes", "fields", "done", "note", "out", "ft", "steps"].forEach(function (k) { q[k] = dlg.querySelector(".bk-" + k); });
+    q.snav = dlg.querySelector(".bk-stepnav"); q.back = dlg.querySelector('[data-bk="back"]'); q.next = dlg.querySelector('[data-bk="next"]');
     ["send", "mail", "gcal", "ocal"].forEach(function (k) { q[k] = dlg.querySelector('[data-bk="' + k + '"]'); });
-    dlg.querySelector("form").addEventListener("submit", function (e) { e.preventDefault(); if (valid() && endpoint()) send(); });
+    dlg.querySelector("form").addEventListener("submit", function (e) { e.preventDefault(); if (step < 4) return go(step + 1, true); if (valid() && endpoint()) send(); });
     q.fields.addEventListener("input", refresh); q.fields.addEventListener("change", refresh);
     dlg.addEventListener("click", function (e) {
       if (e.target === dlg) return close();                                   // a click on the backdrop
@@ -5955,6 +5970,9 @@ html[lang="hsb"] .kits ul.kits-en{display:none}
       if (t.hasAttribute("data-mode")) return setMode(t.getAttribute("data-mode"));
       var a = t.getAttribute("data-bk");
       if (a === "x") return close();
+      if (a === "next") return go(step + 1, true);
+      if (a === "back") return go(step - 1, true);
+      if (a === "step") return go(+t.getAttribute("data-n"), true);
       if (a === "copy") return copy();
       if (a === "send") return send();
       if (!valid()) { e.preventDefault(); return; }
@@ -9992,11 +10010,13 @@ function ensureAudio(){
 }
 function env(g,t,a,peak,dur){g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(peak,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+dur)}
 function kick(t){if(!useAC)return;var o=AC.createOscillator(),g=AC.createGain();o.frequency.setValueAtTime(150,t);o.frequency.exponentialRampToValueAtTime(45,t+.12);env(g,t,.004,.9,.24);o.connect(g);g.connect(MG);o.start(t);o.stop(t+.26)}
+function tom(t,v){if(!useAC)return;var o=AC.createOscillator(),g=AC.createGain();o.type="sine";o.frequency.setValueAtTime(120,t);o.frequency.exponentialRampToValueAtTime(68,t+.18);env(g,t,.004,v,.28);o.connect(g);g.connect(MG);o.start(t);o.stop(t+.3)}
+function shaker(t){if(!useAC)return;var s=AC.createBufferSource(),f=AC.createBiquadFilter(),g=AC.createGain();s.buffer=noiseBuf;f.type="bandpass";f.frequency.value=5200;f.Q.value=1.2;env(g,t,.006,.09,.07);s.connect(f);f.connect(g);g.connect(MG);s.start(t);s.stop(t+.08)}
 function hat(t){if(!useAC)return;var xm=LV[S.li]&&LV[S.li].xmas,s=AC.createBufferSource(),f=AC.createBiquadFilter(),g=AC.createGain();s.buffer=noiseBuf;f.type=xm?"bandpass":"highpass";f.frequency.value=xm?9000:7000;if(xm)f.Q.value=3;env(g,t,.002,xm?.22:.14,xm?.16:.05);s.connect(f);f.connect(g);g.connect(MG);s.start(t);s.stop(t+.06)}
 function bass(t,fr,dur){if(!useAC)return;var o=AC.createOscillator(),f=AC.createBiquadFilter(),g=AC.createGain();o.type="sawtooth";o.frequency.value=fr;f.type="lowpass";f.frequency.value=420;env(g,t,.01,.26,dur);o.connect(f);f.connect(g);g.connect(MG);o.start(t);o.stop(t+dur+.02)}
 function tick(t,fr){if(!useAC)return;var o=AC.createOscillator(),g=AC.createGain();o.type="triangle";o.frequency.value=fr;env(g,t,.003,.3,.09);o.connect(g);g.connect(MG);o.start(t);o.stop(t+.1)}
 var SC=[440,523.25,587.33,659.25,783.99,880],SEQ=[0,2,3,2,4,3,2,0,3,4,5,4,3,2,3,0];
-// The player chooses the song (Martin, 20 Nov 2026, "go 77 B D C - let user choose song"; sound sample source/sweatheart_melodie/).
+// The player chooses the song (Martin, 20 Nov 2026; Dust Reel added 27 Nov, "go 77 E live"; "go 77 B D C - let user choose song"; sound sample source/sweatheart_melodie/).
 // Three melodies, all written new for this game, no quote of an existing piece. Each follows the chords of the bass
 // (Am F C G, one bar each, eight bars): the n-th heart of a bar plays the n-th note of that bar. A perfect hit gets a short
 // grace note from above, the way a violinist decorates a strong note. The Christmas set keeps Jingle Bells. SEQ/SC above are the
@@ -10009,7 +10029,11 @@ var SONGS=[
  {k:"bloom",name:"Night Bloom",d:"Wide leaps and falling sighs, a lot of air. The calmest one, for the late sets.",
   bars:["A5 E5 A4 C5","C6 A5 F5 C5","G5 E5 C5 E5","D6 B5 G5 D5","C6 B5 A5 E5","A5 G5 F5 C5","E5 F5 G5 C6","B5 A5 G5 B5"]},
  {k:"mirage",name:"Mirage",d:"Rises in small steps, with a dark F over the A minor. Desert and distance.",
-  bars:["A4 B4 C5 E5","F5 E5 C5 F5","E5 D5 C5 G4","B4 C5 D5 B4","E5 F5 E5 A5","C6 A5 F5 A5","G5 E5 C5 E5","D5 F5 E5 D5"]}
+  bars:["A4 B4 C5 E5","F5 E5 C5 F5","E5 D5 C5 G4","B4 C5 D5 B4","E5 F5 E5 A5","C6 A5 F5 A5","G5 E5 C5 E5","D5 F5 E5 D5"]},
+ // go 77 E (Martin, 27 Nov 2026): an Irish jig meets the Karoo, for the burns. D dorian over its own chords
+ // (Dm C Dm Am Dm F C Dm), a shaker and a low drum instead of the hat. Written new, no quote of an existing tune.
+ {k:"reel",name:"Dust Reel",reel:1,bassF:[73.42,65.41,73.42,110,73.42,87.31,65.41,73.42],d:"An Irish jig meets the Karoo: the fiddle dances in D, a shaker and a low drum carry it. For the burns.",
+  bars:["A5 F5 A5 D6","G5 E5 G5 C6","A5 G5 F5 D5","E5 C5 A4 C5","D6 A5 F5 A5","C6 A5 F5 A5","E5 G5 C6 G5","F5 E5 D5 E5"]}
 ];
 (function(){var i,j,r;for(i=0;i<SONGS.length;i++){SONGS[i].b=[];for(j=0;j<8;j++){r=SONGS[i].bars[j].split(" ");SONGS[i].b.push([NT[r[0]],NT[r[1]],NT[r[2]],NT[r[3]]])}}})();
 var song=0;(function(){var v=rd("ss-sweatheart-song"),i;for(i=0;i<SONGS.length;i++)if(SONGS[i].k===v)song=i})();
@@ -10332,7 +10356,7 @@ function frame(){
   while(S.nextH<endH&&S.Tc+S.nextH*hb<lim){var at=S.Tc+S.nextH*hb,h=S.nextH;
    if(h<8){if(h%2===0)tick(at,h===6?1320:880)}
    else{if(LV[S.li].xlv===3){var cn=CHOIR[h-8];if(cn)choir(at,cn[0],cn[1]*hb*.92,.035+.11*Math.min(1,S.hats/24))}
-    var b=(h-8)>>1;if(h%2===0)kick(at);else{hat(at);bass(at,LV[S.li].xmas?TUNE[LV[S.li].xlv].b[Math.floor(b/4)%16]:[110,87.31,130.81,98][Math.floor(b/4)%4],hb*.9)}}
+    var b=(h-8)>>1,rl=!LV[S.li].xmas&&SONGS[song]&&SONGS[song].reel;if(h%2===0){kick(at);if(rl&&b%2===1)tom(at,.4)}else{if(rl)shaker(at);else hat(at);bass(at,LV[S.li].xmas?TUNE[LV[S.li].xlv].b[Math.floor(b/4)%16]:rl?SONGS[song].bassF[Math.floor(b/4)%8]:[110,87.31,130.81,98][Math.floor(b/4)%4],hb*.9)}}
    S.nextH++}
   for(i=0;i<S.ev.length;i++){e=S.ev[i];if(e.t>t-GOOD)break;if(e.j)continue;e.j=2;
    if(e.k==="n"){S.combo=0;S.st.m++;S.love-=9;say("missed","#ff8a8a");if(S.love<=0){S.love=0;fail("love");break}}
@@ -11780,5 +11804,57 @@ html[lang="ar"] :is(p,h1,h2,h3,h4,h5,li,blockquote,figcaption,dd,dt,label){unico
 })();
 </script>
 <!-- i18n:end -->
+<!-- book142:start -->
+<style>
+/* item 142: booking button that stays (phone), the dialog in four steps. source/book142/apply.py */
+.bk-float{display:none}
+@media (max-width:900px){
+  .bk-float{display:block;position:fixed;right:max(14px,env(safe-area-inset-right,0px));bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:68;
+    padding:14px 18px;min-height:44px;border:0;border-radius:999px;font-family:var(--mono,monospace);font-size:11px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;
+    background:var(--d-hot,#DFC166);color:#0A0918;box-shadow:0 6px 22px rgba(0,0,0,.32);cursor:pointer;transition:opacity .25s ease,transform .25s ease,bottom .25s ease}
+  :root[data-side="night"] .bk-float{background:var(--n-accent,#E4007C);color:#fff}
+  .bk-float:focus-visible{outline:2px solid #fff;outline-offset:3px}
+  .bk-float.off{opacity:0;transform:translateY(18px);pointer-events:none;visibility:hidden;transition:opacity .25s ease,transform .25s ease,visibility 0s .25s}
+}
+@media (prefers-reduced-motion:reduce){.bk-float,.bk-float.off{transition:none}}
+.bk-steps{display:flex;gap:6px;list-style:none;margin:18px 0 0;padding:0;counter-reset:none}
+.bk-steps[hidden]{display:none}
+.bk-steps li{flex:1 1 0;min-width:0}
+.bk-steps button{display:block;width:100%;text-align:left;background:none;border:0;border-top:2px solid var(--bk-line);padding:8px 0 0;margin:0;cursor:pointer;
+  font-family:var(--mono,monospace);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--bk-muted);line-height:1.4}
+.bk-steps button b{font-weight:500;margin-right:4px}
+.bk-steps button.done{border-top-color:var(--bk-accent)}
+.bk-steps button[aria-current="step"]{border-top-color:var(--bk-accent);color:inherit}
+.bk-steps button:focus-visible{outline:2px solid var(--bk-accent);outline-offset:2px}
+.bk-fields > label[hidden]{display:none}
+.bk-stepnav{display:flex;gap:10px;justify-content:flex-end;margin-top:18px}
+.bk-stepnav[hidden],.bk-stepnav button[hidden]{display:none}
+@media (max-width:520px){.bk-steps button span{display:none}.bk-steps button[aria-current="step"] span{display:inline}}
+</style>
+<button type="button" class="bk-float off" id="bkFloat" data-book="" aria-hidden="true" tabindex="-1">Request a date</button>
+<script>
+(function(){ // item 142: the booking button stays at hand on the phone
+  var b=document.getElementById("bkFloat"), root=document.documentElement; if(!b) return;
+  var L={night:"Request a date",day:"Invite him to speak"}, seen={}, asked=false;
+  function side(){ return root.getAttribute("data-side")==="night"?"night":"day"; }
+  function label(){ var t=L[side()]; if(b.getAttribute("data-en")!==t){ b.setAttribute("data-en",t); b.textContent=t; } }
+  function shown(el){ return el&&el.getClientRects().length; }
+  function update(){ asked=false; label();
+    var mp=document.querySelector(".mp"), dlg=document.getElementById("ssBook"),
+      off=scrollY<innerHeight*0.6 || seen.book || seen.dAsk || seen.acScreen || !!(dlg&&dlg.open) || !!document.querySelector(".swhint.on");
+    b.classList.toggle("off",off); b.setAttribute("aria-hidden",off?"true":"false"); b.tabIndex=off?-1:0;
+    b.style.bottom=(mp&&!mp.hidden&&shown(mp))?"calc("+Math.round(mp.getBoundingClientRect().height+24)+"px + env(safe-area-inset-bottom,0px))":"";
+  }
+  function ask(){ if(!asked){ asked=true; requestAnimationFrame(update); } }
+  if(window.IntersectionObserver){ var io=new IntersectionObserver(function(es){ es.forEach(function(e){ seen[e.target.id]=e.isIntersecting; }); ask(); },{threshold:0});
+    ["book","dAsk","acScreen"].forEach(function(id){ var el=document.getElementById(id); if(el) io.observe(el); }); }
+  addEventListener("scroll",ask,{passive:true}); addEventListener("resize",ask);
+  new MutationObserver(ask).observe(root,{attributes:true,attributeFilter:["data-side"]});
+  document.addEventListener("click",function(){ setTimeout(ask,60); },true);
+  document.addEventListener("close",ask,true);
+  update(); setTimeout(ask,1700); setTimeout(ask,5700); // the one-time swipe hint sits at the bottom for four seconds
+})();
+</script>
+<!-- book142:end -->
 </body>
 </html>
