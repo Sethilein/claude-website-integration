@@ -2428,6 +2428,7 @@ html[lang="hsb"] .kits ul.kits-en{display:none}
       if(s&&s.getClientRects().length){ s.style.scrollMarginTop="120px"; s.scrollIntoView({behavior:"smooth",block:"start"}); return; }   // item 151: "Arcade" shows the whole game screen, not only the headline
       if(t) t.scrollIntoView({behavior:"smooth",block:"start"}); });
   });
+  if(/[#&]g1=/.test(location.hash)) setTimeout(function(){ var s=document.getElementById("acScreen"); if(s){ s.style.scrollMarginTop="120px"; s.scrollIntoView({block:"start"}); } },500);   // item 152: the test links for Game 01
   // copy buttons: the address is always visible as text, the button is a convenience
   Array.prototype.forEach.call(document.querySelectorAll(".copy"),function(b){
     b.addEventListener("click",function(){
@@ -4324,7 +4325,7 @@ html[lang="hsb"] .kits ul.kits-en{display:none}
   function enDue(o){ o=o||enLoad(); return !(o.d&&o.d.k===skDay()); }
   function enBegin(){ var o=enLoad();
     EN.g=0; EN.st=0; EN.rest=0; EN.bp=0; EN.skip=0; EN.gold=0; EN.rot=0; EN.lx=GW/2; EN.dir=1; EN.mx=0; EN.cid=0; EN.cx=0; EN.perf=0; EN.chord=0; EN.saved=false; EN.wall=false; EN.m0=1; EN.gh=[]; EN.ghT=0; EN.card=null; EN.cardT=0; EN.fl=0; EN.top=0;
-    EN.daily=enDue(o)?skDay():0; EN.rs=null; enReseed(0);
+    EN.test=0; EN.daily=(enDue(o)&&!EN.jt)?skDay():0; EN.rs=null; enReseed(0);
     EN.ghost=(!EN.daily&&o.gh&&o.gh.s&&o.gh.s.length>3)?o.gh:null; EN.ini=o.wall?String(o.ini||""):"";
     if(EN.daily){ SK.tag=(SK.tag?SK.tag+" · ":"")+"Today’s set"; if(!SK.msg) SK.msg="Same notes for everyone today."; } }
   function enLevel(){ EN.g=0; EN.st=0; EN.rest=0; EN.bp=0; EN.skip=0; EN.lx=GW/2; enReseed(lvl); }
@@ -4429,7 +4430,7 @@ html[lang="hsb"] .kits ul.kits-en{display:none}
   function enReach(){ var g=EN.g, S0=enS(g); return g<4?"The Mainstage · drop "+g+" · "+S0.b+" BPM":g<8?"The Golden Record · "+S0.t:"Run-out groove · "+S0.b+" BPM · 78 rpm survived ✓"; }
   function enNext(){ var g=EN.g, S0=enS(g), n=Math.max(1,Math.ceil((S0.n*8-EN.st)/8)), nm=g<3?"drop "+(g+1):g===3?"The Golden Record":g<7?ENS[g+1].t:g===7?"the run-out groove":(S0.b+4)+" BPM";
     return {n:n,u:n===1?"bar":"bars",nm:nm,r:n/S0.n}; }
-  function enOver(){ var o=enLoad(), today=skDay();
+  function enOver(){ var o=enLoad(), today=skDay(); if(EN.test) return {g:0,daily:0,sets:+o.n||0,perf:EN.perf,chord:EN.chord,wall:false,saved:EN.saved};
     if(EN.daily){ o.d={k:today,s:score,g:EN.g}; o.n=(+o.n||0)+1; }
     else if(!o.gh||score>(+o.gh.b||0)) o.gh={b:score,s:EN.gh.slice(0,450)};
     if(EN.top>(+o.top||0)) o.top=EN.top;
@@ -4443,6 +4444,14 @@ html[lang="hsb"] .kits ul.kits-en{display:none}
     p.textContent=(o.d&&o.d.k===skDay())?"Today’s set: "+String(o.d.s).replace(/\B(?=(\d{3})+(?!\d))/g,",")+" · a new set tomorrow":"Today’s set · your first run today · same notes for everyone"; }
   function enState(){ return {g:EN.g,st:EN.st,bpm:Math.round(600/CK.spb)/10,gold:EN.gold>0,rest:EN.rest>0,daily:EN.daily,saved:EN.saved,wall:EN.wall,perf:EN.perf,chord:EN.chord,ghost:!!EN.ghost,ini:EN.ini}; }
   // g1encore: end
+  // g1jump152: start
+  // item 152: test links for Game 01. #night&g1=mainstage|golden|78 -> START goes straight to that stage (source/g1jump152/apply.py)
+  var ENJMP={mainstage:0,golden:4,"78":7}, ENJN={mainstage:"The Mainstage",golden:"The Golden Record · 16⅔ rpm","78":"78 rpm"};
+  function enArm(){ var m=/[#&]g1=(mainstage|golden|78)(?:&|$)/.exec(location.hash||""); EN.jt=m?ENJMP[m[1]]+1:0; if(!m) return;
+    setGame(1); var p=document.getElementById("acToday"); if(p) p.textContent="Test link · START goes straight to "+ENJN[m[1]]; }
+  function enJump(){ if(game!==1||!EN.jt) return; var t=EN.jt-1; EN.test=1; EN.daily=0; EN.rs=null; EN.ghost=null;
+    nextLevel(); nextLevel(); if(t>0){ EN.g=t-1; EN.st=enS(EN.g).n*8; EN.rest=0; } }
+  // g1jump152: end
   // ---------- GAME 02 · The Playa Runner: a jump and run across the playa ----------
   // The art cars are invented for this game (a whale, a snail, a lantern boat); none copies a real one.
   // The world moves on the beat of the zone's track: one beat is a fixed distance, so obstacles arrive in time.
@@ -5230,7 +5239,7 @@ html[lang="hsb"] .kits ul.kits-en{display:none}
   function show(s){ ov.hidden=(s==="play"); Array.prototype.forEach.call(ov.querySelectorAll(".ac-panel"),function(p){ p.hidden=p.getAttribute("data-s")!==s; }); scr.classList.toggle("playing",s==="play"); }
   function startGame(){ ART.go(); tlStart(); if(game===2){ startRunner(); return; } if(game===3){ startViolin(); return; } A(); enBegin(); lvl=0; score=0; energy=100; streak=0; caught=0; items=[]; fx=[]; bx=GW/2; bv=0; tLevel=0; spawnT=0.6; beatN=0; lastSpawnB=-1; banner=2.6; bedStop(); pickTracks(); musPre(cur);
     try{ document.dispatchEvent(new CustomEvent("ss:audio",{detail:"arcade"})); }catch(e){}
-    clkSet(gbpm()); st="play"; show("play"); say("Level 1, The Clinic. Theta waves."+(T().t?" Track: "+T().t+".":"")); sLevel(0); bedStart(); wake(); }
+    clkSet(gbpm()); st="play"; show("play"); say("Level 1, The Clinic. Theta waves."+(T().t?" Track: "+T().t+".":"")); sLevel(0); bedStart(); wake(); enJump(); }
   function nextLevel(){ lvl++; enLevel(); caught=0; tLevel=0; spawnT=0.9; beatN=0; lastSpawnB=-1; clkSet(gbpm()); banner=2.6; items=items.filter(function(it){ return it.y<GH*0.5; }); sLevel(lvl); say("Level "+(lvl+1)+", "+LV[lvl].n+". "+LV[lvl].s+"."+(T().t?" Track: "+T().t+".":""));
     bedStart(); }
   function gameOver(){ st="over"; bedStop(); if(game===3&&V&&V.fsDone) fsChime(); else sOver(); show("over"); skEnd();
@@ -5350,7 +5359,7 @@ html[lang="hsb"] .kits ul.kits-en{display:none}
   if(window.IntersectionObserver){ new IntersectionObserver(function(en,ob){ if(en[en.length-1].isIntersecting){ ART.go(); ob.disconnect(); } },{rootMargin:"1400px 0px"}).observe(sec);
     new IntersectionObserver(function(en){ visMost=en[en.length-1].intersectionRatio>=0.6; },{threshold:[0,0.6,1]}).observe(scr); } else { ART.go(); visMost=true; }
   if(coarse) document.getElementById("acKeys").textContent="Drag the bow, or hold ◀ ▶ below";
-  drawBoards(-1); size(); show("attract"); wake(); enToday();
+  drawBoards(-1); size(); show("attract"); wake(); enToday(); enArm();
   window.__ssArcade={start:startGame,menu:menu,target:function(n){ TG=Math.max(0,+n||0); return TG; },game:function(g){ if(g) setGame(g); return game; },
     state:function(){ return {st:st,game:game,lvl:lvl,enc:enState(),fs:(game===3&&V&&V.fs)?fsState():null,zone:R?R.zone:0,m:R?Math.floor(R.dist/10):0,score:score,energy:energy,streak:streak,items:items.length,
       ms:{k:MS.k,pay:msPay(),slow:Math.round(MS.S*1000)/1000,cym:Math.round(BH.cym*100)/100},bh:(game===3&&V&&V.bh)?{d:Math.round(V.bh.d*10)/10,v:Math.round((V.bh.v||V.bh.d)*10)/10,tier:V.bh.tier,tau:Math.round(V.bh.tau*100)/100,gl:!!BH.gl,q:BH.tier,w:BH.w}:null}; },
