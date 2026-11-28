@@ -2428,7 +2428,11 @@ html[lang="hsb"] .kits ul.kits-en{display:none}
       if(s&&s.getClientRects().length){ s.style.scrollMarginTop="120px"; s.scrollIntoView({behavior:"smooth",block:"start"}); return; }   // item 151: "Arcade" shows the whole game screen, not only the headline
       if(t) t.scrollIntoView({behavior:"smooth",block:"start"}); });
   });
-  if(/[#&]g1=/.test(location.hash)) setTimeout(function(){ var s=document.getElementById("acScreen"); if(s){ s.style.scrollMarginTop="120px"; s.scrollIntoView({block:"start"}); } },500);   // item 152: the test links for Game 01
+  if(/[#&]g1=/.test(location.hash)) (function(){ var until=0;   // item 152: the test links for Game 01; item 153: hold the game screen in view while the page above it settles
+    function pin(){ var s=document.getElementById("acScreen"); if(!s) return; var d=s.getBoundingClientRect().top-120; if(Math.abs(d)>24) window.scrollBy(0,d); }
+    function hold(ms){ var go=!until||Date.now()>until; until=Date.now()+ms; if(!go) return; (function loop(){ pin(); if(Date.now()<until) setTimeout(loop,120); else until=0; })(); }
+    setTimeout(function(){ var s=document.getElementById("acScreen"); if(s){ s.style.scrollMarginTop="120px"; s.scrollIntoView({block:"start"}); } hold(8000); },500);
+    document.addEventListener("click",function(e){ var t=e.target; if(t&&t.closest&&t.closest("#nArcade .ac-start, #nArcade .ac-btn, #acScreen")) hold(4000); },true); })();
   // copy buttons: the address is always visible as text, the button is a convenience
   Array.prototype.forEach.call(document.querySelectorAll(".copy"),function(b){
     b.addEventListener("click",function(){
