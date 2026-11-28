@@ -3538,7 +3538,7 @@ html[lang="hsb"] .kits ul.kits-en{display:none}
 
     // ---- cymatics: grains settle on the nodal lines of a vibrating plate ----
     var cy=lab.querySelector(".fl-cy"), cc=cy.getContext("2d"), cap=lab.querySelector(".fl-cyc"), CW=0, isDay=lab.getAttribute("data-p")==="d";
-    var PN=0, gx=null, gy=null, cyLast=0;
+    var PN=0, gx=null, gy=null, cyLast=0, cyK=null; /* item 154: the plate follows the tone you hear, by plate physics */ function cyStir(){ if(!gx) return; for(var i=0;i<PN;i++){ gx[i]+=(Math.random()-0.5)*0.12; gy[i]+=(Math.random()-0.5)*0.12; } } var SQM=[]; (function(){ for(var a=1;a<=11;a++) for(var b=a+1;b<=12;b++) SQM.push([a,b,a*a+b*b]); })(); var CIM=[]; (function(){ for(var a=3;a<=12;a++) for(var c=0;c<=4;c++) CIM.push([a,c,(a+2*c)*(a+2*c)*(1+0.012*a)]); })(); var F0SQ=200/29, F0CI=200/(64*1.048), QW=0.035; function toneNow(){ var kk=kf(); return sch?100*kk:mode==="club"?110*kk:200*kk+f/2; } function pick(list,s){ var best=list[0], bd=1e9; for(var i=0;i<list.length;i++){ var d=Math.abs(Math.log(s/list[i][2])); if(d<bd){ bd=d; best=list[i]; } } return {a:best[0],b:best[1],key:best[0]+"-"+best[1],res:1/(1+Math.pow(bd/QW,2))}; }
     var SQ=[[1,2],[1,3],[2,3],[1,4],[3,4],[2,5],[3,5],[4,5],[1,6],[5,6],[3,7],[5,7]];
     function cySize(){ CW=Math.round(cy.clientWidth*dpr); if(!CW) return; cy.width=CW; cy.height=CW; PN=CW>500?3200:CW>300?2400:1500; if(coarse) PN=Math.min(PN,1800); scatter(); }
     function scatter(){ gx=new Float32Array(PN); gy=new Float32Array(PN); for(var i=0;i<PN;i++){ var a=Math.random()*6.283, r=Math.sqrt(Math.random()); if(isDay){ gx[i]=Math.random()*2-1; gy[i]=Math.random()*2-1; } else { gx[i]=Math.cos(a)*r; gy[i]=Math.sin(a)*r; } } }
@@ -3550,18 +3550,19 @@ html[lang="hsb"] .kits ul.kits-en{display:none}
     }
     function cyDraw(now){
       if(!CW||!gx) return; var t=now/1000, pulse=beatNow(t), PI=Math.PI;
-      var k=Math.max(0,Math.min(SQ.length-1,Math.floor(Math.log(f)/Math.log(45)*SQ.length))), n, m, n2, kr, kr2, rot;
-      if(isDay){ n=SQ[k][0]; m=SQ[k][1]; cap.textContent="Chladni plate · mode "+n+"–"+m+" · "+(f<10?f.toFixed(1):Math.round(f))+" Hz"; }
-      else { var bar=Math.floor(t*(mode==="club"?f:2.0667)/4); n=3+((k+bar)%5); n2=n*2+((bar>>1)%3); kr=2+(k%4)+((bar>>2)%2); kr2=kr+1.5; rot=t*0.12+0.18*pulse;
+      var drv=toneNow(), md=isDay?pick(SQM,drv/F0SQ):pick(CIM,drv/F0CI), n, m, n2, kr, kr2, rot, res=md.res;
+      if(md.key!==cyK){ if(cyK!==null) cyStir(); cyK=md.key; }
+      if(isDay){ n=md.a; m=md.b; cap.textContent="Chladni plate · mode "+n+"–"+m+" · "+Math.round(drv)+" Hz"; }
+      else { n=md.a; n2=n; kr=md.b+1; kr2=kr; rot=t*0.04+0.12*pulse;
         cap.textContent="Mandala · "+n+"-fold · pulsing at "+(mode==="club"||!snd?"124 BPM":(f<10?f.toFixed(1):Math.round(f))+" Hz"); }
       /* item 105: the clone's plate */ if(isDay){ cc.fillStyle="rgb(251,250,246)"; } else { cc.fillStyle="rgba(6,5,6,0.32)"; } cc.fillRect(0,0,CW,CW);
-      var half=CW/2, sc=half*(isDay?0.96:0.94*(1+0.035*pulse)), base=isDay?0.0012:0.0014, J=isDay?0.05:0.045+0.035*pulse;
+      var half=CW/2, sc=half*(isDay?0.96:0.94*(1+0.035*pulse)), base=isDay?0.0012:0.0014, J=(isDay?0.05*(snd?0.55+0.45*pulse/0.7:1):0.045+0.035*pulse)*(0.15+0.85*res);   /* item 154: hard near a resonance, slow between two; the drive swells with the pulse */
       cc.fillStyle=isDay?"rgba(142,111,26,0.85)":(pulse>0.5?"rgba(255,90,170,0.95)":"rgba(228,0,124,0.85)");
       var sz=isDay?Math.max(1,0.95*dpr):Math.max(1,1.15*dpr);
       if(isDay){ cc.strokeStyle="rgba(142,111,26,.25)"; cc.lineWidth=Math.max(1,dpr); cc.strokeRect(half-sc,half-sc,2*sc,2*sc); }
       for(var i=0;i<PN;i++){ var x=gx[i], y=gy[i], v;
         if(isDay){ var X=(x+1)/2, Y=(y+1)/2; v=Math.cos(n*PI*X)*Math.cos(m*PI*Y)-Math.cos(m*PI*X)*Math.cos(n*PI*Y); }
-        else { var r=Math.sqrt(x*x+y*y), th=Math.atan2(y,x); v=Math.sin(kr*PI*r)*Math.cos(n*th+rot)+0.3*Math.sin(kr2*PI*r)*Math.cos(n2*th-rot*1.4); }
+        else { var r=Math.sqrt(x*x+y*y), th=Math.atan2(y,x); v=Math.sin(kr*PI*r)*Math.cos(n*th+rot);   /* item 154: one mode of a round plate, n diameters, kr-1 circles */ }
         var st=J*Math.abs(v)+base; x+=(Math.random()-0.5)*st*2; y+=(Math.random()-0.5)*st*2;
         if(isDay){ if(x<-1)x=-1-(x+1); if(x>1)x=1-(x-1); if(y<-1)y=-1-(y+1); if(y>1)y=1-(y-1); }
         else { var rr=x*x+y*y; if(rr>1){ var q=1/Math.sqrt(rr); x*=q*0.99; y*=q*0.99; } }
