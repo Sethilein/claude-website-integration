@@ -2424,7 +2424,9 @@ html[lang="hsb"] .kits ul.kits-en{display:none}
   goBook();
 
   Array.prototype.forEach.call(document.querySelectorAll("[data-go]"),function(b){
-    b.addEventListener("click",function(){ var t=document.getElementById(b.getAttribute("data-go")); if(t) t.scrollIntoView({behavior:"smooth",block:"start"}); });
+    b.addEventListener("click",function(){ var id=b.getAttribute("data-go"), t=document.getElementById(id), s=id==="nArcade"&&document.getElementById("acScreen");
+      if(s&&s.getClientRects().length){ s.style.scrollMarginTop="120px"; s.scrollIntoView({behavior:"smooth",block:"start"}); return; }   // item 151: "Arcade" shows the whole game screen, not only the headline
+      if(t) t.scrollIntoView({behavior:"smooth",block:"start"}); });
   });
   // copy buttons: the address is always visible as text, the button is a convenience
   Array.prototype.forEach.call(document.querySelectorAll(".copy"),function(b){
@@ -4074,7 +4076,7 @@ html[lang="hsb"] .kits ul.kits-en{display:none}
   function setSnd(on){ sndOn=on; sndBtn.setAttribute("aria-pressed",String(on)); sndBtn.textContent=on?"Sound on":"Sound off"; try{ localStorage.setItem("ss-arcade-sound",on?"on":"off"); }catch(e){}
     if(!on) bedStop(); else if(st==="play") bedStart(); }
   setSnd(sndOn);
-  function A(){ if(!AC||!sndOn) return null; if(!ac){ ac=new AC(); master=ac.createGain(); master.gain.value=0.15; var comp=ac.createDynamicsCompressor(); master.connect(comp); comp.connect(ac.destination); } if(ac.state==="suspended") ac.resume(); return ac; }
+  function A(){ if(!AC||!sndOn) return null; if(!ac){ try{ if(navigator.audioSession) navigator.audioSession.type="playback"; }catch(e){} ac=new AC(); master=ac.createGain(); master.gain.value=0.15; var comp=ac.createDynamicsCompressor(); master.connect(comp); comp.connect(ac.destination); } if(ac.state==="suspended"||ac.state==="interrupted") ac.resume(); return ac; }   // item 151: an iPhone plays it like music, also with the silent switch on
   function env(v,t,a,d,pk){ v.gain.setValueAtTime(0.0001,t); v.gain.exponentialRampToValueAtTime(pk,t+a); v.gain.exponentialRampToValueAtTime(0.0001,t+a+d); }
   function tone(f,d,type,g,at,f2){ var a=A(); if(!a) return; var t=(at||a.currentTime), o=a.createOscillator(), v=a.createGain(); o.type=type||"square"; o.frequency.setValueAtTime(f,t); if(f2) o.frequency.exponentialRampToValueAtTime(f2,t+d);
     v.gain.setValueAtTime(0.0001,t); v.gain.exponentialRampToValueAtTime(g||0.4,t+0.006); v.gain.exponentialRampToValueAtTime(0.0001,t+d); o.connect(v); v.connect(master); o.start(t); o.stop(t+d+0.03); }
